@@ -1,0 +1,382 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:1707439277459928201",
+      "lastPropertyId": "36:5021160019612764793",
+      "name": "BaoCunBean",
+      "properties": [
+        {
+          "id": "1:3027282670016256996",
+          "name": "id"
+        },
+        {
+          "id": "2:7979380228635189235",
+          "name": "shipingIP"
+        },
+        {
+          "id": "3:4964763253039432598",
+          "name": "zhujiDiZhi"
+        },
+        {
+          "id": "4:6350218506910762768",
+          "name": "moban"
+        },
+        {
+          "id": "5:500374892493513483",
+          "name": "tuisongDiZhi"
+        },
+        {
+          "id": "6:628736840182870736",
+          "name": "gonggao"
+        },
+        {
+          "id": "7:5358020804902669589",
+          "name": "isShowMoshengren"
+        },
+        {
+          "id": "8:5283376751089996409",
+          "name": "isShowShiPingLiu"
+        },
+        {
+          "id": "9:6596677215456509572",
+          "name": "isHengOrShu"
+        },
+        {
+          "id": "10:4314935826237430055",
+          "name": "yusu"
+        },
+        {
+          "id": "11:5335298836443407891",
+          "name": "yudiao"
+        },
+        {
+          "id": "12:4964196168145216093",
+          "name": "boyingren"
+        },
+        {
+          "id": "13:3325119939270992557",
+          "name": "zhanghuId"
+        },
+        {
+          "id": "14:6785645968379108135",
+          "name": "wenzi"
+        },
+        {
+          "id": "15:5339510730488524113",
+          "name": "size"
+        },
+        {
+          "id": "16:1094308813982543868",
+          "name": "touxiangzhuji"
+        },
+        {
+          "id": "17:5257238933274157590",
+          "name": "houtaiDiZhi"
+        },
+        {
+          "id": "18:4715707578941706771",
+          "name": "huiyiId"
+        },
+        {
+          "id": "19:2577727562773817513",
+          "name": "wenzi1"
+        },
+        {
+          "id": "20:6938175865351973928",
+          "name": "size1"
+        },
+        {
+          "id": "21:6509387588748650656",
+          "name": "guanggaojiMing"
+        },
+        {
+          "id": "22:4517554880838770464",
+          "name": "shiPingWeiZhi"
+        },
+        {
+          "id": "23:41422088385123719",
+          "name": "zhanhuiId"
+        },
+        {
+          "id": "24:650140836659260073",
+          "name": "zhanhuiBianMa"
+        },
+        {
+          "id": "25:1510922813872240553",
+          "name": "shibieFaZhi"
+        },
+        {
+          "id": "26:7883976205108161448",
+          "name": "shibieFaceSize"
+        },
+        {
+          "id": "27:1001852669511825428",
+          "name": "ruKuMoHuDu"
+        },
+        {
+          "id": "28:1277142071322127674",
+          "name": "ruKuFaceSize"
+        },
+        {
+          "id": "29:6089277036722976828",
+          "name": "isHuoTi"
+        },
+        {
+          "id": "30:4142711735973743363",
+          "name": "huoTiFZ"
+        },
+        {
+          "id": "31:3862160999682050115",
+          "name": "dangqianChengShi"
+        },
+        {
+          "id": "32:16712465146173944",
+          "name": "dangqianChengShi2"
+        },
+        {
+          "id": "33:90539429131426920",
+          "name": "dangqianShiJian"
+        },
+        {
+          "id": "34:3034480770083526410",
+          "name": "isTianQi"
+        },
+        {
+          "id": "35:4432051152134746292",
+          "name": "shangBanTime"
+        },
+        {
+          "id": "36:5021160019612764793",
+          "name": "xiaBanTime"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:8956458165698794345",
+      "lastPropertyId": "3:4265518919022798226",
+      "name": "MingXinBean",
+      "properties": [
+        {
+          "id": "1:8759785294299826608",
+          "name": "id"
+        },
+        {
+          "id": "2:7563267310640670019",
+          "name": "facetoken"
+        },
+        {
+          "id": "3:4265518919022798226",
+          "name": "name"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:3094420921634772857",
+      "lastPropertyId": "13:1458385979230402437",
+      "name": "PaiHangBean",
+      "properties": [
+        {
+          "id": "1:5103335805680585418",
+          "name": "id"
+        },
+        {
+          "id": "2:224226886437999579",
+          "name": "teZhengMa"
+        },
+        {
+          "id": "3:778871921230273506",
+          "name": "yanzhi"
+        },
+        {
+          "id": "4:1149735797393800137",
+          "name": "fuzhi"
+        },
+        {
+          "id": "5:4113544643959731248",
+          "name": "time"
+        },
+        {
+          "id": "6:8417536386692720748",
+          "name": "trackId"
+        },
+        {
+          "id": "7:2329096397179494268",
+          "name": "cishu"
+        },
+        {
+          "id": "8:7886824337118193475",
+          "name": "paihang"
+        },
+        {
+          "id": "9:4298832330456649425",
+          "name": "nianl"
+        },
+        {
+          "id": "10:5469644426835235717",
+          "name": "xingbie"
+        },
+        {
+          "id": "11:3601593065359029257",
+          "name": "guanzhu"
+        },
+        {
+          "id": "12:3249664375985678740",
+          "name": "bytes"
+        },
+        {
+          "id": "13:1458385979230402437",
+          "name": "biaoqing"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:2169262291466580639",
+      "lastPropertyId": "23:685333943160879264",
+      "name": "Subject",
+      "properties": [
+        {
+          "id": "1:253589449088509688",
+          "name": "id"
+        },
+        {
+          "id": "2:3465355969777318097",
+          "name": "sid"
+        },
+        {
+          "id": "3:3823897338602273845",
+          "name": "name"
+        },
+        {
+          "id": "4:5094911790830579599",
+          "name": "companyId"
+        },
+        {
+          "id": "5:6601128275727030985",
+          "name": "companyName"
+        },
+        {
+          "id": "6:8702859813755815118",
+          "name": "workNumber"
+        },
+        {
+          "id": "7:4020416293249941203",
+          "name": "sex"
+        },
+        {
+          "id": "8:6895368420704813862",
+          "name": "phone"
+        },
+        {
+          "id": "9:6773814242483367704",
+          "name": "peopleType"
+        },
+        {
+          "id": "10:277257726630280572",
+          "name": "email"
+        },
+        {
+          "id": "11:2532863873412333503",
+          "name": "position"
+        },
+        {
+          "id": "12:4490484894098244710",
+          "name": "employeeStatus"
+        },
+        {
+          "id": "13:2725167846458161834",
+          "name": "quitType"
+        },
+        {
+          "id": "14:4547124745581307901",
+          "name": "remark"
+        },
+        {
+          "id": "15:4415764016472229309",
+          "name": "photo"
+        },
+        {
+          "id": "16:2941085995207698797",
+          "name": "storeId"
+        },
+        {
+          "id": "17:3630539284690995633",
+          "name": "storeName"
+        },
+        {
+          "id": "18:9056595278152076814",
+          "name": "entryTime"
+        },
+        {
+          "id": "19:8004833694482208416",
+          "name": "birthday"
+        },
+        {
+          "id": "20:6906727566631011276",
+          "name": "teZhengMa"
+        },
+        {
+          "id": "21:3453904819512607856",
+          "name": "departmentName"
+        },
+        {
+          "id": "22:7913469160558401741",
+          "name": "daka"
+        },
+        {
+          "id": "23:685333943160879264",
+          "name": "shijian"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:5607192735633145144",
+      "lastPropertyId": "6:4637948769423415202",
+      "name": "Subjects",
+      "properties": [
+        {
+          "id": "1:8150219464126128801",
+          "name": "id"
+        },
+        {
+          "id": "2:5684564636591386156",
+          "name": "sex"
+        },
+        {
+          "id": "3:8342810442713966671",
+          "name": "age"
+        },
+        {
+          "id": "4:5527369211515163685",
+          "name": "faceScore"
+        },
+        {
+          "id": "5:3810301161530589969",
+          "name": "faceToken"
+        },
+        {
+          "id": "6:4637948769423415202",
+          "name": "filePath"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "5:5607192735633145144",
+  "lastIndexId": "0:0",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}
