@@ -1,1 +1,1 @@
-include ':app', ':danrenbanmohe', ':huiyilixianban', ':mianbanjiyqt', ':yunqiantai'
+include ':app', ':danrenbanmohe', ':yunqiantai', ':huiyilixianban', ':mianbanjiyqt'

@@ -243,10 +243,10 @@ public class MyApplication extends Application implements Application.ActivityLi
      * 获取运行该方法的进程的进程名
      * @return 进程名称
      */
-    public String getProcessName() {
+    public static String getProcessName() {
         int processId = android.os.Process.myPid();
         String processName = null;
-        ActivityManager manager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) myApplication.getSystemService(Context.ACTIVITY_SERVICE);
         Iterator iterator = manager != null ? manager.getRunningAppProcesses().iterator() : null;
         if (iterator != null) {
             while (iterator.hasNext()) {

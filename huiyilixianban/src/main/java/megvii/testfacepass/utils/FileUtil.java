@@ -877,7 +877,7 @@ public class FileUtil {
         pp.setColor(Color.WHITE);
         canvas2.drawCircle(newHeight/2, newHeight/2+20, newHeight/2-1, pp);
         canvas2.drawBitmap(bitmap2,null,new RectF(newHeight+20-60,0,newHeight+20,top+60),pp);
-        canvas2.save(Canvas.ALL_SAVE_FLAG);//保存   
+        canvas2.save();//保存   
         //store   
         canvas2.restore();//存储   
 
@@ -904,7 +904,7 @@ public class FileUtil {
         //draw fg into   
         cv.drawBitmap(foreground, 0, 0, null);//在 0，0坐标开始画入fg ，可以从任意位置画入
         //save all clip   
-        cv.save(Canvas.ALL_SAVE_FLAG);//保存   
+        cv.save();//保存   
         //store   
         cv.restore();//存储   
         return newbmp;
