@@ -309,9 +309,9 @@ public class MyReceiver extends BroadcastReceiver {
 						link_guanhuai(renShu.getId(),renShu.getStatus(),renShu.getUrl());
 						break;
 
-//					case "生日关怀入库":
-//						link_shengrri(renShu.getId(),renShu.getStatus(),renShu.getUrl());
-//						break;
+					case "底图更新":
+						link_beijing(renShu.getId(),renShu.getStatus(),renShu.getUrl());
+						break;
 //					case "入职关怀入库":
 //						link_ruzhi(renShu.getId(),renShu.getStatus(),renShu.getUrl());
 //						break;
@@ -1396,6 +1396,8 @@ public class MyReceiver extends BroadcastReceiver {
 		});
 	}
 
+
+
 	//关怀
 	private void link_youju(final String id, final int status, final String url){
 		//	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
@@ -1448,6 +1450,52 @@ public class MyReceiver extends BroadcastReceiver {
 		});
 	}
 
+	//关怀
+	private void link_beijing(final String id, final int status, final String url){
+		//	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+		OkHttpClient okHttpClient= new OkHttpClient();
+		//RequestBody requestBody = RequestBody.create(JSON, json);
+		RequestBody body = new FormBody.Builder()
+				.add("id",id)
+				//	.add("downloads","1")
+				.build();
+		Request.Builder requestBuilder = new Request.Builder()
+//				.header("Content-Type", "application/json")
+//				.header("user-agent","Koala Admin")
+				//.post(requestBody)
+				//.get()
+				.post(body)
+				.url(baoCunBean.getHoutaiDiZhi()+url);
+
+		// step 3：创建 Call 对象
+		Call call = okHttpClient.newCall(requestBuilder.build());
+		//step 4: 开始异步请求
+		call.enqueue(new Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+				Log.d("AllConnects", "请求失败"+e.getMessage());
+			}
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				Log.d("AllConnects", "请求成功"+call.request().toString());
+				//获得返回体
+				try{
+					ResponseBody body = response.body();
+					final String ss=body.string().trim();
+					Log.d("AllConnects", "背景"+ss);
+
+					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+					Gson gson=new Gson();
+					final GuanHuai youJuBean=gson.fromJson(jsonObject,GuanHuai.class);
+
+
+				}catch (Exception e){
+					showNotifictionIcon( 0,"节日","出现异常"+e.getMessage());
+				}
+
+			}
+		});
+	}
 
 	//从老黄后台拿批量信息
 	private void link_getHouTaiPiLiang(final int id, final Context context, final int status){
