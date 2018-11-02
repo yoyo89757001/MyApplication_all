@@ -121,5 +121,6 @@ dependencies {
     implementation "com.github.czyzby:gdx-lml:1.9.1.9.6"
     implementation "com.github.czyzby:gdx-lml-vis:1.9.1.9.6"
     implementation "com.esotericsoftware.spine:spine-libgdx:3.5.51.1"
+    implementation 'com.airbnb.android:lottie:2.5.4' //svg动画
 
 }

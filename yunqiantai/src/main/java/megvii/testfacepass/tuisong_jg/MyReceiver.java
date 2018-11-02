@@ -29,6 +29,7 @@ import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 
 
+import org.greenrobot.eventbus.EventBus;
 import org.xmlpull.v1.XmlPullParser;
 
 
@@ -62,6 +63,7 @@ import megvii.facepass.types.FacePassAddFaceResult;
 import megvii.testfacepass.MyApplication;
 
 import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.BeiJingBean;
 import megvii.testfacepass.beans.BenDiMBbean;
 import megvii.testfacepass.beans.BenDiMBbean_;
 import megvii.testfacepass.beans.FangKeBean;
@@ -1465,7 +1467,7 @@ public class MyReceiver extends BroadcastReceiver {
 				//.post(requestBody)
 				//.get()
 				.post(body)
-				.url(baoCunBean.getHoutaiDiZhi()+url);
+				.url(url);
 
 		// step 3：创建 Call 对象
 		Call call = okHttpClient.newCall(requestBuilder.build());
@@ -1486,11 +1488,45 @@ public class MyReceiver extends BroadcastReceiver {
 
 					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
 					Gson gson=new Gson();
-					final GuanHuai youJuBean=gson.fromJson(jsonObject,GuanHuai.class);
+					final BeiJingBean beiJingBean=gson.fromJson(jsonObject,BeiJingBean.class);
+					Bitmap bitmap=null;
+					try {
+						bitmap = Glide.with(context).asBitmap()
+								.load(beiJingBean.getBackgroundUrl())
+								// .sizeMultiplier(0.5f)
+								.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+								.get();
+					} catch (InterruptedException | ExecutionException e) {
+						e.printStackTrace();
+						showNotifictionIcon( 0,"底图更新","下载背景底图失败"+e.getMessage());
+					}
+					if (bitmap!=null){
+						try {
+
+							File file = new File(FileUtil.SDPATH+File.separator+"beijing_rt.png");
+							FileOutputStream out = new FileOutputStream(file);
+							bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+							out.flush();
+							out.close();
+							baoCunBean.setTouxiangzhuji(FileUtil.SDPATH+File.separator+"beijing_rt.png");
+							baoCunBean.setWenzi1(beiJingBean.getBackgroundTitle());
+							baoCunBeanDao.put(baoCunBean);
+							EventBus.getDefault().post("ditu");
+
+						} catch (Exception e) {
+							e.printStackTrace();
+							showNotifictionIcon( 0,"底图更新","出现异常"+e.getMessage());
+						}
+
+
+
+					}else {
+						showNotifictionIcon( 0,"底图更新","下载背景底图失败");
+					}
 
 
 				}catch (Exception e){
-					showNotifictionIcon( 0,"节日","出现异常"+e.getMessage());
+					showNotifictionIcon( 0,"底图更新","出现异常"+e.getMessage());
 				}
 
 			}

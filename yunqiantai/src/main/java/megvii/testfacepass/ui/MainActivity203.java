@@ -59,6 +59,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.badoo.mobile.util.WeakHandler;
 import com.baidu.tts.client.SpeechSynthesizer;
@@ -799,6 +800,8 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                             xiabandaka.setTextColor(Color.BLACK);
                             xiaban_rl.setBackgroundResource(R.drawable.daka_r_tuhuang);
                         }
+                        LottieAnimationView  wangluo = view_dk.findViewById(R.id.wangluo);
+                        wangluo.setSpeed(0.8f);
 
                         final LinearLayout linearygwenzi = view_dk.findViewById(R.id.ygwenzi);
                         final ScrollView scrollView_03 = view_dk.findViewById(R.id.scrollview_03);
@@ -3066,7 +3069,11 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
         ppp0.topMargin = -10;
         zidongtext.setLayoutParams(ppp0);
         zidongtext.invalidate();
-        zidongtext.setDate((float) dw * 0.7f, (float) dw * 0.22f, "瑞瞳智能");
+        if (baoCunBean.getWenzi1()!=null)
+        zidongtext.setDate((float) dw * 0.7f, (float) dw * 0.22f, baoCunBean.getWenzi1());
+        if (baoCunBean.getTouxiangzhuji()!=null)
+            daBg.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getTouxiangzhuji()));
+
 
         RelativeLayout.LayoutParams ppp = (RelativeLayout.LayoutParams) contentRl.getLayoutParams();
         ppp.width = (int) ((float) dw * 0.7f);
@@ -3538,6 +3545,15 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
             //  dibuliebiao.setAdapter(diBuAdapter);
             return;
         }
+        if (event.equals("ditu")){
+            if (baoCunBean.getTouxiangzhuji()!=null)
+            daBg.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getTouxiangzhuji()));
+            if (baoCunBean.getWenzi1()!=null)
+                zidongtext.setDate((float) dw * 0.7f, (float) dw * 0.22f, baoCunBean.getWenzi1());
+            Log.d("MainActivity203", "dfgdsgfdgfdgfdg");
+            return;
+        }
+
         Toast tastyToast = TastyToast.makeText(MainActivity203.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
         tastyToast.setGravity(Gravity.CENTER, 0, 0);
         tastyToast.show();

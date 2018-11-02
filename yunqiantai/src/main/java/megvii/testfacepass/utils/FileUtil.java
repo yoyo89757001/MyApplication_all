@@ -861,10 +861,10 @@ public class FileUtil {
         canvas.drawBitmap(bitmap, src, dst, paint); // 以Mode.SRC_IN模式合并bitmap和已经draw了的Circle
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(14.0f);
+        paint.setStrokeWidth(16.0f);
         paint.setXfermode(null);
         paint.setColor(Color.WHITE);
-        canvas.drawCircle(roundPx,roundPx,roundPx-14,paint);
+        canvas.drawCircle(roundPx,roundPx,roundPx-2,paint);
 
 
         return output;
