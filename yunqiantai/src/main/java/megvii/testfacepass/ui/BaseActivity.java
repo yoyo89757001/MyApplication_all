@@ -12,7 +12,6 @@ import megvii.testfacepass.R;
 import megvii.testfacepass.beans.BaoCunBean;
 
 public class BaseActivity extends AppCompatActivity {
-    private Box<BaoCunBean> baoCunBeanDao = null;
 
 
     @Override
@@ -20,13 +19,13 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
-        baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+        Box<BaoCunBean> baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
       BaoCunBean  baoCunBean = baoCunBeanDao.get(123456L);
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
             baoCunBean.setId(123456L);
             baoCunBean.setHoutaiDiZhi("http://hy.inteyeligence.com/front");
-            baoCunBean.setShibieFaceSize(60);
+            baoCunBean.setShibieFaceSize(10);
             baoCunBean.setShibieFaZhi(70);
             baoCunBean.setYudiao(5);
             baoCunBean.setYusu(5);

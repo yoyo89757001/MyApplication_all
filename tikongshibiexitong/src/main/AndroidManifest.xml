@@ -54,6 +54,8 @@
         </activity>
 
         <activity android:name=".ui.SettingActivity" />
+        <activity android:name="android_serialport_api.SerialPortPreferences" />
+        <activity android:name="android_serialport_api.Sending01010101Activity"/>
 
         <activity android:name=".ui.YuLanActivity"/>
         <service

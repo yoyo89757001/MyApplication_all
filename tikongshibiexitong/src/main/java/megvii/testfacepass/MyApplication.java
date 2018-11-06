@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 
@@ -16,8 +17,13 @@ import com.tencent.bugly.Bugly;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 
+import java.io.File;
 import java.io.IOException;
+import java.security.InvalidParameterException;
+import java.util.Objects;
 
+import android_serialport_api.SerialPort;
+import android_serialport_api.SerialPortFinder;
 import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
@@ -25,6 +31,8 @@ import megvii.facepass.FacePassHandler;
 import megvii.testfacepass.beans.ChengShiIDBean;
 import megvii.testfacepass.beans.MyObjectBox;
 import megvii.testfacepass.beans.ZhiChiChengShi;
+
+
 import megvii.testfacepass.dialogall.CommonData;
 import megvii.testfacepass.dialogall.CommonDialogService;
 import megvii.testfacepass.dialogall.ToastUtils;
@@ -45,6 +53,34 @@ public class MyApplication extends Application implements Application.ActivityLi
     public static MyApplication myApplication;
     private Box<ChengShiIDBean> chengShiIDBeanBox;
 
+
+    public SerialPortFinder mSerialPortFinder = new SerialPortFinder();
+    private SerialPort mSerialPort = null;
+
+    public SerialPort getSerialPort() throws SecurityException, IOException, InvalidParameterException {
+        if (mSerialPort == null) {
+            /* Read serial port parameters */
+            SharedPreferences sp = getSharedPreferences("android_serialport_api.sample_preferences", MODE_PRIVATE);
+            String path = sp.getString("DEVICE", "/dev/ttyS4");
+            int baudrate = Integer.decode(Objects.requireNonNull(sp.getString("BAUDRATE", "9600")));
+
+            /* Check parameters */
+            if ( (path.length() == 0) || (baudrate == -1)) {
+                throw new InvalidParameterException();
+            }
+
+            /* Open the serial port */
+            mSerialPort = new SerialPort(new File(path), baudrate, 0);
+        }
+        return mSerialPort;
+    }
+
+    public void closeSerialPort() {
+        if (mSerialPort != null) {
+            mSerialPort.close();
+            mSerialPort = null;
+        }
+    }
 
     @Override
     public void onCreate() {

@@ -38,7 +38,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
@@ -78,6 +77,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
+import android_serialport_api.Sending01010101Activity;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
 import megvii.facepass.FacePassException;
@@ -99,6 +100,7 @@ import megvii.testfacepass.beans.TodayBean;
 import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
+
 import megvii.testfacepass.tts.control.InitConfig;
 import megvii.testfacepass.tts.control.MySyntherizer;
 import megvii.testfacepass.tts.control.NonBlockSyntherizer;
@@ -1702,6 +1704,9 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
             public void onClick(View v) {
                 //网络开关
                 Log.d("MianBanJiActivity", "点击");
+
+                startActivity(new Intent(MianBanJiActivity.this, Sending01010101Activity.class));
+
                 if (isOP){
                     isOP=false;
                     NetLockerAlarmController alarmController = new NetLockerAlarmController();
