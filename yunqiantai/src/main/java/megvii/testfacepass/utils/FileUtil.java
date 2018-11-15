@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -859,13 +860,16 @@ public class FileUtil {
 
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));// 设置两张图片相交时的模式,参考http://trylovecatch.iteye.com/blog/1189452
         canvas.drawBitmap(bitmap, src, dst, paint); // 以Mode.SRC_IN模式合并bitmap和已经draw了的Circle
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(16.0f);
-        paint.setXfermode(null);
-        paint.setColor(Color.WHITE);
-        canvas.drawCircle(roundPx,roundPx,roundPx-2,paint);
+        canvas.save();
+       // canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+        Paint pp=new Paint();
+        pp.setAntiAlias(true);
+        pp.setStyle(Paint.Style.STROKE);
+        pp.setStrokeWidth(10.0f);
+        pp.setColor(Color.WHITE);
 
+        canvas.drawCircle(roundPx,roundPx,roundPx-5,pp);
+        canvas.restore();
 
         return output;
     }

@@ -95,6 +95,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         setMeasuredDimension((int) (width * scaleW), (int) (height * scaleH));
     }
 
+
+
     public interface CameraPreviewListener {
         public void onStartPreview();
     }

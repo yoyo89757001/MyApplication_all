@@ -305,7 +305,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
     private FragmentManager fragmentManager = null;
     private List<GuanHuai> guanHuaiList=new ArrayList<>();
     private List<String> bumenString=new ArrayList<>();
-    private String leixing[] =new String[]{"员工","普通访客","白名单","陌生人"};
+    private String leixing[] =new String[]{"员工","白名单","陌生人"};
 
 
 
@@ -421,7 +421,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
             requestPermission();
         } else {
             //初始化
-            //   FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+            FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
             Log.d("MainActivity201", FacePassHandler.getVersion());
         }
@@ -454,6 +454,18 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
             public boolean handleMessage(Message msg) {
                 switch (msg.what) {
                     case 111: {
+                        if (box2dEffectView!=null){
+                            box2dEffectView.pause();
+                            boxfargment.setScaleX(0.001f);
+                            boxfargment.setScaleY(0.001f);
+                            boxfargment.invalidate();
+                        }
+
+                        if (shengRiThierd!=null){
+                            shengRiThierd.interrupt();
+                            shengRiThierd=null;
+                        }
+
                         if (fangkeThired != null) {
                             fangkeThired.interrupt();
                             fangkeThired = null;
@@ -479,7 +491,6 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-
                         }
                         view_dk.setX(dw);
                         rootLayout.addView(view_dk);
@@ -733,7 +744,20 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                     }
 
                     case 444: {
-
+                        if (box2dEffectView!=null){
+                            box2dEffectView.pause();
+                            boxfargment.setScaleX(0.001f);
+                            boxfargment.setScaleY(0.001f);
+                            boxfargment.invalidate();
+                        }
+                        if (fangkeThired != null) {
+                            fangkeThired.interrupt();
+                            fangkeThired = null;
+                        }
+                        if (shengRiThierd != null) {
+                            shengRiThierd.interrupt();
+                            shengRiThierd = null;
+                        }
                         //普通打卡
                         final Subject bean2 = (Subject) msg.obj;
                         Log.d("MainActivity203", bean2.toString());
@@ -757,10 +781,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                             }
                         }
                         if (isSR) {
-                            if (shengRiThierd != null) {
-                                shengRiThierd.interrupt();
-                                shengRiThierd = null;
-                            }
+
                             shengRiThierd = new ShengRiThierd();
                             shengRiThierd.start();
                         }
@@ -1332,6 +1353,12 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
 
                     case 555: {
 
+                        if (box2dEffectView!=null){
+                            box2dEffectView.pause();
+                            boxfargment.setScaleX(0.001f);
+                            boxfargment.setScaleY(0.001f);
+                            boxfargment.invalidate();
+                        }
                        // Log.d("MainActivity203", "收到555");
                         //零时陌生人
                         final Subject bean2 = (Subject) msg.obj;
@@ -1340,6 +1367,10 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                         boolean isSR = true;
 
                         if (isSR) {
+                            if (fangkeThired != null) {
+                                fangkeThired.interrupt();
+                                fangkeThired = null;
+                            }
                             if (shengRiThierd != null) {
                                 shengRiThierd.interrupt();
                                 shengRiThierd = null;
@@ -1884,6 +1915,16 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                     }
                     case 666: {
                         //普通访客
+                        if (box2dEffectView!=null){
+                            box2dEffectView.pause();
+                            boxfargment.setScaleX(0.001f);
+                            boxfargment.setScaleY(0.001f);
+                            boxfargment.invalidate();
+                        }
+                        if (shengRiThierd != null) {
+                            shengRiThierd.interrupt();
+                            shengRiThierd = null;
+                        }
                         if (fangkeThired != null) {
                             fangkeThired.interrupt();
                             fangkeThired = null;
@@ -2163,6 +2204,8 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                         break;
                     }
                     case 999: {
+
+
                         if (rootLayout.getChildCount() == 1) {
                             //大于1个就
                             utils = new ValueAnimatorUtils();
@@ -2342,7 +2385,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                             Random random2 = new Random();
                             int num2 = random2.nextInt(max2) % (max2 - min2 + 1) + min2;
 
-                            new ParticleSystem(MainActivity203_demo.this, 100, qqIm[num2], 7000)
+                            new ParticleSystem(MainActivity203_demo.this, 100, qqIm[num2], 6000)
                                     .setSpeedModuleAndAngleRange(0.02f, 0.1f, 250, 290)
                                     .setRotationSpeed(0)
                                     .setFadeOut(1000, new LinearInterpolator())
@@ -2680,7 +2723,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                     }
             } else {
 
-                //    FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+                FacePassHandler.getAuth(authIP, apiKey, apiSecret);
                 FacePassHandler.initSDK(getApplicationContext());
                 Log.d("MainActivity2013", FacePassHandler.getVersion());
             }
@@ -3221,6 +3264,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                                 b.setName("女士");
                                 break;
                             default:
+                                b.setName("先生");
                                 sex = "未知";
                         }
 
@@ -3230,7 +3274,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                         b.setBitmap(bitmabToBytes2(bitmap));
                        // Log.d("MainActivity203_demo", leixing[(int) (Math.random()*5)]);
 
-                        b.setPeopleType(leixing[(int) (Math.random()*4)]);
+                        b.setPeopleType(leixing[(int) (Math.random()*3)]);
 
                         new Thread(new Runnable() {
                             @Override
@@ -3240,8 +3284,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                         }).start();
 
                         linkedBlockingQueue.offer(b);
-                       Log.d("MainActivity203", "陌生人入队列");
-
+                       //Log.d("MainActivity203", "陌生人入队列");
 
                     }
 

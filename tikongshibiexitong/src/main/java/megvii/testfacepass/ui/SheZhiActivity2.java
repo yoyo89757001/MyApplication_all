@@ -102,13 +102,13 @@ public class SheZhiActivity2 extends Activity {
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
             baoCunBean.setId(123456L);
-            baoCunBean.setHoutaiDiZhi("http://192.168.2.187:8980/js/f");
-            baoCunBean.setShibieFaceSize(40);
+            baoCunBean.setHoutaiDiZhi("http://39.104.180.94:1080");
+            baoCunBean.setShibieFaceSize(20);
             baoCunBean.setShibieFaZhi(70);
             baoCunBean.setRuKuFaceSize(60);
             baoCunBean.setRuKuMoHuDu(0.4f);
             baoCunBean.setHuoTiFZ(70);
-            baoCunBean.setHuoTi(true);
+            baoCunBean.setHuoTi(false);
             baoCunBean.setDangqianShiJian("d");
             baoCunBean.setTianQi(false);
 

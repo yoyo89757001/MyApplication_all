@@ -397,6 +397,9 @@
 
     <!--</RelativeLayout>-->
 
+
+
+
     <megvii.testfacepass.view.MianBanJiView
         android:id="@+id/mianbanjiview"
         android:background="#00000000"

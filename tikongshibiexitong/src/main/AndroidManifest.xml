@@ -44,7 +44,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ui.MianBanJiActivity"
+            android:name=".ui.BaseActivity"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,7 +56,7 @@
         <activity android:name=".ui.SettingActivity" />
         <activity android:name="android_serialport_api.SerialPortPreferences" />
         <activity android:name="android_serialport_api.Sending01010101Activity"/>
-
+        <activity android:name=".ui.MianBanJiActivity"/>
         <activity android:name=".ui.YuLanActivity"/>
         <service
             android:process=":restart"

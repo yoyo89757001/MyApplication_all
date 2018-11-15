@@ -35,7 +35,7 @@ public class AutoScalingTextView extends View {
         textPaint=new Paint();
         textPaint.setTextSize(tsize);
         textPaint.setAntiAlias(true);
-        textPaint.setColor(Color.WHITE);
+        textPaint.setColor(Color.YELLOW);
     }
 
     public void setDate(float width,float hight,String text){

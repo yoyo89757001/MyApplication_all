@@ -330,7 +330,12 @@ public class MianBanJiView extends View{
                     }
                 };
                 if (task!=null && timer!=null){
-                    timer.schedule(task, 5000);
+                    try {
+                        timer.schedule(task, 5000);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
                 }
 
             }

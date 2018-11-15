@@ -421,7 +421,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
             requestPermission();
         } else {
             //初始化
-            //   FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+             //  FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
             Log.d("MainActivity201", FacePassHandler.getVersion());
         }
@@ -454,6 +454,21 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
             public boolean handleMessage(Message msg) {
                 switch (msg.what) {
                     case 111: {
+                        if (box2dEffectView!=null){
+                            box2dEffectView.pause();
+                            boxfargment.setScaleX(0.001f);
+                            boxfargment.setScaleY(0.001f);
+                            boxfargment.invalidate();
+                        }
+
+                        if (shengRiThierd != null) {
+                            shengRiThierd.interrupt();
+                            shengRiThierd = null;
+                        }
+                        if (fangkeThired != null) {
+                            fangkeThired.interrupt();
+                            fangkeThired = null;
+                        }
                         if (vipThired != null) {
                             vipThired.interrupt();
                             vipThired = null;
@@ -746,7 +761,24 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                     }
 
                     case 444: {
-
+                        if (box2dEffectView!=null){
+                            box2dEffectView.pause();
+                            boxfargment.setScaleX(0.001f);
+                            boxfargment.setScaleY(0.001f);
+                            boxfargment.invalidate();
+                        }
+                        if (shengRiThierd != null) {
+                            shengRiThierd.interrupt();
+                            shengRiThierd = null;
+                        }
+                        if (fangkeThired != null) {
+                            fangkeThired.interrupt();
+                            fangkeThired = null;
+                        }
+                        if (vipThired != null) {
+                            vipThired.interrupt();
+                            vipThired = null;
+                        }
                         //普通打卡
                         final Subject bean2 = (Subject) msg.obj;
                         Log.d("MainActivity203", bean2.toString());
@@ -770,10 +802,6 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                             }
                         }
                         if (isSR) {
-                            if (shengRiThierd != null) {
-                                shengRiThierd.interrupt();
-                                shengRiThierd = null;
-                            }
                             shengRiThierd = new ShengRiThierd();
                             shengRiThierd.start();
                         }
@@ -1967,10 +1995,25 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                     }
                     case 666: {
                         //普通访客
+                        if (box2dEffectView!=null){
+                            box2dEffectView.pause();
+                            boxfargment.setScaleX(0.001f);
+                            boxfargment.setScaleY(0.001f);
+                            boxfargment.invalidate();
+                        }
+                        if (shengRiThierd != null) {
+                            shengRiThierd.interrupt();
+                            shengRiThierd = null;
+                        }
                         if (fangkeThired != null) {
                             fangkeThired.interrupt();
                             fangkeThired = null;
                         }
+                        if (vipThired != null) {
+                            vipThired.interrupt();
+                            vipThired = null;
+                        }
+
                         fangkeThired = new FangkeThired();
                         fangkeThired.start();
 
@@ -2291,6 +2334,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                         break;
                     }
                     case 999: {
+
                         if (rootLayout.getChildCount() == 1) {
                             //大于1个就
                             utils = new ValueAnimatorUtils();
@@ -2470,7 +2514,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                             Random random2 = new Random();
                             int num2 = random2.nextInt(max2) % (max2 - min2 + 1) + min2;
 
-                            new ParticleSystem(MainActivity203.this, 100, qqIm[num2], 7000)
+                            new ParticleSystem(MainActivity203.this, 100, qqIm[num2], 6000)
                                     .setSpeedModuleAndAngleRange(0.02f, 0.1f, 250, 290)
                                     .setRotationSpeed(0)
                                     .setFadeOut(1000, new LinearInterpolator())
@@ -2743,7 +2787,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                         }
                     }
 
-                    SystemClock.sleep(1600);
+                    SystemClock.sleep(2100);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -3550,6 +3594,11 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
             daBg.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getTouxiangzhuji()));
             if (baoCunBean.getWenzi1()!=null)
                 zidongtext.setDate((float) dw * 0.7f, (float) dw * 0.22f, baoCunBean.getWenzi1());
+            if (baoCunBean.getWenzi1()!=null)
+                zidongtext.setDate((float) dw * 0.7f, (float) dw * 0.22f, baoCunBean.getWenzi1());
+            if (baoCunBean.getTouxiangzhuji()!=null)
+                daBg.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getTouxiangzhuji()));
+
             Log.d("MainActivity203", "dfgdsgfdgfdgfdg");
             return;
         }
@@ -3795,8 +3844,6 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                 bean.setSubjectType(subject.getPeopleType());
                 bean.setIdentificationTime(DateUtils.time(System.currentTimeMillis() + ""));
                 benDiJiLuBeanBox.put(bean);
-
-
             }
 
             @Override

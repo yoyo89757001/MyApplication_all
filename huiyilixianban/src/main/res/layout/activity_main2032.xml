@@ -14,7 +14,7 @@
     <ImageView
         android:scaleType="fitXY"
         android:id="@+id/da_bg"
-        android:src="@drawable/jianbian_bg"
+        android:src="@drawable/huiyi_dbg"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -29,23 +29,37 @@
     <ImageView
         android:scaleType="fitXY"
         android:id="@+id/logo"
+        android:visibility="invisible"
         android:background="@drawable/touminglogo"
         android:layout_marginTop="100px"
         android:layout_centerHorizontal="true"
         android:layout_width="120px"
         android:layout_height="120px" />
 
+
+
     <megvii.testfacepass.view.AutoScalingTextView
         android:id="@+id/zidongtext"
+        android:visibility="gone"
         android:layout_marginTop="10px"
         android:layout_below="@+id/logo"
         android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <TextView
+        android:layout_below="@+id/logo"
+        android:id="@+id/trtrtt"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="100px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
 
     <RelativeLayout
-        android:layout_below="@+id/zidongtext"
+        android:layout_below="@+id/trtrtt"
         android:layout_centerHorizontal="true"
         android:id="@+id/content_rl"
         android:layout_marginTop="20px"
@@ -68,148 +82,285 @@
     </RelativeLayout>
 
 
-
-    <LinearLayout
-        android:id="@+id/dibuddd"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="50px"
-        android:layout_marginRight="50px"
-        android:layout_marginBottom="50px"
-        android:layout_width="match_parent"
-        android:layout_height="200px">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:background="#36000000"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:scaleType="fitXY"
-                android:id="@+id/tianqi_im"
-                android:layout_width="90px"
-                android:layout_height="90px" />
-
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="40px"
-                android:layout_marginTop="4px"
-                android:id="@+id/tianqi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-        <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"/>
-        <LinearLayout
-            android:background="#36000000"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="40px"
-                android:id="@+id/wendu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="40px"
-                android:layout_marginTop="4px"
-                android:text="最低/最高"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-
-        </LinearLayout>
-        <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"/>
-        <LinearLayout
-            android:background="#36000000"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="40px"
-                android:id="@+id/shidu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="40px"
-                android:text="湿度"
-                android:layout_marginTop="4px"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
     <RelativeLayout
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/dibuddd"
+        android:layout_marginTop="40px"
         android:gravity="center"
-        android:layout_marginBottom="30px"
-        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_below="@+id/content_rl"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/fgrtgfg"
-            android:orientation="vertical"
+            android:id="@+id/jkkkk"
             android:gravity="center"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/xiaoshi"
-                android:textSize="66px"
+                android:text="签到数"
                 android:textColor="@color/white"
+                android:textSize="60px"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/riqi"
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick1"
+                android:gravity="center"
+                android:layout_marginLeft="30px"
                 android:textColor="@color/white"
-                android:textSize="24px"
-                android:layout_below="@+id/xiaoshi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick2"
+                android:gravity="center"
+                android:layout_marginLeft="12px"
+                android:textColor="@color/white"
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick3"
+                android:gravity="center"
+                android:layout_marginLeft="12px"
+                android:textColor="@color/white"
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick4"
+                android:layout_marginLeft="12px"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick5"
+                android:layout_marginLeft="12px"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+
         </LinearLayout>
 
-        <TextView
-            android:textColor="@color/white"
-            android:layout_toRightOf="@+id/fgrtgfg"
-            android:id="@+id/xingqi"
-            android:ems="1"
-            android:layout_marginTop="14px"
-            android:layout_marginLeft="4px"
-            android:textSize="40px"
+        <LinearLayout
+            android:gravity="center"
+            android:layout_marginTop="20px"
+            android:layout_below="@+id/jkkkk"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="未到场"
+                android:textColor="@color/white"
+                android:textSize="60px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick11"
+                android:gravity="center"
+                android:layout_marginLeft="30px"
+                android:textColor="@color/white"
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick22"
+                android:gravity="center"
+                android:layout_marginLeft="12px"
+                android:textColor="@color/white"
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick33"
+                android:gravity="center"
+                android:layout_marginLeft="12px"
+                android:textColor="@color/white"
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick44"
+                android:layout_marginLeft="12px"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+            <com.robinhood.ticker.TickerView
+                android:background="@color/ijk_transparent_dark"
+                android:id="@+id/tick55"
+                android:layout_marginLeft="12px"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="50px"
+                android:layout_width="50px"
+                android:layout_height="50px" />
+
+        </LinearLayout>
+
 
     </RelativeLayout>
+
+
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/dibuddd"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_marginLeft="50px"-->
+        <!--android:layout_marginRight="50px"-->
+        <!--android:layout_marginBottom="50px"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="200px">-->
+
+        <!--<LinearLayout-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:background="#36000000"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<ImageView-->
+                <!--android:scaleType="fitXY"-->
+                <!--android:id="@+id/tianqi_im"-->
+                <!--android:layout_width="90px"-->
+                <!--android:layout_height="90px" />-->
+
+            <!--<TextView-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="40px"-->
+                <!--android:layout_marginTop="4px"-->
+                <!--android:id="@+id/tianqi"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+
+        <!--</LinearLayout>-->
+        <!--<View-->
+            <!--android:layout_width="2dp"-->
+            <!--android:layout_height="match_parent"/>-->
+        <!--<LinearLayout-->
+            <!--android:background="#36000000"-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<TextView-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="40px"-->
+                <!--android:id="@+id/wendu"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+
+            <!--<TextView-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="40px"-->
+                <!--android:layout_marginTop="4px"-->
+                <!--android:text="最低/最高"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+
+
+        <!--</LinearLayout>-->
+        <!--<View-->
+            <!--android:layout_width="2dp"-->
+            <!--android:layout_height="match_parent"/>-->
+        <!--<LinearLayout-->
+            <!--android:background="#36000000"-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<TextView-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="40px"-->
+                <!--android:id="@+id/shidu"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+
+            <!--<TextView-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="40px"-->
+                <!--android:text="湿度"-->
+                <!--android:layout_marginTop="4px"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+
+        <!--</LinearLayout>-->
+
+    <!--</LinearLayout>-->
+
+    <!--<RelativeLayout-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_above="@+id/dibuddd"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_marginBottom="30px"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<LinearLayout-->
+            <!--android:id="@+id/fgrtgfg"-->
+            <!--android:orientation="vertical"-->
+            <!--android:gravity="center"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content">-->
+            <!--<TextView-->
+                <!--android:id="@+id/xiaoshi"-->
+                <!--android:textSize="66px"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/riqi"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="24px"-->
+                <!--android:layout_below="@+id/xiaoshi"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+        <!--</LinearLayout>-->
+
+        <!--<TextView-->
+            <!--android:textColor="@color/white"-->
+            <!--android:layout_toRightOf="@+id/fgrtgfg"-->
+            <!--android:id="@+id/xingqi"-->
+            <!--android:ems="1"-->
+            <!--android:layout_marginTop="14px"-->
+            <!--android:layout_marginLeft="4px"-->
+            <!--android:textSize="40px"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+
+    <!--</RelativeLayout>-->
 
 
     <!--//竖向列表-->
     <HorizontalScrollView
         android:id="@+id/scrollview"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30px"
-        android:layout_below="@+id/content_rl"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -233,23 +384,25 @@
     </RelativeLayout>
 
 
+
+
+
     <ImageView
         android:scaleType="fitXY"
         android:id="@+id/ceshi"
-        android:background="@color/white"
-        android:visibility="gone"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="100dp"
-        android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:background="@drawable/tytyt"
+        android:layout_marginTop="20px"
+        android:layout_marginLeft="20px"
+        android:layout_width="200dp"
+        android:layout_height="90dp" />
 
-    <FrameLayout
-        android:id="@+id/boxfargment"
-        android:visibility="visible"
-        android:elevation="10dp"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <!--<FrameLayout-->
+        <!--android:id="@+id/boxfargment"-->
+        <!--android:visibility="visible"-->
+        <!--android:elevation="10dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
 
 
     <com.airbnb.lottie.LottieAnimationView

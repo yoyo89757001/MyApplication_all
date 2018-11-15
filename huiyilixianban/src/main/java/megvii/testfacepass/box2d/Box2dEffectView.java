@@ -185,10 +185,10 @@ public class Box2dEffectView implements ApplicationListener {
 
                 if (isLeft) {
                     BallBodydef.linearVelocity.set(0, thrownYRandom);//线速度
-                    BallBodydef.position.set(new Vector2((float) Math.random() *(-camera.viewportWidth/2)-3f, camera.viewportHeight/2 ) );
+                    BallBodydef.position.set(new Vector2((float) Math.random() *(-camera.viewportWidth/2)-4f, camera.viewportHeight/2 ) );
+
                 } else {
-
-
+                    
                     BallBodydef.linearVelocity.set(0, thrownYRandom);
                     BallBodydef.position.set(new Vector2((float) Math.random() *(camera.viewportWidth/2)-4f, camera.viewportHeight/2 ) );
                 }
@@ -202,6 +202,7 @@ public class Box2dEffectView implements ApplicationListener {
                 BallBody.setAngularVelocity(0.4f);
                 BallBody.setAngularDamping(0.6f);
                 BallBody.setFixedRotation(false);
+                BallBody.setGravityScale(90);
                 CircleShape shape = new CircleShape();
                 switch (typee){
                     case 0:
@@ -262,6 +263,7 @@ public class Box2dEffectView implements ApplicationListener {
 			BallBodydef.linearVelocity.set(thrownXRandom, thrownYRandom);
 			BallBodydef.position.set(new Vector2(posXRandom, camera.viewportHeight/2 + 2.5f) );
 
+
 			float randomScale = (float) Math.random()*0.5f+1f;
 			BallInfo ballinfo = new BallInfo();
 			ballinfo.setBallIndex(index);
@@ -269,6 +271,8 @@ public class Box2dEffectView implements ApplicationListener {
 			Body BallBody = world.createBody(BallBodydef);
 			BallBody.setUserData(ballinfo);
 			BallBody.setFixedRotation(false);
+
+
 			CircleShape shape = new CircleShape();
 			shape.setRadius(1.1f*randomScale);
 			FixtureDef BallFixtureDef = new FixtureDef();

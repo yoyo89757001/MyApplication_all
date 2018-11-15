@@ -47,6 +47,24 @@ public class BaoCunBean {
     private String shangBanTime;
     private String xiaBanTime;
     private String ip;
+    private int yiqiandao;
+    private int weiqiandao;
+
+    public int getYiqiandao() {
+        return yiqiandao;
+    }
+
+    public void setYiqiandao(int yiqiandao) {
+        this.yiqiandao = yiqiandao;
+    }
+
+    public int getWeiqiandao() {
+        return weiqiandao;
+    }
+
+    public void setWeiqiandao(int weiqiandao) {
+        this.weiqiandao = weiqiandao;
+    }
 
     public String getIp() {
         return ip;

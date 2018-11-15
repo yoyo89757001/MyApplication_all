@@ -25,7 +25,7 @@ public class BaseActivity extends AppCompatActivity {
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
             baoCunBean.setId(123456L);
-            baoCunBean.setHoutaiDiZhi("http://192.168.2.189:8080/front");
+            baoCunBean.setHoutaiDiZhi("http://192.168.2.119:8080/front");
             baoCunBean.setShibieFaceSize(60);
             baoCunBean.setShibieFaZhi(70);
             baoCunBean.setYudiao(5);
@@ -37,6 +37,7 @@ public class BaseActivity extends AppCompatActivity {
             baoCunBean.setHuoTi(true);
             baoCunBean.setDangqianShiJian("d");
             baoCunBean.setTianQi(false);
+            baoCunBean.setWeiqiandao(9999);
             if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 //竖屏
                 Log.d("SheZhiActivity", "竖屏");
@@ -53,6 +54,11 @@ public class BaseActivity extends AppCompatActivity {
                 //竖屏
                 baoCunBean.setMoban(201);
             }
+            String sss[] =baoCunBean.getHoutaiDiZhi().split(":");
+            if (sss.length>=2){
+                baoCunBean.setIp(sss[1].replace("//",""));
+            }
+            Log.d("SheZhiActivity", baoCunBean.getIp());
             baoCunBeanDao.put(baoCunBean);
 
         }
