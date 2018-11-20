@@ -3470,7 +3470,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
             daBg.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getTouxiangzhuji()));
             if (baoCunBean.getWenzi1()!=null)
                 zidongtext.setDate((float) dw * 0.7f, (float) dw * 0.22f, baoCunBean.getWenzi1());
-            Log.d("MainActivity203", "dfgdsgfdgfdgfdg");
+
             return;
         }
 

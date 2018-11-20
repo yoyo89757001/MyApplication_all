@@ -6,4 +6,14 @@
     android:layout_height="match_parent"
     tools:context="megvii.testfacepass.ui.BaseActivity">
 
+
+    <TextView
+        android:textColor="@color/blake"
+        android:textSize="100px"
+        android:text="房贷首付"
+        android:layout_width="300px"
+        android:layout_height="200px" />
+
+
+
 </RelativeLayout>

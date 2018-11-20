@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.yatoooon.screenadaptation.ScreenAdapterTools;
+
 import io.objectbox.Box;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
@@ -18,6 +20,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+        ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
 
         Box<BaoCunBean> baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
       BaoCunBean  baoCunBean = baoCunBeanDao.get(123456L);

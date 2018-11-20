@@ -4,19 +4,20 @@ public class BeiJingBean {
 
 
     /**
-     * verifyIp : gwWib620ih5B43zCst5O8y5CgCd97PV+EzeD6CPh4ZQ=
-     * backgroundUrl : /userfiles/fileupload/201811/1057937923713937408.jpg
+     * verifyIp : z2JyOAO9s+kbUycYRymMR3mMfuVYkhqNIcADbSmO2iA=
+     * backgroundUrl : http://hy.inteyeligence.com/userfiles/fileupload/201811/1063012015602200576.jpg
      * machineCode : 3ee07eb6b1ded3f
-     * apiKey : wt0h1SScke93cRvu5NpIxtsIeiNgPK05EpbiF9ap2+CBnrTdsIQZKw==
-     * apiSecret : ht+NOt1/Cj6ZzoiwPaO5M61YvDsqehX9S7xZ6BokX6JZA/A2RUofJA==
-     * machineName : 广州付贵机器
-     * backgroundTitle : 广州瑞瞳智能科技
-     * sdkPwd : 123456
-     * id : 1041879416760995840
+     * apiKey : OaZdu67IqVhLItE1CaUdQI5pYaN8vKl0iIBA9FlYNxXdr/Obc7hpbA==
+     * apiSecret : iDiUZNS0cf2LY9dd+bHE7m3CvlMw3do3G6gFpfdws1SvZdlKTVtLRw==
+     * machineName : 广州富贵机器
+     * backgroundTitle : ddd
+     * sdkPwd : treter
+     * backgroundLog : http://hy.inteyeligence.com/userfiles/fileupload/201810/1049623809404231680.png
+     * id : 1061809899086741504
      * accredit : G7002
-     * validity : 2018-09-18 10:39
-     * registerCode : 1041-8794-1447-0905-8566
-     * keyiv : 10498439
+     * validity : 2018-11-12 10:36
+     * registerCode : 1061-8098-9908-2547-2007
+     * keyiv : 10630098
      */
 
     private String verifyIp;
@@ -27,6 +28,7 @@ public class BeiJingBean {
     private String machineName;
     private String backgroundTitle;
     private String sdkPwd;
+    private String backgroundLog;
     private String id;
     private String accredit;
     private String validity;
@@ -95,6 +97,14 @@ public class BeiJingBean {
 
     public void setSdkPwd(String sdkPwd) {
         this.sdkPwd = sdkPwd;
+    }
+
+    public String getBackgroundLog() {
+        return backgroundLog;
+    }
+
+    public void setBackgroundLog(String backgroundLog) {
+        this.backgroundLog = backgroundLog;
     }
 
     public String getId() {

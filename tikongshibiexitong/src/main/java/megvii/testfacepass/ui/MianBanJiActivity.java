@@ -1391,6 +1391,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
 //                                                                    Log.d("RecognizeThread", "十六进制的值：");
 //
 //                                                                }
+                                                                Log.d("RecognizeThread", ss);
 
                                                                 if (mOutputStream != null) {
                                                                      mOutputStream.write(BytesHexStrTranslate.toBytes(ss));

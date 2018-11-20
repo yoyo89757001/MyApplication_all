@@ -44,19 +44,19 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.BaseActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" android:configChanges="fontScale" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MainActivity201" />
-        <activity android:name=".ui.MainActivity202" />
-        <activity android:name=".ui.MainActivity203_demo" />
-        <activity android:name=".ui.MainActivity203" />
-        <activity android:name=".ui.SettingActivity" />
-        <activity android:name=".ui.YuLanActivity" />
+        <activity android:name=".ui.MainActivity201" android:configChanges="fontScale" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.MainActivity202"  android:configChanges="fontScale" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.MainActivity203_demo" android:configChanges="fontScale" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.MainActivity203" android:configChanges="fontScale" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.SettingActivity" android:configChanges="fontScale" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.YuLanActivity" android:configChanges="fontScale" android:screenOrientation="portrait"/>
 
         <service
             android:name=".utils.killSelfService"
@@ -230,7 +230,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.MoBanActivity"/>
+        <activity android:name=".ui.MoBanActivity" android:configChanges="fontScale" android:screenOrientation="portrait"/>
 
         <service android:name=".utils.MyService" android:persistent="true"/>
 
