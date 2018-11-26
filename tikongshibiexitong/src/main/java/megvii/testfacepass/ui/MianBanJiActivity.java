@@ -77,21 +77,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
-
 import android_serialport_api.SerialPort;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
@@ -108,24 +102,19 @@ import megvii.facepass.types.FacePassRecognitionResult;
 import megvii.facepass.types.FacePassRecognitionResultType;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
-
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.BenDiJiLuBean;
 import megvii.testfacepass.beans.CheckBean;
 import megvii.testfacepass.beans.CuoWuBean;
-import megvii.testfacepass.beans.CuoWuBean_;
 import megvii.testfacepass.beans.LoginBean;
 import megvii.testfacepass.beans.PersonBean;
 import megvii.testfacepass.beans.PersonBean_;
 import megvii.testfacepass.beans.Subject;
-
 import megvii.testfacepass.beans.TeZhengMa;
 import megvii.testfacepass.beans.TeZhengMa_;
-
 import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
-
 import megvii.testfacepass.tts.control.InitConfig;
 import megvii.testfacepass.tts.control.MySyntherizer;
 import megvii.testfacepass.tts.control.NonBlockSyntherizer;
@@ -136,9 +125,7 @@ import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.GsonUtil;
-
 import megvii.testfacepass.utils.SettingVar;
-
 import megvii.testfacepass.view.ChuShiHuaListion;
 
 
@@ -331,8 +318,8 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
    // private DiBuAdapter diBuAdapter = null;
    // private GridLayoutManager gridLayoutManager = new GridLayoutManager(MianBanJiActivity.this, 2, LinearLayoutManager.HORIZONTAL, false);
     private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
-    private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
+    private static final String apiKey = "JHt8TdGoELfkEKYkjQMogR8GPLIPAfRM";
+    private static final String apiSecret = "qgPwtgw9Yiqn2aL9KQyv1ukigAV7xWup";
   //  private static boolean isSC=true;
     private int startIndex=0;
     private String token=null;

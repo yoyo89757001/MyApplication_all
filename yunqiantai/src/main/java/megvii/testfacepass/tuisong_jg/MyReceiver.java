@@ -126,7 +126,7 @@ public class MyReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context context, Intent intent) {
 		this.context=context;
-
+		Log.d(TAG, intent.getAction()+"ffffffff"+intent.getStringExtra("msg"));
 		try {
 			stringBuilder=new StringBuilder();
 			stringBuilder2=new StringBuilder();

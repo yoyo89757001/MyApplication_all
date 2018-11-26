@@ -4,8 +4,11 @@ package megvii.testfacepass.utils;
 
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 
+import android.content.Context;
 import android.content.Intent;
 
 import android.os.Binder;
@@ -14,11 +17,17 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import megvii.testfacepass.MyApplication;
 
 
 public class MyService extends Service {
 
     private MyBinder binder = new MyBinder();
+    private static final String UPLOAD_FILE = "com.nuoyuan.statistic.action.UPLOAD_FILE";
+    private static String loadUrlPath = "";
+
+    public static final String CHANNEL_ID_STRING = "nyd001";
+
 
 
     @Nullable
@@ -30,10 +39,23 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        createErrorNotification();
+      //  createErrorNotification();
 
-        Log.d("MyService", "dddddddddddddddddddd");
+        //适配8.0service
+        NotificationManager notificationManager = (NotificationManager) MyApplication.myApplication.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel mChannel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            mChannel = new NotificationChannel(CHANNEL_ID_STRING, "诺秒贷", NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+            Notification notification = new Notification.Builder(getApplicationContext(), CHANNEL_ID_STRING).build();
+            startForeground(1, notification);
+        }
+
     }
+
+
+
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

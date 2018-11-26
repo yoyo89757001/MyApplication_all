@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_rl"
+    android:background="#ef454444"
+    android:layout_height="match_parent">
+
+
+        <megvii.testfacepass.view.YGTopView_101
+            android:id="@+id/ygtopview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+
+
+        <ScrollView
+            android:layout_toRightOf="@+id/ygtopview"
+            android:clipChildren="false"
+            android:visibility="gone"
+            android:id="@+id/scrollview_03"
+            android:background="@color/colorBar_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/xiaoxi_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+            </LinearLayout>
+        </ScrollView>
+
+
+
+
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/wangluo"
+            android:layout_centerInParent="true"
+            android:layout_width="100px"
+            android:layout_height="100px"
+            app:lottie_fileName="check.json"
+            app:lottie_loop="false"
+            app:lottie_autoPlay="true" />
+
+
+
+
+
+
+
+
+
+</RelativeLayout>

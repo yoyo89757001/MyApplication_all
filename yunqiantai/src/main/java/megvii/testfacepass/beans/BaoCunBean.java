@@ -48,6 +48,9 @@ public class BaoCunBean {
     private String xiaBanTime;
     private int xiabandaka;
 
+
+
+
     public int getXiabandaka() {
         return xiabandaka;
     }

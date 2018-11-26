@@ -54,7 +54,7 @@ public class MoBanActivity extends AppCompatActivity implements MoBanAdapter.OnR
         if (baoCunBean.isHengOrShu()){
             //横
             recycerview.setLayoutManager(gridLayoutManager);
-//            integerList.add(R.drawable.moban201);
+              integerList.add(R.drawable.moban101);
 //            integerList.add(R.drawable.moban201);
 //            integerList.add(R.drawable.moban201);
 

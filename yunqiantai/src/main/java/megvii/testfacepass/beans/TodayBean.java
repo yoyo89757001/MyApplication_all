@@ -40,6 +40,42 @@ public class TodayBean {
     private String exercise_index;
     private String drying_index;
     private String humidity;
+    private String tianqi2;
+    private String tianqi2_wendu;
+    private String tianqi3;
+    private String tianqi3_wendu;
+
+    public String getTianqi2() {
+        return tianqi2;
+    }
+
+    public void setTianqi2(String tianqi2) {
+        this.tianqi2 = tianqi2;
+    }
+
+    public String getTianqi2_wendu() {
+        return tianqi2_wendu;
+    }
+
+    public void setTianqi2_wendu(String tianqi2_wendu) {
+        this.tianqi2_wendu = tianqi2_wendu;
+    }
+
+    public String getTianqi3() {
+        return tianqi3;
+    }
+
+    public void setTianqi3(String tianqi3) {
+        this.tianqi3 = tianqi3;
+    }
+
+    public String getTianqi3_wendu() {
+        return tianqi3_wendu;
+    }
+
+    public void setTianqi3_wendu(String tianqi3_wendu) {
+        this.tianqi3_wendu = tianqi3_wendu;
+    }
 
     public String getHumidity() {
         return humidity;

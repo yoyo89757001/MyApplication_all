@@ -163,6 +163,8 @@ public class MyApplication extends Application implements Application.ActivityLi
             CommonData.mNowContext = activity;
         }
 
+
+
         Intent intent = new Intent(activity, MyService.class);
         bindService(intent, serviceConnection,  Context.BIND_AUTO_CREATE);
     }

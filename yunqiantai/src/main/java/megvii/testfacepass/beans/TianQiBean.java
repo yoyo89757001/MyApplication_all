@@ -84,7 +84,6 @@ public class TianQiBean
         private SkBean sk;
         private TodayBean today;
 
-
         public SkBean getSk() {
             return sk;
         }

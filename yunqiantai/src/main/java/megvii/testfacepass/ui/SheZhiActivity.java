@@ -93,6 +93,7 @@ public class SheZhiActivity extends Activity {
     private int shibai;
     private Box<Subject> subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

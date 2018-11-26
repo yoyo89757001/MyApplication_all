@@ -3,7 +3,9 @@ package megvii.testfacepass.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -12,6 +14,9 @@ import com.sdsmdg.tastytoast.TastyToast;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import megvii.facepass.FacePassException;
 import megvii.facepass.FacePassHandler;
 import megvii.facepass.types.FacePassConfig;
@@ -19,24 +24,37 @@ import megvii.facepass.types.FacePassModel;
 import megvii.facepass.types.FacePassPose;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.beans.BaoCunBean;
-
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 
 public class FacePassUtil {
-  private   FacePassModel trackModel;
-  private     FacePassModel poseModel;
- private    FacePassModel blurModel;
-private     FacePassModel livenessModel;
+   private   FacePassModel trackModel;
+   private     FacePassModel poseModel;
+   private    FacePassModel blurModel;
+   private     FacePassModel livenessModel;
    private    FacePassModel searchModel;
    private FacePassModel detectModel;
-  private     FacePassModel ageGenderModel;
+   private     FacePassModel ageGenderModel;
     /* SDK 实例对象 */
+    private Context context;
+    private int TIMEOUT=30*1000;
 
- private    FacePassHandler mFacePassHandler;  /* 人脸识别Group */
+    private    FacePassHandler mFacePassHandler;  /* 人脸识别Group */
     private  final String group_name = "face-pass-test-x";
     private  boolean isLocalGroupExist = false;
+    private   BaoCunBean baoCunBean;
 
     public  void init(final Activity activity , final Context context, final int cameraRotation, final BaoCunBean baoCunBean){
+        this.context=context;
+        this.baoCunBean=baoCunBean;
 
             new Thread() {
                 @Override
@@ -106,12 +124,29 @@ private     FacePassModel livenessModel;
                                         tastyToast.show();
                                        MyApplication.myApplication.setFacePassHandler(mFacePassHandler);
                                         EventBus.getDefault().post("mFacePassHandler");
+                                        chaxuncuowu();
+
+
+
+
+
 
                                     }
                                 });
 
                                 checkGroup(activity,context);
 
+                                SystemClock.sleep(15000);
+
+                                Intent intent = new Intent();
+                                intent.setAction("cn.jpush.android.intent.MESSAGE_RECEIVED");
+                                intent.putExtra("msg", "接收静态注册广播成功！");
+                                context.sendBroadcast(intent);
+
+                                Intent intent2 = new Intent();
+                                intent2.setAction("cn.jpush.android.intent.MESSAGE_RECEIVED");
+                                intent2.putExtra("msg", "接收静态注册广播成功！");
+                                context.sendBroadcast(intent2);
 
                             } catch (FacePassException e) {
                                 e.printStackTrace();
@@ -168,5 +203,51 @@ private     FacePassModel livenessModel;
         }
     }
 
+    private void chaxuncuowu(){
+        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+//				.cookieJar(new CookiesManager())
+                //.retryOnConnectionFailure(true)
+                .build();
+
+        RequestBody body = new FormBody.Builder()
+                .add("machineCode)", FileUtil.getSerialNumber(context) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(context))
+                .build();
+        Request.Builder requestBuilder = new Request.Builder()
+                //.header("Content-Type", "application/json")
+                .post(body)
+                .url(baoCunBean.getHoutaiDiZhi() + "/app/findFailurePush");
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("AllConnects", "请求失败" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求成功" + call.request().toString());
+                //获得返回体
+                try {
+                    //没了删除，所有在添加前要删掉所有
+
+                    ResponseBody body = response.body();
+                    String ss = body.string().trim();
+                    Log.d("AllConnects", "查询错误推送" + ss);
+
+                } catch (Exception e) {
+
+                    Log.d("WebsocketPushMsg", e.getMessage() + "gggg");
+                }
+            }
+        });
+    }
 
 }
