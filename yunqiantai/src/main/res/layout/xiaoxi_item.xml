@@ -1,55 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:autofit="http://schemas.android.com/tools"
     android:id="@+id/root_rl"
     android:layout_height="wrap_content">
 
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/rl_xiaoxi"
-        android:layout_marginLeft="50px"
-        android:layout_marginRight="50px"
+        android:orientation="horizontal"
+        android:layout_marginLeft="20px"
+        android:gravity="center_vertical"
+        android:layout_marginRight="20px"
         android:background="@drawable/zidonghuoqu_baise"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="100dp">
 
-        <TextView
-            android:id="@+id/biaoti"
-            android:textSize="50px"
-            android:text="生日"
-            android:layout_marginLeft="40px"
+        <me.grantland.widget.AutofitTextView
+            android:maxLines="2"
+            autofit:minTextSize="4sp"
             android:textColor="@color/textcolor"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/neirong"
-            android:layout_toRightOf="@+id/biaoti"
-            android:layout_centerVertical="true"
-            android:padding="10px"
-            android:textColor="@color/textcolor"
-            android:textSize="40px"
-            android:layout_toLeftOf="@+id/lingqu"
-            android:text="祝你生日快乐"
+            android:textSize="24sp"
             android:gravity="center"
-            android:layout_marginLeft="10px"
-            android:layout_width="match_parent"
+            android:id="@+id/biaoti"
+            android:layout_marginLeft="20px"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent" />
 
-        <TextView
-            android:id="@+id/lingqu"
-            android:textSize="30px"
-            android:ems="1"
-            android:layout_marginLeft="40px"
-            android:layout_marginRight="32px"
+        <me.grantland.widget.AutofitTextView
+            android:maxLines="3"
+            autofit:minTextSize="4sp"
             android:textColor="@color/textcolor"
+            android:textSize="20sp"
             android:layout_centerVertical="true"
+            android:id="@+id/neirong"
+            android:padding="10px"
+            android:layout_toLeftOf="@+id/lingqu"
+            android:layout_toRightOf="@+id/biaoti"
+            android:gravity="center"
+            android:layout_weight="3.5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+        <me.grantland.widget.AutofitTextView
+            android:maxLines="3"
+            android:ems="1"
+            autofit:minTextSize="10sp"
+            android:textColor="@color/textcolor"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:id="@+id/lingqu"
+            android:layout_marginRight="20px"
+            android:gravity="center"
             android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
             android:layout_height="wrap_content" />
 
-    </RelativeLayout>
+
+    </LinearLayout>
 
 
     <ImageView

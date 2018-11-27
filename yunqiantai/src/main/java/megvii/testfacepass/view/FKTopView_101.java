@@ -16,7 +16,7 @@ import java.util.List;
 
 import megvii.testfacepass.R;
 
-public class YGTopView_101 extends View {
+public class FKTopView_101 extends View {
     private Paint centerPaint;
     private Paint spreadPaint;
     List<Integer> alphas=new ArrayList<>();
@@ -45,23 +45,23 @@ public class YGTopView_101 extends View {
     private Bitmap bitmapHG=null;
     private Context context;
     private boolean ismaozi=false;
-    private Bitmap bg1=BitmapFactory.decodeResource(getResources(),R.drawable.ygbg1);
-    private Bitmap bg2=BitmapFactory.decodeResource(getResources(),R.drawable.ygbg2);
+    private Bitmap bg1=BitmapFactory.decodeResource(getResources(),R.drawable.fkbg1);
+    private Bitmap bg2=BitmapFactory.decodeResource(getResources(),R.drawable.fkbg2);
 
-    public YGTopView_101(Context context) {
+    public FKTopView_101(Context context) {
         super(context);
         this.context=context;
         init();
     }
 
-    public YGTopView_101(Context context, @Nullable AttributeSet attrs) {
+    public FKTopView_101(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context=context;
         init();
     }
 
 
-    public YGTopView_101(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public FKTopView_101(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context=context;
         init();
@@ -115,7 +115,7 @@ public class YGTopView_101 extends View {
     public void setName(String name,String bumen,boolean ismaozi){
         this.name=name;
         if (bumen==null || bumen.equals("")){
-            this.bumen="未知部门";
+            this.bumen="访客";
         }else{
             this.bumen=bumen;
         }

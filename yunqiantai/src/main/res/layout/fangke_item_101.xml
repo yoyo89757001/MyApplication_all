@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
 
-        <megvii.testfacepass.view.YGTopView_101
+        <megvii.testfacepass.view.FKTopView_101
             android:id="@+id/ygtopview"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
@@ -34,8 +34,6 @@
 
 
 
-
-
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/wangluo"
             android:layout_width="80px"
@@ -43,10 +41,6 @@
             app:lottie_fileName="check.json"
             app:lottie_loop="false"
             app:lottie_autoPlay="true" />
-
-
-
-
 
 
 

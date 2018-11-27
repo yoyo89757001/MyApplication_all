@@ -282,15 +282,19 @@
         android:layout_height="1dp" />
 
 
-
-    <megvii.testfacepass.view.AutoScalingTextView
+    <me.grantland.widget.AutofitTextView
+        android:maxLines="1"
+        autofit:minTextSize="10sp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:gravity="center"
         android:id="@+id/zidongtext"
-        android:layout_marginTop="10px"
-        android:visibility="gone"
-        android:layout_below="@+id/logo"
-        android:layout_centerHorizontal="true"
-        android:layout_width="match_parent"
+        android:layout_marginLeft="20px"
+        android:layout_toRightOf="@+id/logo"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+
 
 
 
@@ -309,14 +313,119 @@
 
 
     <!--一个列表-->
-    <RelativeLayout
-        android:visibility="gone"
+    <android.support.v7.widget.CardView
         android:id="@+id/root_layout"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/vipbg101"
+            android:layout_height="match_parent">
 
-    </RelativeLayout>
+
+            <LinearLayout
+                android:layout_weight="1.5"
+                android:layout_width="0dp"
+                android:gravity="center_vertical"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:scaleType="fitXY"
+                    android:id="@+id/touxiang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="2"
+                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+
+                <LinearLayout
+                    android:layout_marginRight="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:id="@+id/ghgh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <me.grantland.widget.AutofitTextView
+                        android:maxLines="1"
+                        autofit:minTextSize="10sp"
+                        android:textColor="@color/blake"
+                        android:textSize="70sp"
+                        android:gravity="center"
+                        android:id="@+id/name"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:paddingLeft="20px"
+                        android:paddingRight="20px"
+                        android:paddingTop="10px"
+                        android:paddingBottom="10px"
+                        android:gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/zidonghuoqu_fen"
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/hg"
+                            android:src="@drawable/yghghg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <me.grantland.widget.AutofitTextView
+                            android:maxLines="1"
+                            android:text="VIP"
+                            android:layout_marginLeft="20dp"
+                            autofit:minTextSize="10sp"
+                            android:textColor="@color/blake"
+                            android:textSize="20sp"
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <me.grantland.widget.AutofitTextView
+                    android:maxLines="1"
+                    android:id="@+id/hyy"
+                    android:layout_marginTop="30dp"
+                    autofit:minTextSize="10sp"
+                    android:textColor="@color/blake"
+                    android:textSize="30sp"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </android.support.v7.widget.CardView>
+
 
 
     <ImageView
