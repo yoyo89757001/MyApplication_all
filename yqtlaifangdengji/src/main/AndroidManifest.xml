@@ -26,8 +26,6 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
 
-
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -44,7 +42,8 @@
         </activity>
         <activity android:name=".ui.SelectActivity" />
         <activity android:name=".ui.PaiZhaoActivity" />
-        <activity android:name=".ui.CameraActivity"></activity>
+        <activity android:name=".ui.CameraActivity" />
+        <activity android:name=".ui.ChaXunActivity"></activity>
     </application>
 
 </manifest>

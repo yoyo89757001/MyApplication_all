@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/allbg"
+    android:layout_height="match_parent"
+    tools:context=".ui.ChaXunActivity">
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="match_parent"/>
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:layout_marginTop="90dp"
+            android:layout_marginBottom="90dp"
+            android:layout_weight="1.2"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:text="查找被访人"
+                    android:textSize="20sp"
+                    android:id="@+id/ee2"
+                    android:textColor="@color/blake"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+
+                <RelativeLayout
+                    android:id="@+id/ghgh"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="20dp"
+                    android:layout_below="@+id/ee2"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <TextView
+                        android:textColor="@color/blake"
+                        android:textSize="20sp"
+                        android:id="@+id/shuru"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="16dp"
+                        android:background="@drawable/zhongkong_tuhuang"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" />
+
+                    <ImageView
+                        android:src="@drawable/sousuo_bg"
+                        android:layout_marginRight="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical"
+                    android:layout_below="@+id/ghgh"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp">
+
+                        <LinearLayout
+                            android:id="@+id/al"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+
+                            <Button
+                                android:clickable="false"
+                                android:gravity="center"
+                                android:text="A"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/bl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="B"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/cl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="C"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/dl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="D"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/el"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="E"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <!--第二行-->
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp">
+
+                        <LinearLayout
+                            android:id="@+id/fl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="F"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/gl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="G"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/hl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="H"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/il"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="I"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/jl"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="J"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+                    <!--第三行-->
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp">
+
+                        <LinearLayout
+                            android:id="@+id/kl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="K"
+                                android:clickable="false"
+
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/ll"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="L"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ml"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="M"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/nl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="N"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ol"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="O"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!--第四行-->
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp">
+                        <LinearLayout
+                            android:id="@+id/pl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="P"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/ql"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="Q"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/rl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="R"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/sl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="S"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/tl"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="T"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!--第五行-->
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp">
+                        <LinearLayout
+                            android:id="@+id/ul"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="U"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/vl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="V"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/wl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="W"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/xl"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="X"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/yl"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="Y"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                   <!--第六行-->
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp">
+
+                        <LinearLayout
+                            android:id="@+id/zl"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:gravity="center"
+                                android:text="Z"
+                                android:clickable="false"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yuan_bg"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:background="@null"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:background="@null"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:background="@null"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/shanchu"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <Button
+                                android:clickable="false"
+                                android:gravity="center"
+                                android:textSize="20sp"
+                                android:textColor="@color/blake"
+                                android:background="@drawable/yshanchu"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_marginTop="90dp"
+            android:layout_marginBottom="90dp"
+            android:visibility="gone"
+            android:layout_marginLeft="40dp"
+            android:id="@+id/recyclerview"
+            android:layout_weight="1.6"
+            android:layout_height="match_parent">
+
+
+        </android.support.v7.widget.RecyclerView>
+
+        <TextView
+            android:id="@+id/tishitishi"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="请 输 入 被 访 人 姓 名 拼 音 的 首 字 母\n\n例如 姓名：张三 首字母：ZS "
+            android:textColor="@color/blake"
+            android:layout_weight="1.6"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="0.4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "
+            android:layout_height="match_parent"/>
+
+
+    </LinearLayout>
+
+
+
+
+
+
+
+    <LinearLayout
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:layout_marginRight="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/riqi"
+            android:textSize="20sp"
+            android:textColor="@color/blake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/xingqi"
+            android:textSize="20sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/blake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/shijian"
+            android:textSize="20sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/blake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:textSize="16sp"
+        android:text="瑞瞳智能科技有限公司"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/blake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/xiaologo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/fanhui"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/xiangzuo"
+        android:layout_marginLeft="40dp"
+        android:layout_marginBottom="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/shouye"
+        android:layout_marginRight="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40dp"
+        android:src="@drawable/zhuye_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+
+
+</RelativeLayout>
