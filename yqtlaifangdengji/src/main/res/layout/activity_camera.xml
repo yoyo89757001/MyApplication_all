@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@drawable/allbg"
+    android:layout_height="match_parent"
+    tools:context=".ui.CameraActivity">
+
+
+    <TextView
+        android:text="此照片用于入库通行，请保持正脸于屏幕中心"
+        android:textSize="24sp"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/blake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <com.example.yqtlaifangdengji.camera.CameraPreview
+        android:layout_width="wrap_content"
+        android:id="@+id/mycamera"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:gravity="center"
+        android:text="拍照"
+        android:layout_below="@+id/mycamera"
+        android:layout_centerHorizontal="true"
+        android:textSize="24sp"
+        android:enabled="false"
+        android:id="@+id/paizhao"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/white"
+        android:background="@drawable/queren_bg"
+        android:layout_width="150dp"
+        android:layout_height="60dp" />
+
+
+
+</RelativeLayout>

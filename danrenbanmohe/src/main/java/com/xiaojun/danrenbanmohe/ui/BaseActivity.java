@@ -26,12 +26,12 @@ public class BaseActivity extends Activity {
             baoCunBean = new BaoCunBean();
             baoCunBean.setId(123456L);
             baoCunBean.setHoutaiDiZhi("http://192.168.2.187:8980/js/f");
-            baoCunBean.setShibieFaceSize(50);
+            baoCunBean.setShibieFaceSize(20);
             baoCunBean.setShibieFaZhi(20);
             baoCunBean.setRuKuFaceSize(50);
             baoCunBean.setRuKuMoHuDu(0.4f);
             baoCunBean.setHuoTiFZ(60);
-            baoCunBean.setHuoTi(true);
+            baoCunBean.setHuoTi(false);
             baoCunBean.setDangqianShiJian("d");
             baoCunBean.setTianQi(false);
 

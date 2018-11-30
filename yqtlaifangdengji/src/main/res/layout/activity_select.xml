@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@drawable/allbg"
+    android:layout_height="match_parent"
+    tools:context=".ui.SelectActivity">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+
+
+
+    <TextView
+        android:text="请选择您的来访事由"
+        android:textSize="50sp"
+        android:textColor="@color/blake"
+        android:layout_marginBottom="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <LinearLayout
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:layout_marginRight="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/riqi"
+            android:textSize="20sp"
+            android:textColor="@color/blake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/xingqi"
+            android:textSize="20sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/blake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/shijian"
+            android:textSize="20sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/blake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:textSize="16sp"
+        android:text="瑞瞳智能科技有限公司"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/blake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+        <ImageView
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/xiaologo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/fanhui"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/xiangzuo"
+        android:layout_marginLeft="40dp"
+        android:layout_marginBottom="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/shouye"
+        android:layout_marginRight="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40dp"
+        android:src="@drawable/zhuye_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+
+
+</RelativeLayout>

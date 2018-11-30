@@ -867,12 +867,14 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
                     /*离线模式，将识别到人脸的，message不为空的result添加到处理队列中*/
                     if (detectionResult != null && detectionResult.message.length != 0) {
+
+                        if (isLink) {
+                            isLink = false;
+
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
 
-                                if (isLink) {
-                                    isLink = false;
                                     //  mDetectResultQueue.offer(detectionResult);
                                     try {
                                         //  FacePassDetectionResult detectionResult = mDetectResultQueue.take();
@@ -889,12 +891,12 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                                 final Bitmap bmp = BitmapFactory.decodeByteArray(stream3.toByteArray(), 0, stream3.size());
                                                 stream3.close();
                                                 bitmapTX = bmp;
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        imageView.setImageBitmap(bmp);
-                                                    }
-                                                });
+//                                                runOnUiThread(new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+//                                                        imageView.setImageBitmap(bmp);
+//                                                    }
+//                                                });
 
                                                 break;
                                             }
@@ -983,6 +985,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                                     }
 
                                                 }
+                                                break;
 
                                             }
                                         } else {
@@ -997,7 +1000,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                     }
 
 
-                                }
+                              //  }
 
                                 //getOkHttpClient2();
 
@@ -1005,7 +1008,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                         }).start();
 
                     }
-                    //     }
+                         }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1317,7 +1320,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             view.setLayoutParams(params);
             view.invalidate();
 
-            ;
         } catch (Exception e) {
             Log.d("CameraPreview", e.getMessage());
         }
@@ -1598,7 +1600,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
             RectF drect = new RectF();
 
-            RectF srect = new RectF(left - 40, top - 120, right + 40, bottom + 20);
+            RectF srect = new RectF(left - 40, top - 40, right + 40, bottom );
 
             mat.mapRect(drect, srect);
             //头像加宽加高点
@@ -2294,7 +2296,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                 }
                             };
                             timer.schedule(task, 10000);
-
                             //保存到本地，以后上传
                             Subjects subjects = new Subjects();
                             subjects.setAge(diKu.getNianl());
@@ -2329,7 +2330,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
                         int size = paiHangBeanVector.size();
                         for (int ii=0;ii<size;ii++){
-
                             if (pp.getYanzhi()==paiHangBeanVector.get(ii).getYanzhi()){
                                 paihangP=ii+1;
                                 break;

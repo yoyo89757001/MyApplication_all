@@ -1381,7 +1381,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
                                                                 Log.d("RecognizeThread", ss);
 
                                                                 if (mOutputStream != null) {
-                                                                     mOutputStream.write(BytesHexStrTranslate.toBytes(ss));
+                                                                     mOutputStream.write(BytesHexStrTranslate.hexStringToBytes(ss.trim()));
                                                                    // mOutputStream.write(mBuffer);
                                                                 }
 
@@ -3043,7 +3043,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
                 case Intent.ACTION_TIME_TICK:
                     mianBanJiView.setTime(DateUtils.time(System.currentTimeMillis()+""));
                     timeCont++;
-                    if (timeCont==1){
+                    if (timeCont==5){
                         timeCont=0;
 
                         link_denglu();
@@ -3505,6 +3505,10 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
                     if (checkBean.getStatus()==200){
                         startIndex=checkBean.getStartIndex();
                         for (CheckBean.DataBean dataBean:checkBean.getData() ){
+                            if (dataBean.getOperation().equals("1")){
+                                personBeanBox.remove(dataBean.getUser_id());
+                                continue;
+                            }
                             PersonBean benDiPeople=new PersonBean();
                             benDiPeople.setUser_id(dataBean.getUser_id());
                             benDiPeople.setUsername(dataBean.getUsername());

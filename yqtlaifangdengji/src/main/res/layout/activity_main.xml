@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/allbg"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        app:flexDirection="column"
+        app:alignItems="stretch"
+        android:background="@drawable/allbg"
+        app:alignContent="stretch"
+        app:justifyContent="flex_start"
+        android:layout_height="match_parent">
+
+
+
+    <View
+        app:layout_flexBasisPercent="10%"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:gravity="center"
+        app:layout_flexBasisPercent="30%"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:src="@drawable/dalogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:gravity="center"
+        android:background="@drawable/kaishi_bg"
+        app:layout_flexBasisPercent="35%"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <me.grantland.widget.AutofitTextView
+            android:maxLines="1"
+            autofit:minTextSize="10sp"
+            android:textSize="150sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="您好，来访请登记"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:id="@+id/zidongtext"
+            android:layout_width="400dp"
+            android:layout_height="match_parent" />
+
+
+        <ImageView
+            android:src="@drawable/xiangyou"
+            android:layout_margin="30dp"
+            android:id="@+id/next"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+    </LinearLayout>
+
+    <View
+        app:layout_flexBasisPercent="25%"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</com.google.android.flexbox.FlexboxLayout>
+
+
+    <LinearLayout
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:layout_marginRight="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/riqi"
+            android:textSize="20sp"
+            android:textColor="@color/blake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/xingqi"
+            android:textSize="20sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/blake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/shijian"
+            android:textSize="20sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/blake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+    </LinearLayout>
+
+
+    <TextView
+        android:textSize="16sp"
+        android:text="瑞瞳智能科技有限公司"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/blake"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <!--<com.airbnb.lottie.LottieAnimationView-->
+        <!--android:id="@+id/wangluo"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_marginRight="10dp"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:layout_width="100px"-->
+        <!--android:layout_height="100px"-->
+        <!--app:lottie_fileName="check.json"-->
+        <!--app:lottie_loop="true"-->
+        <!--app:lottie_autoPlay="true" />-->
+
+    
+
+</RelativeLayout>
