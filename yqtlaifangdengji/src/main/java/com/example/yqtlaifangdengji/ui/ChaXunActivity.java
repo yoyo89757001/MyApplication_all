@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -132,6 +135,7 @@ public class ChaXunActivity extends AppCompatActivity implements MoBanAdapter.On
     private MoBanAdapter adapter = null;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,9 +182,9 @@ public class ChaXunActivity extends AppCompatActivity implements MoBanAdapter.On
         recyclerview.setLayoutManager(gridLayoutManager2);
         adapter = new MoBanAdapter(listBeanList, ChaXunActivity.this, dw, dh, this);
         recyclerview.setAdapter(adapter);
-
-
     }
+
+
 
     public void donghua(final View view) {
         //动画
@@ -206,6 +210,8 @@ public class ChaXunActivity extends AppCompatActivity implements MoBanAdapter.On
         // 设置动画结束值
         spring3.setEndValue(1f);
     }
+
+
 
     @OnClick({R.id.al, R.id.bl, R.id.cl, R.id.dl, R.id.el, R.id.fl, R.id.gl, R.id.hl, R.id.il, R.id.jl, R.id.kl, R.id.ll, R.id.ml, R.id.nl, R.id.ol, R.id.pl, R.id.ql, R.id.rl, R.id.sl, R.id.tl, R.id.ul, R.id.vl, R.id.wl, R.id.xl, R.id.yl, R.id.zl, R.id.shanchu})
     public void onViewClicked(View view) {
@@ -356,7 +362,8 @@ public class ChaXunActivity extends AppCompatActivity implements MoBanAdapter.On
     @Override
     public void onItemClick(View v, int position) {
         donghua(v);
-
+Log.d("ChaXunActivity", "房贷首付都是风");
+        link(new File(Environment.getExternalStorageDirectory() + File.separator + "mmruitong.png"),listBeanList.get(position));
 
     }
 
@@ -469,6 +476,75 @@ public class ChaXunActivity extends AppCompatActivity implements MoBanAdapter.On
             }
         });
     }
+
+
+    // 照片质量
+    private void link(final File file,ChaXun.ListBean listBean) {
+
+//        if (screen_token.equals("") || url.equals("")) {
+//
+//            return;
+//        }
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .writeTimeout(100000, TimeUnit.MILLISECONDS)
+                .connectTimeout(100000, TimeUnit.MILLISECONDS)
+                .readTimeout(100000, TimeUnit.MILLISECONDS)
+                //  .cookieJar(new CookiesManager())
+               // .retryOnConnectionFailure(true)
+                .build();
+        ;
+        MultipartBody mBody;
+        final MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+
+        RequestBody fileBody1 = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+
+        builder.addFormDataPart("myfiles", file.getName(), fileBody1);
+        builder.addFormDataPart("companyId","G6002");
+        builder.addFormDataPart("employeeId",listBean.getId());
+        builder.addFormDataPart("visitDate","2018-11-11");
+        builder.addFormDataPart("rangeDate","09:00-18:00");
+        builder.addFormDataPart("visitOrigin","2");
+        builder.addFormDataPart("numberPeople","1");
+        builder.addFormDataPart("registerSubjects[0].name","周三");
+        builder.addFormDataPart("registerSubjects[0].phone","周三");
+
+        mBody = builder.build();
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Content-Type", "application/json")
+                .post(mBody)
+                .url("http://192.168.2.189:8980" + "/front/weixin/registerVisitSave");
+
+        // step 3：创建 Call 对象
+        Call call = okHttpClient.newCall(requestBuilder.build());
+
+        //step 4: 开始异步请求
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                //  Log.d("CustomerDisplay", "file.delete():" + );
+                Log.d("AllConnects", "请求识别失败" + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.d("AllConnects", "请求识别成功" + call.request().toString());
+                //获得返回体
+                try {
+                    ResponseBody body = response.body();
+                    String ss = body.string();
+                    Log.d("AllConnects", "有意义" + ss);
+
+
+                } catch (Exception e) {
+
+                    Log.d("WebsocketPushMsg", e.getMessage() + "klklklkl");
+                }
+            }
+        });
+    }
+
 
 
 }

@@ -27,18 +27,17 @@ public class BaseActivity extends Activity {
             baoCunBean.setId(123456L);
             baoCunBean.setHoutaiDiZhi("http://192.168.2.187:8980/js/f");
             baoCunBean.setShibieFaceSize(20);
-            baoCunBean.setShibieFaZhi(20);
-            baoCunBean.setRuKuFaceSize(50);
+            baoCunBean.setShibieFaZhi(90);
+            baoCunBean.setRuKuFaceSize(20);
             baoCunBean.setRuKuMoHuDu(0.4f);
             baoCunBean.setHuoTiFZ(60);
             baoCunBean.setHuoTi(false);
             baoCunBean.setDangqianShiJian("d");
             baoCunBean.setTianQi(false);
-
             baoCunBeanDao.put(baoCunBean);
         }
 
-        startActivity(new Intent(BaseActivity.this,MainActivity.class));
+        startActivity(new Intent(BaseActivity.this,DingZhiActivity.class));
         finish();
 
 

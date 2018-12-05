@@ -22,6 +22,7 @@ import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import megvii.facepass.FacePassHandler;
+import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.ChengShiIDBean;
 import megvii.testfacepass.beans.MyObjectBox;
 import megvii.testfacepass.beans.ZhiChiChengShi;
@@ -44,7 +45,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     private static BoxStore mBoxStore;
     public static MyApplication myApplication;
     private Box<ChengShiIDBean> chengShiIDBeanBox;
-
+    private BaoCunBean baoCunBean = null;
 
     @Override
     public void onCreate() {
@@ -119,11 +120,33 @@ public class MyApplication extends Application implements Application.ActivityLi
             });
         }
 
+
+
+        baoCunBean = getBoxStore().boxFor(BaoCunBean.class).get(123456L);
+        if (baoCunBean == null) {
+            baoCunBean = new BaoCunBean();
+            baoCunBean.setId(123456L);
+            baoCunBean.setHoutaiDiZhi("http://hy.inteyeligence.com/front");
+            baoCunBean.setShibieFaceSize(30);
+            baoCunBean.setShibieFaZhi(70);
+            baoCunBean.setRuKuFaceSize(60);
+            baoCunBean.setRuKuMoHuDu(0.4f);
+            baoCunBean.setHuoTiFZ(70);
+            baoCunBean.setHuoTi(true);
+            baoCunBean.setDangqianShiJian("d");
+            baoCunBean.setTianQi(false);
+
+            getBoxStore().boxFor(BaoCunBean.class).put(baoCunBean);
+        }
+
+
     }
 
     public BoxStore getBoxStore(){
         return mBoxStore;
     }
+
+
 
     public FacePassHandler getFacePassHandler() {
 

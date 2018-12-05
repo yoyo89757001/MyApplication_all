@@ -79,8 +79,13 @@ public class MyApplication extends Application implements Application.ActivityLi
                 throw new InvalidParameterException();
             }
 
+            try {
+                mSerialPort = new SerialPort(new File(path), baudrate, 0);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             /* Open the serial port */
-            mSerialPort = new SerialPort(new File(path), baudrate, 0);
+
         }
         return mSerialPort;
     }

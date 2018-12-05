@@ -30,6 +30,8 @@ android {
         }
     }
     packagingOptions {
+
+
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/NOTICE.txt'
@@ -41,7 +43,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation(name: 'mylibrary-release', ext: 'aar')
+    implementation(name: 'FacePassAndroidSDK-trial', ext: 'aar')
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.liulishuo.filedownloader:library:1.7.4'
     //文件下载库
@@ -69,4 +71,5 @@ dependencies {
     implementation 'com.android.support:cardview-v7:28.0.0'
     implementation 'com.robinhood.ticker:ticker:2.0.0'//字体里程表滚动
     implementation 'com.plattysoft.leonids:LeonidsLib:1.3.2'  //粒子
+    implementation 'pub.devrel:easypermissions:2.0.0'
 }

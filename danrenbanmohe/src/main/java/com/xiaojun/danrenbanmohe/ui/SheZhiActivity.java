@@ -25,6 +25,7 @@ import com.xiaojun.danrenbanmohe.dialog.XiuGaiHuoTiFZDialog;
 import com.xiaojun.danrenbanmohe.dialog.XiuGaiRuKuFZDialog;
 import com.xiaojun.danrenbanmohe.dialog.XiuGaiSBFZDialog;
 import com.xiaojun.danrenbanmohe.dialog.YuYingDialog;
+import com.xiaojun.danrenbanmohe.utils.FaceInit;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,7 +37,7 @@ import butterknife.ButterKnife;
 
 import butterknife.OnClick;
 import io.objectbox.Box;
-import megvii.facepass.ruitong.FaceInit;
+
 
 
 

@@ -36,8 +36,8 @@ public class FacePassUtil {
 
  private FacePassHandler mFacePassHandler;  /* 人脸识别Group */
     private  final String group_name = "face-pass-test-x";
-    private static final String group_name_mxNan = "face-pass-test-xnan2";
-    private static final String group_name_mxNv = "face-pass-test-xnv2";
+    private static final String group_name_mxNan = "facepasstestxnan";
+    private static final String group_name_mxNv = "facepasstestxnan2";
     private  boolean isLocalGroupExist = false;
     private BaoCunBean baoCunBean=null;
     private int cameraRotation;
@@ -69,17 +69,16 @@ public class FacePassUtil {
                             float livenessThreshold = baoCunBean.getHuoTiFZ();
                             boolean livenessEnabled = baoCunBean.isHuoTi();
                             int faceMinThreshold =baoCunBean.getShibieFaceSize();
-                            FacePassPose poseThreshold = new FacePassPose(30f, 30f, 30f);
+                            FacePassPose poseThreshold = new FacePassPose(25f, 25f, 25f);
                             float blurThreshold = 0.3f;
                             float lowBrightnessThreshold = 70f;
                             float highBrightnessThreshold = 210f;
                             float brightnessSTDThreshold = 60f;
-                            int retryCount = 0;
+                            int retryCount = 2;
                             int rotation = cameraRotation;
                             String fileRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
                             FacePassConfig config;
                             try {
-
                                 /* 填入所需要的配置 */
                                 config = new FacePassConfig(searchThreshold, livenessThreshold, livenessEnabled,
                                         faceMinThreshold, poseThreshold, blurThreshold,
@@ -88,7 +87,6 @@ public class FacePassUtil {
                                         trackModel, poseModel, blurModel, livenessModel, searchModel, detectModel, ageGenderModel);
                                 /* 创建SDK实例 */
                                 mFacePassHandler = new FacePassHandler(config);
-
 
                                 float searchThreshold2 = 75f;
                                 float livenessThreshold2 = 48f;
@@ -121,14 +119,14 @@ public class FacePassUtil {
                                                     int man[]={R.drawable.n1,R.drawable.m2,R.drawable.m3,R.drawable.m4,R.drawable.m5,R.drawable.m6,R.drawable.m7,R.drawable.m8,R.drawable.m9};
 
                                                     //男明星库
-                                                    for (int i=0;i<8;i++){
+                                                    for (int i=0;i<1;i++){
                                                         FacePassAddFaceResult result= mFacePassHandler.addFace(BitmapFactory.decodeResource(context.getResources(),man[i]));
                                                         if (result.result==0){
                                                             Log.d("FacePassUtil", "添加男明星" + mFacePassHandler.bindGroup(group_name_mxNan,result.faceToken));
                                                         }
                                                     }
                                                     //女明星库
-                                                    for (int i=0;i<7;i++){
+                                                    for (int i=0;i<1;i++){
                                                         FacePassAddFaceResult result= mFacePassHandler.addFace(BitmapFactory.decodeResource(context.getResources(),wmen[i]));
                                                         if (result.result==0){
                                                             Log.d("FacePassUtil", "添加女明星" + mFacePassHandler.bindGroup(group_name_mxNv,result.faceToken));
@@ -176,7 +174,7 @@ public class FacePassUtil {
                             /* 如果SDK初始化未完成则需等待 */
                             sleep(500);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                           Log.d("FacePassUtil", e.getMessage()+"ddd");
                         }
                     }
                 }
@@ -222,41 +220,5 @@ public class FacePassUtil {
     }
 
 
-    public void setMyConfig(float search){
-        FacePassModel  trackModel = FacePassModel.initModel(context.getAssets(), "tracker.DT1.4.1.dingding.20180315.megface2.9.bin");
-        FacePassModel  poseModel = FacePassModel.initModel(context.getAssets(), "pose.alfa.tiny.170515.bin");
-        FacePassModel  blurModel = FacePassModel.initModel(context.getAssets(), "blurness.v5.l2rsmall.bin");
-        FacePassModel livenessModel = FacePassModel.initModel(context.getAssets(), "panorama.facepass.offline.180312.bin");
-        FacePassModel searchModel = FacePassModel.initModel(context.getAssets(), "feat.small.facepass.v2.9.bin");
-        FacePassModel detectModel = FacePassModel.initModel(context.getAssets(), "detector.mobile.v5.fast.bin");
-        FacePassModel ageGenderModel = FacePassModel.initModel(context.getAssets(), "age_gender.bin");
-        /* SDK 配置 */
-        float searchThreshold =search ;
-        float livenessThreshold = baoCunBean.getHuoTiFZ();
-        boolean livenessEnabled = baoCunBean.isHuoTi();
-        int faceMinThreshold =baoCunBean.getShibieFaceSize();
-        FacePassPose poseThreshold = new FacePassPose(30f, 30f, 30f);
-        float blurThreshold = 0.3f;
-        float lowBrightnessThreshold = 70f;
-        float highBrightnessThreshold = 210f;
-        float brightnessSTDThreshold = 60f;
-        int retryCount = 2;
-        int rotation = cameraRotation;
-        String fileRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        FacePassConfig config;
-        try {
-
-            /* 填入所需要的配置 */
-            config = new FacePassConfig(searchThreshold, livenessThreshold, livenessEnabled,
-                    faceMinThreshold, poseThreshold, blurThreshold,
-                    lowBrightnessThreshold, highBrightnessThreshold, brightnessSTDThreshold,
-                    retryCount, rotation, fileRootPath,
-                    trackModel, poseModel, blurModel, livenessModel, searchModel, detectModel, ageGenderModel);
-            mFacePassHandler.setConfig(config);
-
-        }catch (Exception e){
-            Log.d("MainActivity", e.getMessage()+"设置识别配置异常");
-        }
-    }
 
 }

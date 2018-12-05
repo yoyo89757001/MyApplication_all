@@ -98,23 +98,7 @@ public class SheZhiActivity2 extends Activity {
         ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
         baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
         chengShiIDBeanBox = MyApplication.myApplication.getBoxStore().boxFor(ChengShiIDBean.class);
-        baoCunBean = baoCunBeanDao.get(123456L);
-        if (baoCunBean == null) {
-            baoCunBean = new BaoCunBean();
-            baoCunBean.setId(123456L);
-            baoCunBean.setHoutaiDiZhi("http://192.168.2.187:8980/js/f");
-            baoCunBean.setShibieFaceSize(40);
-            baoCunBean.setShibieFaZhi(70);
-            baoCunBean.setRuKuFaceSize(60);
-            baoCunBean.setRuKuMoHuDu(0.4f);
-            baoCunBean.setHuoTiFZ(70);
-            baoCunBean.setHuoTi(true);
-            baoCunBean.setDangqianShiJian("d");
-            baoCunBean.setTianQi(false);
-
-            baoCunBeanDao.put(baoCunBean);
-        }
-
+        baoCunBean=baoCunBeanDao.get(123456L);
 
         EventBus.getDefault().register(this);//订阅
         switchs.setChecked(true);

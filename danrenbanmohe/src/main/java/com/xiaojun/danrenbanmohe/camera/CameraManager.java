@@ -62,6 +62,8 @@ public class CameraManager implements CameraPreview.CameraPreviewListener {
         int max = Integer.MIN_VALUE;
         Camera.Size maxSize = null;
         for (Camera.Size tmpSize : allSupportedSize) {
+            Log.d("CameraManager", "tmpSize.height:" + tmpSize.height);
+            Log.d("CameraManager", "tmpSize.width:" + tmpSize.width);
             int multi = tmpSize.height * tmpSize.width;
             if (multi > max) {
                 max = multi;

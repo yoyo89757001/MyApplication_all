@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Xml;
 
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
@@ -27,7 +28,10 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
 
+
+import org.greenrobot.eventbus.EventBus;
 import org.xmlpull.v1.XmlPullParser;
+
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,7 +41,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.net.URLDecoder;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,22 +52,31 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+
+
 import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
+
 import megvii.facepass.FacePassException;
 import megvii.facepass.FacePassHandler;
 import megvii.facepass.types.FacePassAddFaceResult;
 import megvii.testfacepass.MyApplication;
+
 import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.BeiJingBean;
 import megvii.testfacepass.beans.BenDiMBbean;
 import megvii.testfacepass.beans.BenDiMBbean_;
 import megvii.testfacepass.beans.FangKeBean;
 import megvii.testfacepass.beans.GuanHuai;
+import megvii.testfacepass.beans.GuanHuai_;
 import megvii.testfacepass.beans.LingShiSubject;
 import megvii.testfacepass.beans.MOBan;
 import megvii.testfacepass.beans.RenYuanInFo;
 import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.beans.TuiSongBean;
+import megvii.testfacepass.beans.XinXiAll;
+import megvii.testfacepass.beans.XinXiIdBean;
+import megvii.testfacepass.beans.XinXiIdBean_;
 import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FileUtil;
@@ -70,6 +85,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -79,21 +95,23 @@ import okhttp3.ResponseBody;
 
 /**
  * 自定义接收器
- * 
+ *
  * 如果不定义这个 Receiver，则：
  * 1) 默认用户会打开主界面
  * 2) 接收不到自定义消息
  */
 public class MyReceiver extends BroadcastReceiver {
 	private static final String TAG = "JIGUANG-Example";
-	public OkHttpClient okHttpClient=null;
+	public  OkHttpClient okHttpClient=null;
 	private BaoCunBean baoCunBean=null;
 	private Box<BaoCunBean> baoCunBeanDao=null;
 	private Box<Subject> subjectBox=null;
 	private boolean isA=true;
 	private static final String group_name = "face-pass-test-x";
 	private Box<BenDiMBbean> benDiMBbeanDao=null;
-	private Box<RenYuanInFo> renYuanInFoDao=null;
+	//private Box<RenYuanInFo> renYuanInFoDao=null;
+	private Box<XinXiAll> xinXiAllBox=null;
+	private Box<XinXiIdBean> xinXiIdBeanBox=null;
 	private StringBuilder stringBuilder=null;
 	private StringBuilder stringBuilder2=null;
 	private StringBuilder stringBuilderId=new StringBuilder();
@@ -102,13 +120,13 @@ public class MyReceiver extends BroadcastReceiver {
 	private Context context;
 	private final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"ruitongzip";
 	public static boolean isDW=true;
-	private FacePassHandler facePassHandler;
+	private FacePassHandler  facePassHandler;
 	private Box<GuanHuai> guanHuaiBox=null;
 
 	@Override
 	public void onReceive(final Context context, Intent intent) {
 		this.context=context;
-
+		Log.d(TAG, intent.getAction()+"ffffffff"+intent.getStringExtra("msg"));
 		try {
 			stringBuilder=new StringBuilder();
 			stringBuilder2=new StringBuilder();
@@ -116,11 +134,13 @@ public class MyReceiver extends BroadcastReceiver {
 			subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
 			benDiMBbeanDao = MyApplication.myApplication.getBoxStore().boxFor(BenDiMBbean.class);
 			guanHuaiBox = MyApplication.myApplication.getBoxStore().boxFor(GuanHuai.class);
+			xinXiAllBox = MyApplication.myApplication.getBoxStore().boxFor(XinXiAll.class);
+			xinXiIdBeanBox = MyApplication.myApplication.getBoxStore().boxFor(XinXiIdBean.class);
 			baoCunBean = baoCunBeanDao.get(123456L);
-			renYuanInFoDao = MyApplication.myApplication.getBoxStore().boxFor(RenYuanInFo.class);
+			//renYuanInFoDao = MyApplication.myApplication.getBoxStore().boxFor(RenYuanInFo.class);
 			facePassHandler=MyApplication.myApplication.getFacePassHandler();
 			Bundle bundle = intent.getExtras();
-		//	Logger.d(TAG, "[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
+			//	Logger.d(TAG, "[MyReceiver] onReceive - " + intent.getAction() + ", extras: " + printBundle(bundle));
 
 			if (JPushInterface.ACTION_REGISTRATION_ID.equals(intent.getAction())) {
 				String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
@@ -214,7 +234,7 @@ public class MyReceiver extends BroadcastReceiver {
 										if (task.getUrl().equals(path2)){
 
 											ToastUtils.getInstances().setDate("下载中",((float)soFarBytes/(float) totalBytes)*100,"下载人脸库中"+((float)soFarBytes/(float) totalBytes)*100+"%");
-										//	showNotifictionIcon(,,);
+											//	showNotifictionIcon(,,);
 										}
 									}
 
@@ -225,7 +245,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 									@Override
 									protected void retry(final BaseDownloadTask task, final Throwable ex, final int retryingTimes, final int soFarBytes) {
-									//重试
+										//重试
 										Log.d(TAG, ex.getMessage()+"重试 "+retryingTimes);
 									}
 
@@ -299,12 +319,12 @@ public class MyReceiver extends BroadcastReceiver {
 						link_guanhuai(renShu.getId(),renShu.getStatus(),renShu.getUrl());
 						break;
 
-//					case "生日关怀入库":
-//						link_shengrri(renShu.getId(),renShu.getStatus(),renShu.getUrl());
-//						break;
-//					case "入职关怀入库":
-//						link_ruzhi(renShu.getId(),renShu.getStatus(),renShu.getUrl());
-//						break;
+					case "底图更新":
+						link_beijing(renShu.getId(),renShu.getStatus(),renShu.getUrl());
+						break;
+					case "信息推送":
+						link_xinxituisong(renShu.getId(),renShu.getStatus(),renShu.getUrl());
+						break;
 
 					case "":
 
@@ -313,7 +333,7 @@ public class MyReceiver extends BroadcastReceiver {
 						break;
 
 				}
-			//	processCustomMessage(context, bundle);
+				//	processCustomMessage(context, bundle);
 
 			} else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) {
 				Logger.d(TAG, "[MyReceiver] 接收到推送下来的通知");
@@ -419,7 +439,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 			for (int i = 0; i < fileHeaderList.size(); i++) {
 				FileHeader fileHeader = (FileHeader) fileHeaderList.get(i);
-			//	FileHeader fileHeader2 = (FileHeader) fileHeaderList.get(0);
+				//	FileHeader fileHeader2 = (FileHeader) fileHeaderList.get(0);
 
 				//Log.d(TAG, fileHeader2.getFileName());
 
@@ -485,94 +505,94 @@ public class MyReceiver extends BroadcastReceiver {
 			Log.d("SheZhiActivity", e.getMessage()+"解析XML异常");
 		}
 
-}
+	}
 
 	//入库
 	public void getOkHttpClient3(final List<Subject> subjectList, final String trg){
 
 
-		        		if (facePassHandler==null){
-							showNotifictionIcon(0,"识别模块初始化失败","识别模块初始化失败无法入库");
-		        			return;
-						}
-						final int size=subjectList.size();
-						int t=0;
-						Log.d(TAG, "size:" + size);
-						//循环
-						for (int j=0;j<size;j++) {
-						//	Log.d(TAG, "i:" + j);
-							String filePath=null;
-							while (true){
-								try {
-									Thread.sleep(300);
-									t++;
-									Log.d(TAG, "2循环");
-									// 获取后缀名
-									//String sname = name.substring(name.lastIindexOf("."));
-									filePath=trg+ File.separator+subjectList.get(j).getId()+(subjectList.get(j).getPhoto().
-											substring(subjectList.get(j).getPhoto().lastIndexOf(".")));
-									File file=new File(filePath);
-									if ((file.isFile() && file.length()>0)|| t==100){
-										t=0;
-									//	Log.d(TAG, "file.length():" + file.length()+"   t:"+t);
-										break;
-									}
-								}catch (Exception e){
-									filePath=null;
-									Log.d(TAG, e.getMessage()+"检测文件是否存在异常");
-									break;
-								}
+		if (facePassHandler==null){
+			showNotifictionIcon(0,"识别模块初始化失败","识别模块初始化失败无法入库");
+			return;
+		}
+		final int size=subjectList.size();
+		int t=0;
+		Log.d(TAG, "size:" + size);
+		//循环
+		for (int j=0;j<size;j++) {
+			//	Log.d(TAG, "i:" + j);
+			String filePath=null;
+			while (true){
+				try {
+					Thread.sleep(300);
+					t++;
+					Log.d(TAG, "2循环");
+					// 获取后缀名
+					//String sname = name.substring(name.lastIindexOf("."));
+					filePath=trg+ File.separator+subjectList.get(j).getId()+(subjectList.get(j).getPhoto().
+							substring(subjectList.get(j).getPhoto().lastIndexOf(".")));
+					File file=new File(filePath);
+					if ((file.isFile() && file.length()>0)|| t==100){
+						t=0;
+						//	Log.d(TAG, "file.length():" + file.length()+"   t:"+t);
+						break;
+					}
+				}catch (Exception e){
+					filePath=null;
+					Log.d(TAG, e.getMessage()+"检测文件是否存在异常");
+					break;
+				}
 
+			}
+			//Log.d(TAG, "((float)j / (float) size * 100):" + ((float)j / (float) size * 100));
+			showNotifictionIcon((int) ((float)j / (float) size * 100),"入库中","入库中"+(int) ((float)j / (float) size * 100)+"%");
+			if (filePath!=null){
+				try {
+
+					FacePassAddFaceResult faceResult= facePassHandler.addFace(BitmapFactory.decodeFile(filePath));
+					if (faceResult.result==0){
+						//先查询有没有
+						Subject ee= subjectBox.get(subjectList.get(j).getId());
+						if (ee!=null){
+							//重复编辑会导致旷视底库图片增多，所以先删除旷视的
+							if (ee.getTeZhengMa()!=null){
+								boolean bb=facePassHandler.deleteFace(ee.getTeZhengMa().getBytes());
+								Log.d("MyRecriver", "批量入库中,删除已有的底库" + bb);
 							}
-							//Log.d(TAG, "((float)j / (float) size * 100):" + ((float)j / (float) size * 100));
-							showNotifictionIcon((int) ((float)j / (float) size * 100),"入库中","入库中"+(int) ((float)j / (float) size * 100)+"%");
-							if (filePath!=null){
-								try {
+						}
+						facePassHandler.bindGroup(group_name,faceResult.faceToken);
+						subjectList.get(j).setTeZhengMa(new String(faceResult.faceToken));
+						subjectList.get(j).setDaka(0);
+						subjectBox.put(subjectList.get(j));
+						stringBuilderId.append(subjectList.get(j).getId());
+						stringBuilderId.append(",");
 
-									FacePassAddFaceResult faceResult= facePassHandler.addFace(BitmapFactory.decodeFile(filePath));
-									if (faceResult.result==0){
-										//先查询有没有
-										Subject ee= subjectBox.get(subjectList.get(j).getId());
-										if (ee!=null){
-											//重复编辑会导致旷视底库图片增多，所以先删除旷视的
-											if (ee.getTeZhengMa()!=null){
-											boolean bb=facePassHandler.deleteFace(ee.getTeZhengMa().getBytes());
-												Log.d("MyRecriver", "批量入库中,删除已有的底库" + bb);
-											}
-										}
-										facePassHandler.bindGroup(group_name,faceResult.faceToken);
-										subjectList.get(j).setTeZhengMa(new String(faceResult.faceToken));
-										subjectList.get(j).setDaka(0);
-										subjectBox.put(subjectList.get(j));
-										stringBuilderId.append(subjectList.get(j).getId());
-										stringBuilderId.append(",");
+						Log.d(TAG,"批量入库成功："+ subjectList.get(j).getId());
 
-										Log.d(TAG,"批量入库成功："+ subjectList.get(j).getId());
+					}else {
+						stringBuilder2.append("入库添加图片失败:").append("ID:")
+								.append(subjectList.get(j).getId()).append("姓名:")
+								.append(subjectList.get(j).getName()).append("时间:")
+								.append(DateUtils.time(System.currentTimeMillis() + ""))
+								.append("错误码:").append(faceResult.result).append("\n");
+					}
 
-									}else {
-										stringBuilder2.append("入库添加图片失败:").append("ID:")
-												.append(subjectList.get(j).getId()).append("姓名:")
-												.append(subjectList.get(j).getName()).append("时间:")
-												.append(DateUtils.time(System.currentTimeMillis() + ""))
-												.append("错误码:").append(faceResult.result).append("\n");
-									}
+				} catch (FacePassException e) {
+					e.printStackTrace();
+					stringBuilder2.append("入库添加图片失败:").append("ID:")
+							.append(subjectList.get(j).getId()).append("姓名:")
+							.append(subjectList.get(j).getName()).append("时间:")
+							.append(DateUtils.time(System.currentTimeMillis() + ""))
+							.append("错误码:").append(e.getMessage()).append("\n");
+				}
 
-								} catch (FacePassException e) {
-									e.printStackTrace();
-									stringBuilder2.append("入库添加图片失败:").append("ID:")
-											.append(subjectList.get(j).getId()).append("姓名:")
-											.append(subjectList.get(j).getName()).append("时间:")
-											.append(DateUtils.time(System.currentTimeMillis() + ""))
-											.append("错误码:").append(e.getMessage()).append("\n");
-								}
-
-							}else {
-                                stringBuilder2.append("入库失败文件不存在:").append("ID:")
-                                        .append(subjectList.get(j).getId()).append("姓名:")
-                                        .append(subjectList.get(j).getName()).append("时间:")
-                                        .append(DateUtils.time(System.currentTimeMillis() + ""))
-                                        .append("\n");
-                            }
+			}else {
+				stringBuilder2.append("入库失败文件不存在:").append("ID:")
+						.append(subjectList.get(j).getId()).append("姓名:")
+						.append(subjectList.get(j).getName()).append("时间:")
+						.append(DateUtils.time(System.currentTimeMillis() + ""))
+						.append("\n");
+			}
 
 //							//查询旷视
 //							synchronized (subjectList.get(j)) {
@@ -585,29 +605,29 @@ public class MyReceiver extends BroadcastReceiver {
 //
 //							}
 
-						}
-						//   Log.d("SheZhiActivity", "循环完了");
+		}
+		//   Log.d("SheZhiActivity", "循环完了");
 
-						String ss=stringBuilder2.toString();
+		String ss=stringBuilder2.toString();
 
-						if (ss.length()>0){
+		if (ss.length()>0){
 
-							try {
-								FileUtil.savaFileToSD("失败记录"+DateUtils.timesOne(System.currentTimeMillis()+"")+".txt",ss);
-								showNotifictionIcon(0,"入库完成","有失败的记录,已保存到本地根目录");
-								stringBuilder2.delete(0, stringBuilder2.length());
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+			try {
+				FileUtil.savaFileToSD("失败记录"+DateUtils.timesOne(System.currentTimeMillis()+"")+".txt",ss);
+				showNotifictionIcon(0,"入库完成","有失败的记录,已保存到本地根目录");
+				stringBuilder2.delete(0, stringBuilder2.length());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-						}else {
-							showNotifictionIcon(0,"入库完成","全部入库成功，没有失败记录");
-						}
-						if (stringBuilderId.length()>0){
-							gengxingzhuangtai();
-						}
+		}else {
+			showNotifictionIcon(0,"入库完成","全部入库成功，没有失败记录");
+		}
+		if (stringBuilderId.length()>0){
+			gengxingzhuangtai();
+		}
 
-					}
+	}
 
 
 //	public static final int TIMEOUT2 = 1000 * 100;
@@ -957,7 +977,7 @@ public class MyReceiver extends BroadcastReceiver {
 //						sheBeiInFoBeanDao.insert(zhaoPianBean);
 //					}
 					//先登陆
-				//	getOkHttpClient(context,status,null,renYuanInFo);
+					//	getOkHttpClient(context,status,null,renYuanInFo);
 					Log.d("MyReceiver", "登陆");
 
 				}catch (Exception e){
@@ -1000,7 +1020,7 @@ public class MyReceiver extends BroadcastReceiver {
 
 			e.printStackTrace();
 		}
-	//	recycleBitmap(bitmap);
+		//	recycleBitmap(bitmap);
 		return file;
 	}
 //	public static void recycleBitmap(Bitmap... bitmaps) {
@@ -1076,7 +1096,7 @@ public class MyReceiver extends BroadcastReceiver {
 		//RequestBody requestBody = RequestBody.create(JSON, json);
 		RequestBody body = new FormBody.Builder()
 				.add("id",id)
-			//	.add("downloads","1")
+				//	.add("downloads","1")
 				.build();
 		Request.Builder requestBuilder = new Request.Builder()
 //				.header("Content-Type", "application/json")
@@ -1128,7 +1148,7 @@ public class MyReceiver extends BroadcastReceiver {
 									if (ee!=null){
 										//重复编辑会导致旷视底库图片增多，所以先删除旷视的
 										if (ee.getTeZhengMa()!=null)
-										Log.d("MyReceiver", "删除已有的访客底库"+facePassHandler.deleteFace(ee.getTeZhengMa().getBytes()));
+											Log.d("MyReceiver", "删除已有的访客底库"+facePassHandler.deleteFace(ee.getTeZhengMa().getBytes()));
 									}
 									facePassHandler.bindGroup(group_name, faceResult.faceToken);
 									Subject subject = new Subject();
@@ -1147,7 +1167,7 @@ public class MyReceiver extends BroadcastReceiver {
 									subject.setStoreId(renShu.getStoreId());
 									subject.setStoreName(renShu.getStoreName());
 									subject.setCompanyId(renShu.getCompanyId());
-                                   // subject.setDepartmentName(renShu.getDepartmentName());
+									// subject.setDepartmentName(renShu.getDepartmentName());
 									if (renShu.getDisplayPhoto()!=null && !renShu.getDisplayPhoto().equals("")){
 										try {
 											bitmapTX = Glide.with(context).asBitmap()
@@ -1172,9 +1192,9 @@ public class MyReceiver extends BroadcastReceiver {
 									showNotifictionIcon(0,"入库失败","图片不符合入库要求 "+renShu.getName());
 								}
 
-								} catch(FacePassException e){
-									e.printStackTrace();
-								}
+							} catch(FacePassException e){
+								e.printStackTrace();
+							}
 						}else {
 							showNotifictionIcon(0,"入库失败","下载图片失败 "+renShu.getName());
 						}
@@ -1256,7 +1276,7 @@ public class MyReceiver extends BroadcastReceiver {
 									if (ee!=null){
 										//重复编辑会导致旷视底库图片增多，所以先删除旷视的
 										if (ee.getTeZhengMa()!=null)
-										Log.d("MyReceiver", "删除已有的员工底库"+facePassHandler.deleteFace(ee.getTeZhengMa().getBytes()));
+											Log.d("MyReceiver", "删除已有的员工底库"+facePassHandler.deleteFace(ee.getTeZhengMa().getBytes()));
 									}
 									facePassHandler.bindGroup(group_name, faceResult.faceToken);
 									//Log.d("MyReceiver", "faceResult.faceToken:" + new String(faceResult.faceToken));
@@ -1276,7 +1296,7 @@ public class MyReceiver extends BroadcastReceiver {
 									subject.setStoreId(renShu.getStoreId());
 									subject.setStoreName(renShu.getStoreName());
 									subject.setCompanyId(renShu.getCompanyId());
-                                    subject.setDepartmentName(renShu.getDepartmentName());
+									subject.setDepartmentName(renShu.getDepartmentName());
 									if (renShu.getDisplayPhoto()!=null && !renShu.getDisplayPhoto().equals("")){
 										try {
 											bitmapTX = Glide.with(context).asBitmap()
@@ -1370,7 +1390,7 @@ public class MyReceiver extends BroadcastReceiver {
 					// 1生日提醒 2入职关怀 3节日关怀）
 					final GuanHuai youJuBean=gson.fromJson(jsonObject,GuanHuai.class);
 					if (status!=3){
-					//添加
+						//添加
 						Log.d("MyReceiver", "关怀入库:" + guanHuaiBox.put(youJuBean));
 					}else {
 						//删除
@@ -1385,6 +1405,8 @@ public class MyReceiver extends BroadcastReceiver {
 			}
 		});
 	}
+
+
 
 	//关怀
 	private void link_youju(final String id, final int status, final String url){
@@ -1438,64 +1460,187 @@ public class MyReceiver extends BroadcastReceiver {
 		});
 	}
 
+	//关怀
+	private void link_beijing(final String id, final int status, final String url){
+		//	final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+		OkHttpClient okHttpClient= new OkHttpClient();
+		//RequestBody requestBody = RequestBody.create(JSON, json);
+		RequestBody body = new FormBody.Builder()
+				.add("id",id)
+				//	.add("downloads","1")
+				.build();
+		Request.Builder requestBuilder = new Request.Builder()
+//				.header("Content-Type", "application/json")
+//				.header("user-agent","Koala Admin")
+				//.post(requestBody)
+				//.get()
+				.post(body)
+				.url(url);
 
-	//从老黄后台拿批量信息
-	private void link_getHouTaiPiLiang(final int id, final Context context, final int status){
-		if (status==3){
-			//删除
-//			BenDiQianDaoDao dao= MyApplication.myApplication.getDaoSession().getBenDiQianDaoDao();
-//			dao.deleteAll();
-//			getOkHttpClient2(context,3);
+		// step 3：创建 Call 对象
+		Call call = okHttpClient.newCall(requestBuilder.build());
+		//step 4: 开始异步请求
+		call.enqueue(new Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+				Log.d("AllConnects", "请求失败"+e.getMessage());
+			}
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				Log.d("AllConnects", "请求成功"+call.request().toString());
+				//获得返回体
+				try{
+					ResponseBody body = response.body();
+					final String ss=body.string().trim();
+					Log.d("AllConnects", "背景"+ss);
 
-		}else {
-			//新增
-			final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-			OkHttpClient okHttpClient = new OkHttpClient.Builder()
-					.writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
-					.connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
-					.readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
-//				.cookieJar(new CookiesManager())
-					.retryOnConnectionFailure(true)
-					.build();
+					JsonObject jsonObject= GsonUtil.parse(ss).getAsJsonObject();
+					Gson gson=new Gson();
+					final BeiJingBean beiJingBean=gson.fromJson(jsonObject,BeiJingBean.class);
+					Bitmap bitmap=null,bitmapLog = null;
+					try {
+						bitmap = Glide.with(context).asBitmap()
+								.load(beiJingBean.getBackgroundUrl())
+								// .sizeMultiplier(0.5f)
+								.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+								.get();
+					} catch (InterruptedException | ExecutionException e) {
+						e.printStackTrace();
+						showNotifictionIcon( 0,"底图更新","下载背景底图失败"+e.getMessage());
+					}
+					try {
+						bitmapLog = Glide.with(context).asBitmap()
+								.load(beiJingBean.getBackgroundLog())
+								// .sizeMultiplier(0.5f)
+								.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+								.get();
+					} catch (InterruptedException | ExecutionException e) {
+						e.printStackTrace();
+						showNotifictionIcon( 0,"底图更新","下载背景底图失败"+e.getMessage());
+					}
+					if (bitmapLog!=null ) {
+						try {
 
-			RequestBody body = new FormBody.Builder()
-					.add("companyName", baoCunBean.getZhanghuId())
-					.add("cardNumber", id + "")
-					.build();
-			Request.Builder requestBuilder = new Request.Builder()
-					.header("Content-Type", "application/json")
-					.post(body)
-					.url(baoCunBean.getHoutaiDiZhi() + "/queryMeetingSubject.do");
+							File file = new File(FileUtil.SDPATH + File.separator + "logo_rt.png");
+							FileOutputStream out = new FileOutputStream(file);
+							bitmapLog.compress(Bitmap.CompressFormat.PNG, 100, out);
+							out.flush();
+							out.close();
+							baoCunBean.setXiaBanTime(FileUtil.SDPATH + File.separator + "logo_rt.png");
+							baoCunBean.setWenzi1(beiJingBean.getBackgroundTitle());
+							baoCunBeanDao.put(baoCunBean);
+							EventBus.getDefault().post("ditu123");
 
-			// step 3：创建 Call 对象
-			Call call = okHttpClient.newCall(requestBuilder.build());
+						} catch (Exception e) {
+							e.printStackTrace();
+							showNotifictionIcon(0, "底图更新", "出现异常" + e.getMessage());
+						}
+					}
+					if (bitmap!=null ){
+						try {
 
-			//step 4: 开始异步请求
-			call.enqueue(new Callback() {
-				@Override
-				public void onFailure(Call call, IOException e) {
-					Log.d("AllConnects", "请求失败" + e.getMessage());
-					stringBuilder.append("从后台获取人员信息失败记录:")
-							.append("ID").append(id)
-							.append("时间:")
-							.append(DateUtils.time(System.currentTimeMillis()+""))
-							.append("\n");
+							File file = new File(FileUtil.SDPATH+File.separator+"beijing_rt.png");
+							FileOutputStream out = new FileOutputStream(file);
+							bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+							out.flush();
+							out.close();
+							baoCunBean.setTouxiangzhuji(FileUtil.SDPATH+File.separator+"beijing_rt.png");
+							baoCunBean.setWenzi1(beiJingBean.getBackgroundTitle());
+							baoCunBeanDao.put(baoCunBean);
+							EventBus.getDefault().post("ditu123");
+
+						} catch (Exception e) {
+							e.printStackTrace();
+							showNotifictionIcon( 0,"底图更新","出现异常"+e.getMessage());
+						}
+
+
+
+					}else {
+						showNotifictionIcon( 0,"底图更新","下载背景底图失败");
+					}
+
+
+				}catch (Exception e){
+					showNotifictionIcon( 0,"底图更新","出现异常"+e.getMessage());
 				}
 
-				@Override
-				public void onResponse(Call call, Response response) throws IOException {
-					Log.d("AllConnects", "请求成功" + call.request().toString());
-					//获得返回体
-					try {
-						//没了删除，所有在添加前要删掉所有
-//						renYuanInFoDao.deleteAll();
-//						ResponseBody body = response.body();
-//						String ss = body.string().trim();
-//						Log.d("AllConnects", "获取批量人员信息" + ss);
-//
-//						JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
-//						Gson gson = new Gson();
-//						PiLiangBean zhaoPianBean = gson.fromJson(jsonObject, PiLiangBean.class);
+			}
+		});
+	}
+
+	//从老黄后台拿批量信息
+	private void link_xinxituisong(final String id, final int status,String url){
+
+		final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+		OkHttpClient okHttpClient = new OkHttpClient.Builder()
+				.writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+				.connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+				.readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+//				.cookieJar(new CookiesManager())
+				.retryOnConnectionFailure(true)
+				.build();
+
+		RequestBody body = new FormBody.Builder()
+				.add("id", id)
+				.build();
+		Request.Builder requestBuilder = new Request.Builder()
+				.header("Content-Type", "application/json")
+				.post(body)
+				.url(baoCunBean.getHoutaiDiZhi() + url);
+
+		// step 3：创建 Call 对象
+		Call call = okHttpClient.newCall(requestBuilder.build());
+
+		//step 4: 开始异步请求
+		call.enqueue(new Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+				Log.d("AllConnects", "请求失败" + e.getMessage());
+
+			}
+
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				Log.d("AllConnects", "请求成功" + call.request().toString());
+				//获得返回体
+				try {
+					ResponseBody body = response.body();
+					String ss = body.string().trim();
+					Log.d("AllConnects", "信息推送" + ss);
+
+					JsonObject jsonObject = GsonUtil.parse(ss).getAsJsonObject();
+					Gson gson = new Gson();
+					XinXiAll xiAll = gson.fromJson(jsonObject, XinXiAll.class);
+					if (status!=3){
+						//更新
+						//先查询子数据有没有,有就不管他，没有就新增
+						List<XinXiIdBean> xx = xinXiIdBeanBox.query().equal(XinXiIdBean_.uuid, xiAll.getId()).build().find();
+						if (xx.size()<=0){
+							String ids[] = xiAll.getEmployeeId().split(",");
+							for (String id1 : ids) {
+								XinXiIdBean xiIdBean = new XinXiIdBean();
+								xiIdBean.setYgid(Long.valueOf(id1));
+								xiIdBean.setUuid(xiAll.getId());
+								Log.d("MyReceiver", "新增消息2：" + xinXiIdBeanBox.put(xiIdBean));
+							}
+						}
+						Log.d("MyReceiver", "新增消息1:" + xinXiAllBox.put(xiAll));
+
+					}else {
+						//删除
+						if (xiAll.getEmployeeId().equals("0")){
+							xinXiAllBox.remove(xiAll.getId());
+							Log.d("MyReceiver", "删除"+xiAll.getId());
+						}
+						List<XinXiIdBean> xx = xinXiIdBeanBox.query().equal(XinXiIdBean_.uuid, xiAll.getId()).build().find();
+						for (XinXiIdBean id1 : xx) {
+							xinXiIdBeanBox.remove(id1.getId());
+							Log.d("MyReceiver", "删除"+id1);
+						}
+
+					}
+
 //						int size = zhaoPianBean.getObjects().size();
 //
 //						for (int i = 0; i < size; i++) {
@@ -1520,21 +1665,17 @@ public class MyReceiver extends BroadcastReceiver {
 //							}
 //						}
 
-						//Log.d("MyReceivereee", "DDDDD");
-						//先登陆
+					//Log.d("MyReceivereee", "DDDDD");
+					//先登陆
 					//	getOkHttpClient2(context, 1);
 
-					} catch (Exception e) {
-						stringBuilder.append("获取后台数据异常记录:")
-								.append("ID").append(id)
-								.append("时间:")
-								.append(DateUtils.time(System.currentTimeMillis()+""))
-								.append("\n");
-						Log.d("WebsocketPushMsg", e.getMessage() + "gggg");
-					}
+				} catch (Exception e) {
+
+					Log.d("WebsocketPushMsg", e.getMessage() + "gggg");
 				}
-			});
-		}
+			}
+		});
+
 	}
 
 
@@ -1574,9 +1715,9 @@ public class MyReceiver extends BroadcastReceiver {
 				try {
 					//没了删除，所有在添加前要删掉所有
 
-						ResponseBody body = response.body();
-						String ss = body.string().trim();
-						Log.d("AllConnects", "更新后台状态" + ss);
+					ResponseBody body = response.body();
+					String ss = body.string().trim();
+					Log.d("AllConnects", "更新后台状态" + ss);
 
 				} catch (Exception e) {
 
@@ -1603,7 +1744,7 @@ public class MyReceiver extends BroadcastReceiver {
 		//Log.d("MyReceiver", "图片0");
 		Bitmap bitmap=null;
 		try {
-			  bitmap = Glide.with(context).asBitmap()
+			bitmap = Glide.with(context).asBitmap()
 					.load(baoCunBean.getHoutaiDiZhi()+"/upload/compare/"+renYuanInFo.getPhoto_ids())
 					// .sizeMultiplier(0.5f)
 					.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)

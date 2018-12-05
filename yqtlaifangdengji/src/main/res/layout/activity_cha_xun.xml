@@ -706,7 +706,6 @@
             android:layout_height="match_parent" />
 
 
-
         <View
             android:layout_width="0dp"
             android:layout_weight="0.4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "
@@ -714,8 +713,6 @@
 
 
     </LinearLayout>
-
-
 
 
 
@@ -751,7 +748,6 @@
             android:textColor="@color/blake"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
 
 
     </LinearLayout>
@@ -795,6 +791,15 @@
         android:layout_height="wrap_content" />
 
 
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

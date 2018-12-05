@@ -180,6 +180,7 @@ public class PaiZhaoActivity extends AppCompatActivity {
             finish();
         }
         if (event.equals("tupiangengxin")) {
+
             // Log.d("PaiZhaoActivity", "更新图片");
 
             // File file = new File(Environment.getExternalStorageDirectory(), "mmruitong.png");//将要保存图片的路径
@@ -188,7 +189,6 @@ public class PaiZhaoActivity extends AppCompatActivity {
 //                    .load(Environment.getExternalStorageDirectory()+File.separator+"mmruitong.png")
 //                    .apply(myOptions)
 //                    .into(paizhao);
-
 
             paizhao.setImageBitmap(FileUtil.toRoundBitmap(BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + File.separator + "mmruitong.png")));
             link_P2(new File(Environment.getExternalStorageDirectory() + File.separator + "mmruitong.png"));

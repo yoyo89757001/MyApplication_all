@@ -310,8 +310,8 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
      * }
      */
     private int cameraRotation;
-    private static final int cameraWidth = 1280;
-    private static final int cameraHeight = 720;
+    private static final int cameraWidth = 1920;
+    private static final int cameraHeight = 1080;
     // private int mSecretNumber = 0;
     // private static final long CLICK_INTERVAL = 500;
     //  private long mLastClickTime;
@@ -358,6 +358,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private int nianlingP;
     private byte[] filePathP;
     private int paihangP;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -884,7 +885,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                                         for (int i = 0; i < size; i++) {
                                             if (detectionResult.images[0].trackId == detectionResult.faceList[i].trackId) {
                                                 //detectionResult.images存在 ，拿到男女 0是男 1是女
-                                                mow = detectionResult.faceList[i].gender;
+                                              //  mow = detectionResult.faceList[i].gender;
                                                 YuvImage image3 = new YuvImage(detectionResult.images[0].image, ImageFormat.NV21, detectionResult.images[0].width, detectionResult.images[0].height, null);
                                                 ByteArrayOutputStream stream3 = new ByteArrayOutputStream();
                                                 image3.compressToJpeg(new Rect(0, 0, detectionResult.images[0].width, detectionResult.images[0].height), 100, stream3);
@@ -1192,7 +1193,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
         shijian.setText(DateUtils.xiaoshi(System.currentTimeMillis() + ""));
         mingxingIM = findViewById(R.id.mingxing);
         view = findViewById(R.id.preview);
-
         //   daBg.setBackgroundResource(R.drawable.d_bg2);
 
 
@@ -1528,19 +1528,19 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             StringBuilder faceBlurString = new StringBuilder();
             faceBlurString.append("模糊: ").append(String.format("%.2f", face.blur));
             StringBuilder faceAgeString = new StringBuilder();
-            faceAgeString.append("年龄: ").append(face.age);
+            faceAgeString.append("年龄: ").append("0");
             StringBuilder faceGenderString = new StringBuilder();
 
-            switch (face.gender) {
-                case 0:
-                    faceGenderString.append("性别: 男");
-                    break;
-                case 1:
-                    faceGenderString.append("性别: 女");
-                    break;
-                default:
-                    faceGenderString.append("性别: ?");
-            }
+//            switch (face.gender) {
+//                case 0:
+//                    faceGenderString.append("性别: 男");
+//                    break;
+//                case 1:
+//                    faceGenderString.append("性别: 女");
+//                    break;
+//                default:
+//                    faceGenderString.append("性别: ?");
+//            }
 
             Matrix mat = new Matrix();
             int w = cameraView.getMeasuredWidth();
@@ -3220,21 +3220,21 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        for (int i=0;i<10;i++){
-
-                        Log.d("MainActivity", "mFacePassHandler.compare(BitmapFactory.decodeResource(getResources(),R.drawable.zf3),BitmapFactory.decodeResource(getResources(),R.drawable.junn),false).score:" +
-                                mFacePassHandler.compare(FileUtil.scaleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.junn),800,800),
-                                        BitmapFactory.decodeResource(getResources(), R.drawable.junn), false).score);
-                           // 30.858118
-                           // 29.134697
-                            //27.145298
-                            //98.01972
-                            //98.293175
-                        }
-                         } catch (FacePassException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        for (int i=0;i<10;i++){
+//
+//                        Log.d("MainActivity", "mFacePassHandler.compare(BitmapFactory.decodeResource(getResources(),R.drawable.zf3),BitmapFactory.decodeResource(getResources(),R.drawable.junn),false).score:" +
+//                                mFacePassHandler.compare(FileUtil.scaleBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.junn),800,800),
+//                                        BitmapFactory.decodeResource(getResources(), R.drawable.junn), false).score);
+//                           // 30.858118
+//                           // 29.134697
+//                            //27.145298
+//                            //98.01972
+//                            //98.293175
+//                        }
+//                         } catch (FacePassException e) {
+//                        e.printStackTrace();
+//                    }
 
                 }
             }).start();

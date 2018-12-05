@@ -114,7 +114,10 @@ public class SheZhiActivity extends Activity {
         }
 
         EventBus.getDefault().register(this);//订阅
-        switchs.setChecked(true);
+
+
+        switchs.setChecked(baoCunBean.isHuoTi());
+
         switchs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

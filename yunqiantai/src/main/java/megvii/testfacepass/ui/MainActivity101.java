@@ -316,6 +316,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
     private Box<XinXiIdBean> xinXiIdBeanBox = null;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -364,6 +365,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
 //        bumenString.add("后勤部");
 
         //每分钟的广播
+
         intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_TIME_TICK);//每分钟变化
         intentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);//设置了系统时区
@@ -406,7 +408,6 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
 
         /* 初始化界面 */
         initView();
-
 
 //        dibuliebiao.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
 //                    @Override
@@ -502,7 +503,6 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
 
                         rootLayout.setX((int) ((float) dw * 0.06f));
                         rootLayout.setY(dh - (int) ((float) dh * 0.08f));
-
 
 
                         LinearLayout.LayoutParams layoutParams2 = (LinearLayout.LayoutParams) touxiang.getLayoutParams();
