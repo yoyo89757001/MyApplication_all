@@ -1,6 +1,8 @@
 package com.xiaojun.danrenbanmohe.ui;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,9 +24,16 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +43,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.plattysoft.leonids.ParticleSystem;
+import com.robinhood.ticker.TickerUtils;
+import com.robinhood.ticker.TickerView;
 import com.xiaojun.danrenbanmohe.MyApplication;
 import com.xiaojun.danrenbanmohe.R;
 import com.xiaojun.danrenbanmohe.bean.BaoCunBean;
@@ -50,6 +62,7 @@ import com.xiaojun.danrenbanmohe.utils.FileUtil;
 import com.xiaojun.danrenbanmohe.utils.GsonUtil;
 import com.xiaojun.danrenbanmohe.view.FaceView;
 import com.xiaojun.danrenbanmohe.view.GlideCircleTransform;
+import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -66,6 +79,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -92,7 +106,9 @@ import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
@@ -113,26 +129,43 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
     FaceView faceView;
     @BindView(R.id.ceshi)
     ImageView ceshi;
+    @BindView(R.id.rootview)
+    RelativeLayout rootview;
+    @BindView(R.id.l1)
+    RelativeLayout l1;
+    @BindView(R.id.l3)
+    LinearLayout l3;
+
 
     private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "JHt8TdGoELfkEKYkjQMogR8GPLIPAfRM";
-    private static final String apiSecret = "qgPwtgw9Yiqn2aL9KQyv1ukigAV7xWup";
+    private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
+    private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
+    @BindView(R.id.baozha)
+    View baozha;
+    private int[] baozhaiSZ = {R.drawable.baiselizi, R.drawable.baiselizi2, R.drawable.baiselizi3, R.drawable.baiselizi4, R.drawable.baiselizi5, R.drawable.baiselizi6};
     private long tID = -1;
     private ConcurrentHashMap<Long, Integer> concurrentHashMap = new ConcurrentHashMap<Long, Integer>();
     private static final String group_name = "facepasstestxnan";
     private int dw, dh;
     private int cameraRotation;
-    private static final int cameraWidth = 1920;
-    private static final int cameraHeight = 1080;
+    private static final int cameraWidth = 1280;
+    private static final int cameraHeight = 720;
     public FacePassHandler mFacePassHandler;
     /* 相机实例 */
     private CameraManager manager;
     /* 显示人脸位置角度信息 */
+    private RequestOptions myOptions2 = new RequestOptions()
+            .fitCenter()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .error(R.drawable.erroy_bg)
+            .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#FFFFFFFF")));
+
     private RequestOptions myOptions = new RequestOptions()
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .error(R.drawable.erroy_bg)
             .transform(new GlideCircleTransform(MyApplication.myApplication, 2, Color.parseColor("#FFFFFB00")));
+
     // .transform(new GlideRoundTransform(MainActivity.this,10));
     private boolean isAnXia = true;
     /* 在预览界面圈出人脸 */
@@ -150,9 +183,9 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
     FeedFrameThread mFeedFrameThread;
     TanChuangThread tanChuangThread;
     private static boolean isLink = true;
-    private static boolean isLink2 = true;
+    //  private static boolean isLink2 = true;
     private final int TIMEOUT = 1000 * 6;
-    private   OkHttpClient okHttpClient = new OkHttpClient.Builder()
+    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
             .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
             .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
@@ -168,21 +201,928 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
     private final Timer timer = new Timer();
     private TimerTask task;
     private Box<Subjects> subjectsBox = null;
-    private WeakHandler mHandler=new WeakHandler(new Handler.Callback() {
+    private int guanzhu[] = {80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 92, 94, 96, 98};
+    private int huati[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    private Typeface tf = null;
+
+
+    private WeakHandler mHandler = new WeakHandler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            switch (msg.what){
-                case 110:
-                    PaiHangBean bean= (PaiHangBean) msg.obj;
 
+            switch (msg.what) {
+                case 110: {
+                    final View v1 = rootview.getChildAt(0);
+                    final PaiHangBean bean = (PaiHangBean) msg.obj;
+                    //入场动画(从右往左)
+                    ValueAnimator anim = ValueAnimator.ofInt(0, dw);
+                    anim.setDuration(800);
+                    anim.setRepeatMode(ValueAnimator.RESTART);
+                    Interpolator interpolator = new DecelerateInterpolator(2f);
+                    anim.setInterpolator(interpolator);
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int currentValue = (Integer) animation.getAnimatedValue();
+                            // 获得改变后的值
+                            //   System.out.println(currentValue);
+                            // 输出改变后的值
+                            // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                            v1.setX(currentValue);
+                            // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                            v1.requestLayout();
+                        }
+                    });
+                    anim.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            //开始第三页
+                            biaoti.setText("你 的 颜 值 段 位");
+                            final View view = View.inflate(DingZhiActivity.this, R.layout.paihang_item, null);
+                            TextView tt = view.findViewById(R.id.text);
+                            tt.setTypeface(tf);
+                            tt.setText("最高颜值获得者");
+                            final LinearLayout linearLayout = view.findViewById(R.id.linearLayout);
+                            TextView yanzhi3 = view.findViewById(R.id.yanzhi3);
+                            TextView nianling3 = view.findViewById(R.id.nianling3);
+                            ImageView touxiang3 = view.findViewById(R.id.touxiang3);
+                            Button xuhao = view.findViewById(R.id.xuhao1);
+                            xuhao.setText(paihangP + "");
+                            yanzhi3.setText("颜值打分： " + bean.getYanzhi());
+                            nianling3.setText("年龄: " + bean.getNianl());
+                            Glide.get(DingZhiActivity.this).clearMemory();
+                            Glide.with(DingZhiActivity.this)
+                                    .load(bean.getBytes())
+                                    .apply(myOptions2)
+                                    .into(touxiang3);
+
+                            view.setX(-dw);
+                            rootview.addView(view);
+
+
+                            //入场动画(从右往左)
+                            ValueAnimator anim = ValueAnimator.ofInt(-dw, 0);
+                            anim.setDuration(1200);
+                            anim.setRepeatMode(ValueAnimator.RESTART);
+                            Interpolator interpolator = new DecelerateInterpolator(2f);
+                            anim.setInterpolator(interpolator);
+                            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator animation) {
+                                    int currentValue = (Integer) animation.getAnimatedValue();
+                                    // 获得改变后的值
+                                    //   System.out.println(currentValue);
+                                    // 输出改变后的值
+                                    // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                                    view.setX(currentValue);
+                                    // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                                    view.requestLayout();
+
+                                }
+                            });
+                            anim.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    final int si = paiHangBeanVector.size();
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            for (int i = 0; i < si; i++) {
+                                                final int finalI = i;
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        final View view_xiaoxi = View.inflate(DingZhiActivity.this, R.layout.paihang_item_min, null);
+                                                        ScreenAdapterTools.getInstance().loadView(view_xiaoxi);
+                                                        RelativeLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
+                                                        TextView yanzhi = view_xiaoxi.findViewById(R.id.yanzhi3);
+                                                        Button xuhao = view_xiaoxi.findViewById(R.id.xuhao1);
+                                                        ImageView touxiang = view_xiaoxi.findViewById(R.id.touxiang3);
+
+                                                        yanzhi.setText("颜值打分: " + paiHangBeanVector.get(finalI).getYanzhi());
+                                                        switch (finalI) {
+                                                            case 0:
+                                                                xuhao.setBackgroundResource(R.drawable.xh1);
+                                                                break;
+                                                            case 1:
+                                                                xuhao.setBackgroundResource(R.drawable.xh2);
+                                                                break;
+                                                            case 2:
+                                                                xuhao.setBackgroundResource(R.drawable.xh3);
+                                                                break;
+                                                            case 3:
+                                                                xuhao.setBackgroundResource(R.drawable.xh4);
+                                                                break;
+                                                        }
+                                                        Glide.get(DingZhiActivity.this).clearMemory();
+                                                        Glide.with(DingZhiActivity.this)
+                                                                .load(paiHangBeanVector.get(finalI).getBytes())
+                                                                .apply(myOptions2)
+                                                                .into(touxiang);
+
+                                                        view_xiaoxi.setY(dh);
+                                                        linearLayout.addView(view_xiaoxi);
+
+                                                        LinearLayout.LayoutParams layoutParams6 = (LinearLayout.LayoutParams) rl_xiaoxi.getLayoutParams();
+                                                        layoutParams6.topMargin = 30;
+                                                        layoutParams6.bottomMargin = 20;
+                                                        layoutParams6.height = ((int) ((float) dh * 0.1)) - 10;
+                                                        rl_xiaoxi.setLayoutParams(layoutParams6);
+                                                        rl_xiaoxi.invalidate();
+
+                                                        float sfff = 50 + ((float) dh * 0.10f);
+
+                                                        ValueAnimator animator = ValueAnimator.ofFloat(dh, sfff * finalI);
+                                                        //动画时长，让进度条在CountDown时间内正好从0-360走完，
+                                                        animator.setDuration(1000);
+                                                        animator.setInterpolator(new DecelerateInterpolator());//匀速
+                                                        animator.setRepeatCount(0);//0表示不循环，-1表示无限循环
+                                                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                                            @Override
+                                                            public void onAnimationUpdate(ValueAnimator animation) {
+                                                                /**
+                                                                 * 这里我们已经知道ValueAnimator只是对值做动画运算，而不是针对控件的，因为我们设置的区间值为0-1.0f
+                                                                 * 所以animation.getAnimatedValue()得到的值也是在[0.0-1.0]区间，而我们在画进度条弧度时，设置的当前角度为360*currentAngle，
+                                                                 * 因此，当我们的区间值变为1.0的时候弧度刚好转了360度
+                                                                 */
+                                                                float jiaodu = (float) animation.getAnimatedValue();
+                                                                view_xiaoxi.setY(jiaodu);
+
+                                                            }
+                                                        });
+                                                        animator.start();
+
+                                                    }
+                                                });
+                                                SystemClock.sleep(600);
+
+                                            }
+                                        }
+                                    }).start();
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for (int i = 0; i < 11; i++) {
+                                                Message message = Message.obtain();
+                                                message.what = 666;
+                                                mHandler.sendMessage(message);
+                                                SystemClock.sleep(900);
+                                            }
+                                        }
+                                    }).start();
+
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+
+                                    task = new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            Message message = new Message();
+                                            message.what = 220;
+                                            mHandler.sendMessage(message);
+                                        }
+                                    };
+                                    timer.schedule(task, 8000);
+
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+                                }
+                            });
+                            anim.start();
+
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            rootview.removeView(v1);
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+                        }
+                    });
+                    anim.start();
+
+
+                    break;
+                }
+
+                case 120: {
+
+                    RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) l3.getLayoutParams();
+                    params2.height = (int) (dh * 0.2f);
+                    l3.setLayoutParams(params2);
+                    l3.invalidate();
+                    int min = 0;
+                    int max = 14;
+                    Random random = new Random();
+                    int num = random.nextInt(max) % (max - min + 1) + min;
+
+                    dibutv.setTextSize(30);
+                    dibutv2.setTextSize(30);
+                    dibutv.setText("听说颜值高能借到更多钱");
+                    dibutv2.setText("微信扫码查看你的额度吧");
+
+                    final PaiHangBean bean = (PaiHangBean) msg.obj;
+
+                    final View view_dk = View.inflate(DingZhiActivity.this, R.layout.view_item2, null);
+                    final RelativeLayout rootrl = view_dk.findViewById(R.id.ddd);
+                    ImageView touxiang = view_dk.findViewById(R.id.touxiang);
+                    final TickerView tickerview = view_dk.findViewById(R.id.tickerview);
+                    final TickerView tickerview2 = view_dk.findViewById(R.id.tickerview2);
+                    TextView xingbie = view_dk.findViewById(R.id.xingbie);
+                    TextView nianling = view_dk.findViewById(R.id.nianling);
+                    TextView guanzhudu = view_dk.findViewById(R.id.guanzhudu);
+                    TextView huanledu = view_dk.findViewById(R.id.huanledu);
+                    tickerview.setCharacterLists(TickerUtils.provideNumberList());
+                    tickerview.setAnimationDuration(1400);
+                    tickerview.setAnimationInterpolator(new OvershootInterpolator());
+                    tickerview.setText("0");
+                    tickerview2.setCharacterLists(TickerUtils.provideNumberList());
+                    tickerview2.setAnimationDuration(1400);
+                    tickerview2.setAnimationInterpolator(new OvershootInterpolator());
+                    tickerview2.setText("0");
+                    xingbie.setText("性别 " + bean.getXingbie());
+                    nianling.setText("年龄 " + bean.getNianl());
+                    guanzhudu.setText("关注度 " + guanzhu[num] + "%");
+                    huanledu.setText("心情 " + bean.getBiaoqing());
+
+                    view_dk.setX(-dw);
+
+                    rootview.addView(view_dk);
+
+                    RelativeLayout.LayoutParams dp = (RelativeLayout.LayoutParams) rootrl.getLayoutParams();
+                    dp.height = (int) (dh * 0.34f);
+                    rootrl.setLayoutParams(dp);
+                    rootrl.invalidate();
+
+                    RelativeLayout.LayoutParams txp = (RelativeLayout.LayoutParams) touxiang.getLayoutParams();
+                    txp.height = (int) (dh * 0.15f);
+                    txp.width = (int) (dh * 0.15f);
+                    touxiang.setLayoutParams(txp);
+                    touxiang.invalidate();
+
+                    //入场动画(从右往左)
+                    ValueAnimator anim = ValueAnimator.ofInt(-dw, 0);
+                    anim.setDuration(1200);
+                    anim.setRepeatMode(ValueAnimator.RESTART);
+                    Interpolator interpolator = new DecelerateInterpolator(2f);
+                    anim.setInterpolator(interpolator);
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int currentValue = (Integer) animation.getAnimatedValue();
+                            // 获得改变后的值
+                            //   System.out.println(currentValue);
+                            // 输出改变后的值
+                            // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                            view_dk.setX(currentValue);
+                            // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                            view_dk.requestLayout();
+
+                        }
+                    });
+                    anim.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                            //入场动画(从右往左)
+                            ValueAnimator anim = ValueAnimator.ofFloat(0f, 1.3f, 0.6f, 1.0f);
+                            anim.setDuration(5000);
+                            anim.setRepeatMode(ValueAnimator.RESTART);
+                            Interpolator interpolator = new DecelerateInterpolator(2f);
+                            anim.setInterpolator(interpolator);
+                            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator animation) {
+                                    float currentValue = (float) animation.getAnimatedValue();
+                                    // 获得改变后的值
+                                    //   System.out.println(currentValue);
+                                    // 输出改变后的值
+                                    // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                                    rootrl.setScaleX(currentValue);
+                                    rootrl.setScaleY(currentValue);
+                                    // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                                    rootrl.requestLayout();
+
+                                }
+                            });
+                            anim.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+                                }
+                            });
+                            anim.start();
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            try {
+                                tickerview.setText(bean.getYanzhi() + "");
+                                float ll = 74 + (bean.getYanzhi() / 6);
+                                if (ll >= 100) {
+                                    ll = 99.99f;
+                                }
+                                DecimalFormat decimalFormat = new DecimalFormat("0.00");
+                                tickerview2.setText(decimalFormat.format(ll) + "");
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+                        }
+                    });
+                    anim.start();
                     Glide.get(DingZhiActivity.this).clearMemory();
                     Glide.with(DingZhiActivity.this)
                             .load(bean.getBytes())
                             .apply(myOptions)
-                            .into(ceshi);
-
+                            .into(touxiang);
 
                     break;
+                }
+
+                case 130: {
+                    RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) l3.getLayoutParams();
+                    params2.height = (int) (dh * 0.2f);
+                    l3.setLayoutParams(params2);
+                    l3.invalidate();
+                    int min = 0;
+                    int max = 14;
+                    Random random = new Random();
+                    int num = random.nextInt(max) % (max - min + 1) + min;
+                    dibutv.setTextSize(30);
+                    dibutv2.setTextSize(30);
+                    dibutv.setText("听说颜值高能借到更多钱");
+                    dibutv2.setText("微信扫码查看你的额度吧");
+
+                    final PaiHangBean bean = (PaiHangBean) msg.obj;
+
+                    final View view_dk = View.inflate(DingZhiActivity.this, R.layout.view_item3, null);
+                    final RelativeLayout rootrl = view_dk.findViewById(R.id.ddd);
+                    ImageView touxiang = view_dk.findViewById(R.id.touxiang);
+                    final TickerView tickerview = view_dk.findViewById(R.id.tickerview);
+                    final TickerView tickerview2 = view_dk.findViewById(R.id.tickerview2);
+                    TextView xingbie = view_dk.findViewById(R.id.xingbie);
+                    TextView nianling = view_dk.findViewById(R.id.nianling);
+                    TextView guanzhudu = view_dk.findViewById(R.id.guanzhudu);
+                    TextView huanledu = view_dk.findViewById(R.id.huanledu);
+                    tickerview.setCharacterLists(TickerUtils.provideNumberList());
+                    tickerview.setAnimationDuration(1400);
+                    tickerview.setAnimationInterpolator(new OvershootInterpolator());
+                    tickerview.setText("0");
+                    tickerview2.setCharacterLists(TickerUtils.provideNumberList());
+                    tickerview2.setAnimationDuration(1400);
+                    tickerview2.setAnimationInterpolator(new OvershootInterpolator());
+                    tickerview2.setText("0");
+                    xingbie.setText("性别 " + bean.getXingbie());
+                    nianling.setText("年龄 " + bean.getNianl());
+                    guanzhudu.setText("关注度 " + guanzhu[num] + "%");
+                    huanledu.setText("心情 " + bean.getBiaoqing());
+
+                    view_dk.setX(-dw);
+
+                    rootview.addView(view_dk);
+
+                    RelativeLayout.LayoutParams dp = (RelativeLayout.LayoutParams) rootrl.getLayoutParams();
+                    dp.height = (int) (dh * 0.34f);
+                    rootrl.setLayoutParams(dp);
+                    rootrl.invalidate();
+
+                    RelativeLayout.LayoutParams txp = (RelativeLayout.LayoutParams) touxiang.getLayoutParams();
+                    txp.height = (int) (dh * 0.15f);
+                    txp.width = (int) (dh * 0.15f);
+                    touxiang.setLayoutParams(txp);
+                    touxiang.invalidate();
+
+                    //入场动画(从右往左)
+                    ValueAnimator anim = ValueAnimator.ofInt(-dw, 0);
+                    anim.setDuration(1200);
+                    anim.setRepeatMode(ValueAnimator.RESTART);
+                    Interpolator interpolator = new DecelerateInterpolator(2f);
+                    anim.setInterpolator(interpolator);
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int currentValue = (Integer) animation.getAnimatedValue();
+                            // 获得改变后的值
+                            //   System.out.println(currentValue);
+                            // 输出改变后的值
+                            // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                            view_dk.setX(currentValue);
+                            // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                            view_dk.requestLayout();
+
+                        }
+                    });
+                    anim.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                            //入场动画(从右往左)
+                            ValueAnimator anim = ValueAnimator.ofFloat(0f, 1.3f, 0.6f, 1.0f);
+                            anim.setDuration(5000);
+                            anim.setRepeatMode(ValueAnimator.RESTART);
+                            Interpolator interpolator = new DecelerateInterpolator(2f);
+                            anim.setInterpolator(interpolator);
+                            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator animation) {
+                                    float currentValue = (float) animation.getAnimatedValue();
+                                    // 获得改变后的值
+                                    //   System.out.println(currentValue);
+                                    // 输出改变后的值
+                                    // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                                    rootrl.setScaleX(currentValue);
+                                    rootrl.setScaleY(currentValue);
+                                    // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                                    rootrl.requestLayout();
+
+                                }
+                            });
+                            anim.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+                                }
+                            });
+                            anim.start();
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            try {
+                                tickerview.setText(bean.getYanzhi() + "");
+                                float ll = 74 + (bean.getYanzhi() / 6);
+                                if (ll >= 100) {
+                                    ll = 99.99f;
+                                }
+                                DecimalFormat decimalFormat = new DecimalFormat("0.00");
+                                tickerview2.setText(decimalFormat.format(ll) + "");
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+                        }
+                    });
+                    anim.start();
+                    Glide.get(DingZhiActivity.this).clearMemory();
+                    Glide.with(DingZhiActivity.this)
+                            .load(bean.getBytes())
+                            .apply(myOptions)
+                            .into(touxiang);
+
+                    break;
+                }
+
+                case 140: {
+
+                    RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) l3.getLayoutParams();
+                    params2.height = (int) (dh * 0.2f);
+                    l3.setLayoutParams(params2);
+                    l3.invalidate();
+                    int min = 0;
+                    int max = 14;
+                    Random random = new Random();
+                    int num = random.nextInt(max) % (max - min + 1) + min;
+                    dibutv.setTextSize(30);
+                    dibutv2.setTextSize(30);
+                    dibutv.setText("听说颜值高能借到更多钱");
+                    dibutv2.setText("微信扫码查看你的额度吧");
+
+                    final PaiHangBean bean = (PaiHangBean) msg.obj;
+
+                    final View view_dk = View.inflate(DingZhiActivity.this, R.layout.view_item1, null);
+                    final RelativeLayout rootrl = view_dk.findViewById(R.id.ddd);
+                    ImageView touxiang = view_dk.findViewById(R.id.touxiang);
+                    final TickerView tickerview = view_dk.findViewById(R.id.tickerview);
+                    final TickerView tickerview2 = view_dk.findViewById(R.id.tickerview2);
+                    TextView xingbie = view_dk.findViewById(R.id.xingbie);
+                    TextView nianling = view_dk.findViewById(R.id.nianling);
+                    TextView guanzhudu = view_dk.findViewById(R.id.guanzhudu);
+                    TextView huanledu = view_dk.findViewById(R.id.huanledu);
+                    tickerview.setCharacterLists(TickerUtils.provideNumberList());
+                    tickerview.setAnimationDuration(1400);
+                    tickerview.setAnimationInterpolator(new OvershootInterpolator());
+                    tickerview.setText("0");
+                    tickerview2.setCharacterLists(TickerUtils.provideNumberList());
+                    tickerview2.setAnimationDuration(1400);
+                    tickerview2.setAnimationInterpolator(new OvershootInterpolator());
+                    tickerview2.setText("0");
+                    xingbie.setText("性别 " + bean.getXingbie());
+                    nianling.setText("年龄 " + bean.getNianl());
+                    guanzhudu.setText("关注度 " + guanzhu[num] + "%");
+                    huanledu.setText("心情 " + bean.getBiaoqing());
+
+                    view_dk.setX(-dw);
+
+                    rootview.addView(view_dk);
+
+                    RelativeLayout.LayoutParams dp = (RelativeLayout.LayoutParams) rootrl.getLayoutParams();
+                    dp.height = (int) (dh * 0.34f);
+                    rootrl.setLayoutParams(dp);
+                    rootrl.invalidate();
+
+                    RelativeLayout.LayoutParams txp = (RelativeLayout.LayoutParams) touxiang.getLayoutParams();
+                    txp.height = (int) (dh * 0.15f);
+                    txp.width = (int) (dh * 0.15f);
+                    touxiang.setLayoutParams(txp);
+                    touxiang.invalidate();
+
+                    //入场动画(从右往左)
+                    ValueAnimator anim = ValueAnimator.ofInt(-dw, 0);
+                    anim.setDuration(1200);
+                    anim.setRepeatMode(ValueAnimator.RESTART);
+                    Interpolator interpolator = new DecelerateInterpolator(2f);
+                    anim.setInterpolator(interpolator);
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int currentValue = (Integer) animation.getAnimatedValue();
+                            // 获得改变后的值
+                            //   System.out.println(currentValue);
+                            // 输出改变后的值
+                            // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                            view_dk.setX(currentValue);
+                            // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                            view_dk.requestLayout();
+
+                        }
+                    });
+                    anim.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                            //入场动画(从右往左)
+                            ValueAnimator anim = ValueAnimator.ofFloat(0f, 1.3f, 0.6f, 1.0f);
+                            anim.setDuration(5000);
+                            anim.setRepeatMode(ValueAnimator.RESTART);
+                            Interpolator interpolator = new DecelerateInterpolator(2f);
+                            anim.setInterpolator(interpolator);
+                            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator animation) {
+                                    float currentValue = (float) animation.getAnimatedValue();
+                                    // 获得改变后的值
+                                    //   System.out.println(currentValue);
+                                    // 输出改变后的值
+                                    // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                                    rootrl.setScaleX(currentValue);
+                                    rootrl.setScaleY(currentValue);
+                                    // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                                    rootrl.requestLayout();
+
+                                }
+                            });
+                            anim.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+                                }
+                            });
+                            anim.start();
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            try {
+                                tickerview.setText(bean.getYanzhi() + "");
+                                float ll = 74 + (bean.getYanzhi() / 6);
+                                if (ll >= 100) {
+                                    ll = 99.99f;
+                                }
+                                DecimalFormat decimalFormat = new DecimalFormat("0.00");
+                                tickerview2.setText(decimalFormat.format(ll) + "");
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+                        }
+                    });
+                    anim.start();
+                    Glide.get(DingZhiActivity.this).clearMemory();
+                    Glide.with(DingZhiActivity.this)
+                            .load(bean.getBytes())
+                            .apply(myOptions)
+                            .into(touxiang);
+
+                    break;
+                }
+
+                case 150: {
+
+                    RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) l3.getLayoutParams();
+                    params2.height = (int) (dh * 0.2f);
+                    l3.setLayoutParams(params2);
+                    l3.invalidate();
+                    int min = 0;
+                    int max = 14;
+                    Random random = new Random();
+                    int num = random.nextInt(max) % (max - min + 1) + min;
+                    dibutv.setTextSize(30);
+                    dibutv2.setTextSize(30);
+                    dibutv.setText("听说颜值高能借到更多钱");
+                    dibutv2.setText("微信扫码查看你的额度吧");
+
+                    final PaiHangBean bean = (PaiHangBean) msg.obj;
+
+                    final View view_dk = View.inflate(DingZhiActivity.this, R.layout.view_item4, null);
+                    final RelativeLayout rootrl = view_dk.findViewById(R.id.ddd);
+                    ImageView touxiang = view_dk.findViewById(R.id.touxiang);
+                    final TickerView tickerview = view_dk.findViewById(R.id.tickerview);
+                    final TickerView tickerview2 = view_dk.findViewById(R.id.tickerview2);
+                    TextView xingbie = view_dk.findViewById(R.id.xingbie);
+                    TextView nianling = view_dk.findViewById(R.id.nianling);
+                    TextView guanzhudu = view_dk.findViewById(R.id.guanzhudu);
+                    TextView huanledu = view_dk.findViewById(R.id.huanledu);
+                    tickerview.setCharacterLists(TickerUtils.provideNumberList());
+                    tickerview.setAnimationDuration(1400);
+                    tickerview.setAnimationInterpolator(new OvershootInterpolator());
+                    tickerview.setText("0");
+                    tickerview2.setCharacterLists(TickerUtils.provideNumberList());
+                    tickerview2.setAnimationDuration(1400);
+                    tickerview2.setAnimationInterpolator(new OvershootInterpolator());
+                    tickerview2.setText("0");
+                    xingbie.setText("性别 " + bean.getXingbie());
+                    nianling.setText("年龄 " + bean.getNianl());
+                    guanzhudu.setText("关注度 " + guanzhu[num] + "%");
+                    huanledu.setText("心情 " + bean.getBiaoqing());
+
+                    view_dk.setX(-dw);
+
+                    rootview.addView(view_dk);
+
+                    RelativeLayout.LayoutParams dp = (RelativeLayout.LayoutParams) rootrl.getLayoutParams();
+                    dp.height = (int) (dh * 0.34f);
+                    rootrl.setLayoutParams(dp);
+                    rootrl.invalidate();
+
+                    RelativeLayout.LayoutParams txp = (RelativeLayout.LayoutParams) touxiang.getLayoutParams();
+                    txp.height = (int) (dh * 0.15f);
+                    txp.width = (int) (dh * 0.15f);
+                    touxiang.setLayoutParams(txp);
+                    touxiang.invalidate();
+
+                    //入场动画(从右往左)
+                    ValueAnimator anim = ValueAnimator.ofInt(-dw, 0);
+                    anim.setDuration(1200);
+                    anim.setRepeatMode(ValueAnimator.RESTART);
+                    Interpolator interpolator = new DecelerateInterpolator(2f);
+                    anim.setInterpolator(interpolator);
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int currentValue = (Integer) animation.getAnimatedValue();
+                            // 获得改变后的值
+                            //   System.out.println(currentValue);
+                            // 输出改变后的值
+                            // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                            view_dk.setX(currentValue);
+                            // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                            view_dk.requestLayout();
+
+                        }
+                    });
+                    anim.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                            //入场动画(从右往左)
+                            ValueAnimator anim = ValueAnimator.ofFloat(0f, 1.3f, 0.6f, 1.0f);
+                            anim.setDuration(5000);
+                            anim.setRepeatMode(ValueAnimator.RESTART);
+                            Interpolator interpolator = new DecelerateInterpolator(2f);
+                            anim.setInterpolator(interpolator);
+                            anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator animation) {
+                                    float currentValue = (float) animation.getAnimatedValue();
+                                    // 获得改变后的值
+                                    //   System.out.println(currentValue);
+                                    // 输出改变后的值
+                                    // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                                    rootrl.setScaleX(currentValue);
+                                    rootrl.setScaleY(currentValue);
+                                    // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                                    rootrl.requestLayout();
+
+                                }
+                            });
+                            anim.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+                                }
+                            });
+                            anim.start();
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            try {
+                                tickerview.setText(bean.getYanzhi() + "");
+                                float ll = 74 + (bean.getYanzhi() / 6);
+                                if (ll >= 100) {
+                                    ll = 99.99f;
+                                }
+                                DecimalFormat decimalFormat = new DecimalFormat("0.00");
+                                tickerview2.setText(decimalFormat.format(ll) + "");
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+                        }
+                    });
+                    anim.start();
+                    Glide.get(DingZhiActivity.this).clearMemory();
+                    Glide.with(DingZhiActivity.this)
+                            .load(bean.getBytes())
+                            .apply(myOptions)
+                            .into(touxiang);
+                    break;
+                }
+                case 220: {
+                    final View view = rootview.getChildAt(0);
+                    //入场动画(从右往左)
+                    ValueAnimator anim = ValueAnimator.ofInt(0, dw);
+                    anim.setDuration(1000);
+                    anim.setRepeatMode(ValueAnimator.RESTART);
+                    Interpolator interpolator = new DecelerateInterpolator(2f);
+                    anim.setInterpolator(interpolator);
+                    anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            int currentValue = (Integer) animation.getAnimatedValue();
+                            // 获得改变后的值
+                            //   System.out.println(currentValue);
+                            // 输出改变后的值
+                            // 步骤4：将改变后的值赋给对象的属性值，下面会详细说明
+                            view.setX(currentValue);
+                            // 步骤5：刷新视图，即重新绘制，从而实现动画效果
+                            view.requestLayout();
+                        }
+                    });
+                    anim.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            rootview.removeView(view);
+                            RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) l3.getLayoutParams();
+                            params2.height = (int) (dh * 0.36f);
+                            l3.setLayoutParams(params2);
+                            l3.invalidate();
+
+                            biaoti.setText("颜 值 贷 款");
+                            dibutv.setTextSize(46);
+                            dibutv2.setTextSize(42);
+                            dibutv.setText("颜 值 等 级 测 试 贷 款 机");
+                            dibutv2.setText("Face Level Test Loan Machine");
+
+                            isLink = true;
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+                        }
+                    });
+                    anim.start();
+
+                    break;
+                }
+                case 666: {
+                    int min = 100;
+                    int max = dw - 100;
+                    Random random = new Random();
+                    int numX = random.nextInt(max) % (max - min + 1) + min;
+                    int min2 = 180;
+                    int max2 = 420;
+                    Random random2 = new Random();
+                    int numY = random2.nextInt(max2) % (max2 - min2 + 1) + min2;
+                    baozha.setX(numX);
+                    baozha.setY(numY);
+                    int min5 = 0;
+                    int max5 = 5;
+                    Random random5 = new Random();
+                    int num = random5.nextInt(max5) % (max5 - min5 + 1) + min5;
+
+                    ParticleSystem s = new ParticleSystem(DingZhiActivity.this, 2000, baozhaiSZ[num], 2000);
+                    s.setSpeedModuleAndAngleRange(0.009f, 0.1f, 0, 360)
+                            // .setRotationSpeed(0)
+                            .setFadeOut(700, new LinearInterpolator())
+                            .setAcceleration(0.0001f, 90)
+                            .oneShot(baozha, 160);
+
+                    break;
+                }
 
             }
 
@@ -207,9 +1147,7 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                         Manifest.permission.CAMERA)
                         .build());
 
-
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -285,7 +1223,6 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
             /* 注册相机回调函数 */
             manager.setListener(this);
 
-
             mFeedFrameThread = new FeedFrameThread();
             mFeedFrameThread.start();
 
@@ -297,16 +1234,30 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
 
             AssetManager mgr = getAssets();
             //Univers LT 57 Condensed
-            Typeface tf = Typeface.createFromAsset(mgr, "baiduzongyijianti.ttf");
+            tf = Typeface.createFromAsset(mgr, "baiduzongyijianti.ttf");
             biaoti.setTypeface(tf);
-            biaoti.setText("颜 值 测 试");
-            dibutv.setText("颜值等级测试贷款机");
+            biaoti.setText("颜 值 贷 款");
+            dibutv.setTextSize(46);
+            dibutv2.setTextSize(42);
+            dibutv.setText("颜 值 等 级 测 试 贷 款 机");
             dibutv2.setText("Face Level Test Loan Machine");
 
 
+            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) l1.getLayoutParams();
+            params1.height = (int) (dh * 0.08f);
+            l1.setLayoutParams(params1);
+            l1.invalidate();
+
+
+            RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) l3.getLayoutParams();
+            params2.height = (int) (dh * 0.36f);
+            l3.setLayoutParams(params2);
+            l3.invalidate();
+
+
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) erweima.getLayoutParams();
-            params.width = (int) (dw * 0.2f);
-            params.height = (int) (dw * 0.2f);
+            params.width = (int) (dw * 0.18f);
+            params.height = (int) (dw * 0.18f);
             erweima.setLayoutParams(params);
             erweima.invalidate();
 
@@ -417,7 +1368,7 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                                 //识别的
 
                             } else {
-                                Log.d("RecognizeThread", "未识别");
+                                //   Log.d("RecognizeThread", "未识别");
                                 //未识别的
                                 // 防止concurrentHashMap 数据过多 ,超过一定数据 删除没用的
                                 if (concurrentHashMap.size() > 10) {
@@ -433,7 +1384,7 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                                 //判断次数超过3次
                                 if (concurrentHashMap.get(result.trackId) == 2) {
                                     tID = result.trackId;
-                                    isLink2 = true;
+                                    //isLink2 = true;
                                     //Log.d("RecognizeThread", "入库"+tID);
                                 }
 
@@ -552,8 +1503,8 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
             //头像加宽加高点
 //            RectF srect2 = new RectF(face.rect.left - 40 < 0 ? 0 : face.rect.left - 40, face.rect.top - 100 < 0 ? 0 : face.rect.top - 100,
 //                    face.rect.right + 40 > image.width ? image.width : face.rect.right + 40, face.rect.bottom + 100 > image.height ? image.height : face.rect.bottom + 100);
-            RectF srect2 = new RectF(face.rect.left - 110 < 0 ? 0 : face.rect.left - 110, face.rect.top - 100 < 0 ? 0 : face.rect.top - 100,
-                    face.rect.right + 200 > image.width ? image.width : face.rect.right + 200, face.rect.bottom + 100 > image.height ? image.height : face.rect.bottom + 100);
+            RectF srect2 = new RectF(face.rect.left - 120 < 0 ? 0 : face.rect.left - 120, face.rect.top - 120 < 0 ? 0 : face.rect.top - 120,
+                    face.rect.right + 220 > image.width ? image.width : face.rect.right + 220, face.rect.bottom + 120 > image.height ? image.height : face.rect.bottom + 120);
 
 
             float pitch = face.pose.pitch;
@@ -567,11 +1518,11 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                     //  Log.d("MainActivity203", "tID:" + tID);
                     //  Log.d("MainActivity203", "face.trackId:" + face.trackId);
                     //   Log.d("MainActivity203", "isLink:" + isLink);
-                    if (tID == face.trackId && isLink && isLink2) {  //入库成功后将 tID=-1;
+                    if (isLink) {  //入库成功后将 tID=-1;
                         //  Log.d("MainActivity203", "进来");
                         isLink = false;
-                        isLink2=false;
-                        tID = -1;
+                        //  isLink2 = false;
+                        //  tID = -1;
                         //获取图片
                         YuvImage image2 = new YuvImage(image.image, ImageFormat.NV21, image.width, image.height, null);
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -603,12 +1554,12 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
 
                         //linkedBlockingQueue.offer(b);
                         Log.d("MainActivity203", "陌生人入队列");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ceshi.setImageBitmap(bitmap);
-                            }
-                        });
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                ceshi.setImageBitmap(bitmap);
+//                            }
+//                        });
 
                     }
 
@@ -711,7 +1662,7 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
     }
 
     //首先登录-->获取所有主机-->创建或者删除或者更新门禁
-    private void getOkHttpClient2( final String fileName) {
+    private void getOkHttpClient2(final String fileName) {
 
         MultipartBody mBody = null;
         try {
@@ -749,12 +1700,12 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
 //                .add("return_attributes", "gender,age,emotion,eyestatus,beauty,skinstatus")
 //                .build();
 
-        okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder();
+        Request.Builder requestBuilder = new Request.Builder();
         //requestBuilder.header("User-Agent", "Koala Admin");
         //requestBuilder.header("Content-Type","application/json");
         requestBuilder.post(mBody);
         requestBuilder.url("https://api-cn.faceplusplus.com/facepp/v3/detect");
-        final okhttp3.Request request = requestBuilder.build();
+        final Request request = requestBuilder.build();
 
         Call mcall = okHttpClient.newCall(request);
         mcall.enqueue(new Callback() {
@@ -769,19 +1720,19 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
             }
 
             @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    PaiHangBean pp=null;
+                    PaiHangBean pp = null;
                     String s = response.body().string();
                     Log.d("YanShiActivitytttttt", "检测" + s);
                     JsonObject jsonObject = GsonUtil.parse(s).getAsJsonObject();
                     Gson gson = new Gson();
-                    YanZhiBean menBean = gson.fromJson(jsonObject, YanZhiBean.class);
+                    final YanZhiBean menBean = gson.fromJson(jsonObject, YanZhiBean.class);
                     if (menBean.getFaces() != null && menBean.getFaces().get(0) != null) {
                         Bitmap bitmap = BitmapFactory.decodeFile(fileName);
-                        PaiHangBean diKu=null;
-                        if (bitmap!=null) {
-                             diKu = new PaiHangBean();
+                        PaiHangBean diKu = null;
+                        if (bitmap != null) {
+                            diKu = new PaiHangBean();
                             //更新
                             YanZhiBean.FacesBean.AttributesBean.SkinstatusBean nn = menBean.getFaces().get(0).getAttributes().getSkinstatus();
                             HashMap<Double, String> kk = new HashMap<>();
@@ -814,7 +1765,6 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                             kk2.put(a2[5], "悲伤");
                             kk2.put(a2[6], "惊讶");
                             Arrays.sort(a2);  //进行排序
-
                             String xb = "";
                             if (menBean.getFaces().get(0).getAttributes().getGender().getValue().equals("Male")) {
                                 xb = "男";
@@ -828,19 +1778,72 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                             diKu.setXingbie(xb);
                             diKu.setGuanzhu(System.currentTimeMillis());
                             float yan = (float) (xb.equals("女") ? menBean.getFaces().get(0).getAttributes().getBeauty().getFemale_score() : menBean.getFaces().get(0).getAttributes().getBeauty().getMale_score());
-                            float fl = yan + 18 >= 100 ? 99.9f : yan + 18;
+                            float fl = (yan + 22) >= 100 ? 99.9f : (yan + 22);
+                            if (fl < 80) {
+                                fl = (80.0f + (fl / 100f));
+                            }
                             DecimalFormat decimalFormat = new DecimalFormat("0.00");
                             diKu.setYanzhi(Float.valueOf(decimalFormat.format(fl)));
                             diKu.setBiaoqing(kk2.get(a2[6]));
                             diKu.setBytes(bitmabToBytes(bitmap));
+                            float yz = diKu.getYanzhi();
 
-                            Message message = new Message();
-                            message.obj = diKu;
-                            message.what = 110;
-                            mHandler.sendMessage(message);
+
+                            if (diKu.getXingbie().equals("女")) {
+                                int min = 0;
+                                int max = 14;
+                                Random random = new Random();
+                                int num = random.nextInt(max) % (max - min + 1) + min;
+
+                                if (huati[num] == 5) {
+
+                                    Message message = new Message();
+                                    message.obj = diKu;
+                                    message.what = 120;
+                                    mHandler.sendMessage(message);
+
+                                } else {
+
+                                    if (yz > 80 && yz <= 85) {
+                                        Message message = new Message();
+                                        message.obj = diKu;
+                                        message.what = 130;
+                                        mHandler.sendMessage(message);
+                                    } else if (yz > 85 && yz <= 90) {
+                                        Message message = new Message();
+                                        message.obj = diKu;
+                                        message.what = 140;
+                                        mHandler.sendMessage(message);
+                                    } else if (yz > 90) {
+                                        Message message = new Message();
+                                        message.obj = diKu;
+                                        message.what = 150;
+                                        mHandler.sendMessage(message);
+                                    }
+                                }
+
+                            } else {
+                                if (yz > 80 && yz <= 85) {
+                                    Message message = new Message();
+                                    message.obj = diKu;
+                                    message.what = 130;
+                                    mHandler.sendMessage(message);
+                                } else if (yz > 85 && yz <= 90) {
+                                    Message message = new Message();
+                                    message.obj = diKu;
+                                    message.what = 140;
+                                    mHandler.sendMessage(message);
+                                } else {
+                                    Message message = new Message();
+                                    message.obj = diKu;
+                                    message.what = 150;
+                                    mHandler.sendMessage(message);
+                                }
+
+                            }
+
+
                         }
-
-
 
                         //  gengxingjiemian(menBean,facetoken,BitmapFactory.decodeFile(filePath));
 
@@ -857,30 +1860,36 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                                 float sou = 0;
                                 try {
 
-                                    final Bitmap map=BitmapFactory.decodeByteArray(paiHangBeanVector.get(i).getBytes(), 0, paiHangBeanVector.get(i).getBytes().length);
-                                    FacePassCompareResult result = mFacePassHandler.compare(map, bitmap, false);
-                                    sou= result.score;
-
+                                    final Bitmap map = BitmapFactory.decodeByteArray(paiHangBeanVector.get(i).getBytes(), 0, paiHangBeanVector.get(i).getBytes().length);
+                                    FacePassCompareResult result = mFacePassHandler.compare(map, BitmapFactory.decodeByteArray(diKu.getBytes(), 0, diKu.getBytes().length), false);
+                                    sou = result.score;
                                     Log.d("MainActivity", "sou:" + sou);
 
+                                } catch (final FacePassException e) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            rootview.removeAllViews();
+                                            isLink = true;
+                                            Log.d("YanShiActivity", e.getMessage() + "ggggg");
+                                        }
+                                    });
 
-                                } catch (FacePassException e) {
-                                    isLink = true;
-                                    //  Log.d("YanShiActivity", e.getMessage()+"ggggg");
                                 }
                                 //  Log.d("YanShiActivity", "sou:" + sou);
                                 if (sou >= 68) {
                                     dui = 1;
                                     //通过
 
-                                    String xb = "";
-                                    if (menBean.getFaces().get(0).getAttributes().getGender().getValue().equals("Male")) {
-                                        xb = "男";
-                                    } else {
-                                        xb = "女";
-                                    }
+//                                    String xb = "";
+//                                    if (menBean.getFaces().get(0).getAttributes().getGender().getValue().equals("Male")) {
+//                                        xb = "男";
+//                                    } else {
+//                                        xb = "女";
+//                                    }
                                     //  Log.d("YanShiActivityttttt", "bitmabToBytes(bitmap):" + bitmabToBytes(bitmap).length);
                                     // diKu.setTrackId(trackId);
+
                                     diKu.setCishu(paiHangBeanVector.get(i).getCishu() + 1);
 
                                     if (paiHangBeanVector.get(i).getNianl() > (menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3)) {
@@ -889,34 +1898,43 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                                         diKu.setNianl(paiHangBeanVector.get(i).getNianl());
                                     }
 
-                                    diKu.setXingbie(xb);
-                                    //  diKu.setGuanzhu(System.currentTimeMillis());
-                                    float yan = (float) (xb.equals("女") ? menBean.getFaces().get(0).getAttributes().getBeauty().getFemale_score() : menBean.getFaces().get(0).getAttributes().getBeauty().getMale_score());
-                                    float fl = yan + 18 >= 100 ? 99.9f : yan + 18;
-                                    if (paiHangBeanVector.get(i).getYanzhi() < yan) {
-                                        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                                        diKu.setYanzhi(Float.valueOf(decimalFormat.format(fl)));
-                                    } else {
-                                        diKu.setYanzhi(paiHangBeanVector.get(i).getYanzhi());
-                                    }
+                                    //  diKu.setXingbie(xb);
+//                                    //  diKu.setGuanzhu(System.currentTimeMillis());
+//                                    float yan = (float) (xb.equals("女") ? menBean.getFaces().get(0).getAttributes().getBeauty().getFemale_score() : menBean.getFaces().get(0).getAttributes().getBeauty().getMale_score());
+//                                    float fl = yan + 18 >= 100 ? 99.9f : yan + 18;
+//                                    if (fl<80){
+//                                        fl=(80.0f+(fl/100f));
+//                                    }
+//                                    if (paiHangBeanVector.get(i).getYanzhi() < yan) {
+//                                        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+//                                        diKu.setYanzhi(Float.valueOf(decimalFormat.format(fl)));
+//                                    } else {
+//                                        diKu.setYanzhi(paiHangBeanVector.get(i).getYanzhi());
+//                                    }
 
                                     //替换掉
                                     paiHangBeanVector.set(i, diKu);
-                                    pp=diKu;
+                                    if (paiHangBeanVector.size() > 4) {
+                                        paiHangBeanVector.remove(0);
+                                    }
+
+                                    pp = diKu;
 
                                     //更新界面
-                                   // setViewFullScreen(zhongjianview, diKu, facetoken);
+                                    // setViewFullScreen(zhongjianview, diKu, facetoken);
 
                                     //计时
+                                    final PaiHangBean finalDiKu = diKu;
                                     task = new TimerTask() {
                                         @Override
                                         public void run() {
                                             Message message = new Message();
-                                            message.what = 111;
+                                            message.what = 110;
+                                            message.obj = finalDiKu;
                                             mHandler.sendMessage(message);
                                         }
                                     };
-                                    timer.schedule(task, 10000);
+                                    timer.schedule(task, 9000);
                                     //保存到本地，以后上传
                                     Subjects subjects = new Subjects();
                                     subjects.setAge(diKu.getNianl());
@@ -924,9 +1942,9 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                                     subjects.setSex(diKu.getXingbie());
                                     subjects.setFaceScore(diKu.getYanzhi());
                                     subjectsBox.put(subjects);
-                                    yanzhiP=diKu.getYanzhi();
-                                    nianlingP=diKu.getNianl();
-                                    filePathP=diKu.getBytes();
+                                    yanzhiP = diKu.getYanzhi();
+                                    nianlingP = diKu.getNianl();
+                                    filePathP = diKu.getBytes();
 
                                     break;
 
@@ -938,40 +1956,48 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                             //跟所有人不同 就添加
                             if (dui == 0) {
 
-
-                                String xb = "";
-                                if (menBean.getFaces().get(0).getAttributes().getGender().getValue().equals("Male")) {
-                                    xb = "男";
-                                } else {
-                                    xb = "女";
-                                }
+//                                String xb = "";
+//                                if (menBean.getFaces().get(0).getAttributes().getGender().getValue().equals("Male")) {
+//                                    xb = "男";
+//                                } else {
+//                                    xb = "女";
+//                                }
                                 //  Log.d("YanShiActivityttttt", "bitmabToBytes(bitmap):" + bitmabToBytes(bitmap).length);
                                 //  diKu.setTrackId(trackId);
                                 diKu.setCishu(diKu.getCishu() + 1);
                                 diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3);
-                                diKu.setXingbie(xb);
+                                // diKu.setXingbie(xb);
                                 diKu.setGuanzhu(System.currentTimeMillis());
-                                float yan = (float) (xb.equals("女") ? menBean.getFaces().get(0).getAttributes().getBeauty().getFemale_score() : menBean.getFaces().get(0).getAttributes().getBeauty().getMale_score());
-                                float fl = yan + 18 >= 100 ? 99.9f : yan + 18;
-                                DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                                diKu.setYanzhi(Float.valueOf(decimalFormat.format(fl)));
+
+//                                float yan = (float) (xb.equals("女") ? menBean.getFaces().get(0).getAttributes().getBeauty().getFemale_score() : menBean.getFaces().get(0).getAttributes().getBeauty().getMale_score());
+//                                float fl = yan + 18 >= 100 ? 99.9f : yan + 18;
+//                                if (fl<80){
+//                                    fl=(80.0f+(fl/100f));
+//                                }
+//                                DecimalFormat decimalFormat = new DecimalFormat("0.00");
+//                                diKu.setYanzhi(Float.valueOf(decimalFormat.format(fl)));
 
                                 paiHangBeanVector.add(diKu);
-                                pp=diKu;
+                                if (paiHangBeanVector.size() > 4) {
+                                    paiHangBeanVector.remove(0);
+                                }
+                                pp = diKu;
 
                                 //更新界面
-                             //   setViewFullScreen(zhongjianview, diKu, facetoken);
+                                //   setViewFullScreen(zhongjianview, diKu, facetoken);
 
                                 //计时
+                                final PaiHangBean finalDiKu1 = diKu;
                                 task = new TimerTask() {
                                     @Override
                                     public void run() {
                                         Message message = new Message();
-                                        message.what = 111;
+                                        message.what = 110;
+                                        message.obj = finalDiKu1;
                                         mHandler.sendMessage(message);
                                     }
                                 };
-                                timer.schedule(task, 10000);
+                                timer.schedule(task, 9000);
                                 //保存到本地，以后上传
                                 Subjects subjects = new Subjects();
                                 subjects.setAge(diKu.getNianl());
@@ -979,46 +2005,57 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                                 subjects.setSex(diKu.getXingbie());
                                 subjects.setFaceScore(diKu.getYanzhi());
                                 subjectsBox.put(subjects);
-                                yanzhiP=diKu.getYanzhi();
-                                nianlingP=diKu.getNianl();
-                                filePathP=diKu.getBytes();
+                                yanzhiP = diKu.getYanzhi();
+                                nianlingP = diKu.getNianl();
+                                filePathP = diKu.getBytes();
                             }
 
 
                         } else {
 
                             //更新
-                            String xb = "";
-                            if (menBean.getFaces().get(0).getAttributes().getGender().getValue().equals("Male")) {
-                                xb = "男";
-                            } else {
-                                xb = "女";
-                            }
+//                            String xb = "";
+//                            if (menBean.getFaces().get(0).getAttributes().getGender().getValue().equals("Male")) {
+//                                xb = "男";
+//                            } else {
+//                                xb = "女";
+//                            }
                             //  Log.d("YanShiActivityttttt", "bitmabToBytes(bitmap):" + bitmabToBytes(bitmap).length);
                             // diKu.setTrackId(trackId);
                             diKu.setCishu(diKu.getCishu() + 1);
                             diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3);
-                            diKu.setXingbie(xb);
+                            //  diKu.setXingbie(xb);
                             diKu.setGuanzhu(System.currentTimeMillis());
-                            float yan = (float) (xb.equals("女") ? menBean.getFaces().get(0).getAttributes().getBeauty().getFemale_score() : menBean.getFaces().get(0).getAttributes().getBeauty().getMale_score());
-                            float fl = yan + 18 >= 100 ? 99.9f : yan + 18;
-                            DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                            diKu.setYanzhi(Float.valueOf(decimalFormat.format(fl)));
+
+//                            float yan = (float) (xb.equals("女") ? menBean.getFaces().get(0).getAttributes().getBeauty().getFemale_score() : menBean.getFaces().get(0).getAttributes().getBeauty().getMale_score());
+//                            float fl = yan + 18 >= 100 ? 99.9f : yan + 18;
+//                            if (fl<80){
+//                                fl=(80.0f+(fl/100f));
+//                            }
+//                            DecimalFormat decimalFormat = new DecimalFormat("0.00");
+//                            diKu.setYanzhi(Float.valueOf(decimalFormat.format(fl)));
+
                             paiHangBeanVector.add(diKu);
-                            pp=diKu;
+                            if (paiHangBeanVector.size() > 4) {
+                                paiHangBeanVector.remove(0);
+                            }
+
+                            pp = diKu;
                             //更新界面
-                          //  setViewFullScreen(zhongjianview, diKu, facetoken);
+                            //  setViewFullScreen(zhongjianview, diKu, facetoken);
 
                             //计时
+                            final PaiHangBean finalDiKu2 = diKu;
                             task = new TimerTask() {
                                 @Override
                                 public void run() {
                                     Message message = new Message();
-                                    message.what = 111;
+                                    message.what = 110;
+                                    message.obj = finalDiKu2;
                                     mHandler.sendMessage(message);
                                 }
                             };
-                            timer.schedule(task, 10000);
+                            timer.schedule(task, 9000);
                             //保存到本地，以后上传
                             Subjects subjects = new Subjects();
                             subjects.setAge(diKu.getNianl());
@@ -1026,58 +2063,91 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                             subjects.setSex(diKu.getXingbie());
                             subjects.setFaceScore(diKu.getYanzhi());
                             subjectsBox.put(subjects);
-                            yanzhiP=diKu.getYanzhi();
-                            nianlingP=diKu.getNianl();
-                            filePathP=diKu.getBytes();
+                            yanzhiP = diKu.getYanzhi();
+                            nianlingP = diKu.getNianl();
+                            filePathP = diKu.getBytes();
                         }
 
                         //排序
+
+                        //冒泡排序实现
+//                        for(int i=0;i<paiHangBeanVector.size()-1;i++){
+//                                for(int j=0;j<paiHangBeanVector.size()-i-1;j++){
+//                                        if(a[j]>a[j+1]){
+//                                                int temp = a[j];
+//                                                a[j] = a[j+1];
+//                                                a[j+1] = temp;
+//                                            }
+//                                    }
+//                            }
+
                         //  Log.d("YanShiActivity", "paiHangBeanVector.size():" + paiHangBeanVector.size());
 
                         Comparator<PaiHangBean> studentComparator2 = new Comparator<PaiHangBean>() {
                             @Override
                             public int compare(PaiHangBean o1, PaiHangBean o2) {
-
                                 if (o1.getYanzhi() != o2.getYanzhi()) {
-                                    return (int) (o2.getYanzhi() - o1.getYanzhi());
+
+                                    if ((o2.getYanzhi() - o1.getYanzhi()) < 1) {
+                                        return (int) ((o2.getYanzhi() - o1.getYanzhi()) * 100);
+                                    } else {
+                                        return (int) (o2.getYanzhi() - o1.getYanzhi());
+                                    }
+
                                 }
                                 return 0;
                             }
                         };
                         Collections.sort(paiHangBeanVector, studentComparator2);
-
                         //  adapter_zuo.notifyDataSetChanged();
                         //  paihangP= paiHangBeanVector.lastIndexOf(pp)+1;
-
                         int size = paiHangBeanVector.size();
-                        for (int ii=0;ii<size;ii++){
-                            if (pp.getYanzhi()==paiHangBeanVector.get(ii).getYanzhi()){
-                                paihangP=ii+1;
+
+                        for (int ii = 0; ii < size; ii++) {
+                            if (pp.getYanzhi() == paiHangBeanVector.get(ii).getYanzhi()) {
+                                paihangP = ii + 1;
                                 break;
                             }
                             //  Log.d("MainActivity", "pp.getYanzhi():" + pp.getYanzhi());
                             //  Log.d("MainActivity", "paiHangBeanVector.get(ii).getYanzhi():" + paiHangBeanVector.get(ii).getYanzhi());
                         }
                         //  Log.d("MainActivity", "paihangP:" + paihangP);
-                        if (size > 6) {
+                        if (size > 4) {
                             paiHangBeanVector.remove(paiHangBeanVector.lastElement());
                         }
                         Log.d("YanShiActivitytttttt", "更新成功");
 
 
-                    }else {
+                    } else {
                         isLink = true;
                         mFacePassHandler.reset();
                     }
 
-                } catch (Exception e) {
-                    Log.d("YanShiActivity", e.getMessage() + "");
-                    isLink = true;
-                    mFacePassHandler.reset();
+                } catch (final Exception e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            rootview.removeAllViews();
+                            isLink = true;
+                            Log.d("YanShiActivity", e.getMessage() + "ggggg");
+                        }
+                    });
                 }
 
             }
         });
+
+    }
+
+
+    private void bashi(float ss) {
+
+        if (ss < 80) {
+            ss += 1.6;
+            if (ss < 80) {
+                bashi(ss);
+            }
+        }
 
     }
 
@@ -1099,14 +2169,13 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                 bitmap.recycle();
                 baos.close();
             } catch (IOException e) {
-                Log.d("MainActivity", e.getMessage()+"bitmap转byte异常");
+                Log.d("MainActivity", e.getMessage() + "bitmap转byte异常");
                 e.printStackTrace();
             }
         }
         Log.d("MainActivity", "返回空byte[]");
         return new byte[0];
     }
-
 
 
 }

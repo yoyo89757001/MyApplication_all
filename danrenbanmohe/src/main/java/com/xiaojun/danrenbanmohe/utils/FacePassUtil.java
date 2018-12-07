@@ -160,7 +160,7 @@ public class FacePassUtil {
                                     }
                                 });
 
-                                checkGroup(activity,context);
+                                //checkGroup(activity,context);
 
 
                             } catch (FacePassException e) {

@@ -21,7 +21,7 @@ import java.util.List;
 
 
 /**
- * Created by wangjingyi on 28/03/2017.
+ * Created by wangjingyi on 28/xh3/2017.
  */
 
 public class FaceView extends View {
@@ -51,7 +51,7 @@ public class FaceView extends View {
         rect = new ArrayList<Rect>();
         ages = new ArrayList<>();
         genders = new ArrayList<>();
-        paint.setColor(Color.BLUE);
+        paint.setARGB(100,0,0,255);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(4.0f);
 

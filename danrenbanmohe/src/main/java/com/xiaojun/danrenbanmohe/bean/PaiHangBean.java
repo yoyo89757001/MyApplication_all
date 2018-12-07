@@ -15,7 +15,7 @@ public class PaiHangBean {
     private float yanzhi;
     private String fuzhi;
     private String time;
-    private long trackId;
+    private double trackId;
     private int cishu;
     private int paihang;
     private int nianl;
@@ -57,10 +57,10 @@ public class PaiHangBean {
     public void setTime(String time) {
         this.time = time;
     }
-    public long getTrackId() {
+    public double getTrackId() {
         return this.trackId;
     }
-    public void setTrackId(long trackId) {
+    public void setTrackId(double trackId) {
         this.trackId = trackId;
     }
     public int getCishu() {
