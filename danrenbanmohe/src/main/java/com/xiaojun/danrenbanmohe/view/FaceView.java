@@ -51,7 +51,7 @@ public class FaceView extends View {
         rect = new ArrayList<Rect>();
         ages = new ArrayList<>();
         genders = new ArrayList<>();
-        paint.setARGB(100,0,0,255);
+        paint.setARGB(80,0,0,255);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(4.0f);
 

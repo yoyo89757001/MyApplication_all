@@ -25,7 +25,7 @@ public class GlideCircleTransform extends BitmapTransformation {
     private float mBorderWidth;
 
     public GlideCircleTransform(Context context) {
-        super(context);
+        super();
     }
 
     public GlideCircleTransform(Context context, int borderWidth, int borderColor) {

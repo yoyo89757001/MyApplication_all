@@ -36,13 +36,15 @@ import okhttp3.ResponseBody;
 
 
 public class FacePassUtil {
-   private   FacePassModel trackModel;
-   private     FacePassModel poseModel;
-   private    FacePassModel blurModel;
-   private     FacePassModel livenessModel;
-   private    FacePassModel searchModel;
-   private FacePassModel detectModel;
-   private     FacePassModel ageGenderModel;
+    FacePassModel trackModel;
+    FacePassModel poseModel;
+    FacePassModel blurModel;
+    FacePassModel livenessModel;
+    FacePassModel searchModel;
+    FacePassModel detectModel;
+    FacePassModel detectRectModel;
+    FacePassModel landmarkModel;
+    FacePassModel smileModel;
     /* SDK 实例对象 */
     private Context context;
     private int TIMEOUT=30*1000;
@@ -62,35 +64,40 @@ public class FacePassUtil {
                     while (!activity.isFinishing()) {
                         if (FacePassHandler.isAvailable()) {
                             /* FacePass SDK 所需模型， 模型在assets目录下 */
-                            trackModel = FacePassModel.initModel(context.getAssets(), "tracker.DT1.4.1.dingding.20180315.megface2.9.bin");
-                            poseModel = FacePassModel.initModel(context.getAssets(), "pose.alfa.tiny.170515.bin");
-                            blurModel = FacePassModel.initModel(context.getAssets(), "blurness.v5.l2rsmall.bin");
-                            livenessModel = FacePassModel.initModel(context.getAssets(), "panorama.facepass.offline.180312.bin");
-                            searchModel = FacePassModel.initModel(context.getAssets(), "feat.small.facepass.v2.9.bin");
-                            detectModel = FacePassModel.initModel(context.getAssets(), "detector.mobile.v5.fast.bin");
-                            ageGenderModel = FacePassModel.initModel(context.getAssets(), "age_gender.bin");
+                            poseModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "pose.alfa.tiny.170515.bin");
+                            blurModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "blurness.v5.l2rsmall.bin");
+                            livenessModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "panorama.facepass.181129_3288_3models_1core.combine.bin");
+                            searchModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "feat.inu.3comps.inp96.200ms.e6000.pca512.bin");
+                            detectModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "detector.retinanet.facei2head.x14.180910.bin");
+//                        detectRectModel = FacePassModel.initModel(getApplicationContext().getAssets(), "det.retinanet.head2face.x20.180613.bin");
+                            detectRectModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "det.retinanet.face2head.x14.180906.bin");
+
+                            landmarkModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "lmk.postfilter.tiny.dt1.4.1.20180602.3dpose.bin");
+                            smileModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "attr.blur.align.gray.general.mgf29.0.1.0.181127.smile.bin");
+
                             /* SDK 配置 */
+                            boolean smileEnabled = false;
                             float searchThreshold = baoCunBean.getShibieFaZhi();
                             float livenessThreshold = baoCunBean.getHuoTiFZ();
                             boolean livenessEnabled = baoCunBean.isHuoTi();
                             int faceMinThreshold =baoCunBean.getShibieFaceSize();
-                            FacePassPose poseThreshold = new FacePassPose(22f, 22f, 22f);
+                            FacePassPose poseThreshold = new FacePassPose(30f, 30f, 30f);
                             float blurThreshold = 0.3f;
                             float lowBrightnessThreshold = 70f;
                             float highBrightnessThreshold = 210f;
                             float brightnessSTDThreshold = 60f;
                             int retryCount = 2;
-                            int rotation = cameraRotation;
                             String fileRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
                             FacePassConfig config;
                             try {
-
                                 /* 填入所需要的配置 */
-                                config = new FacePassConfig(searchThreshold, livenessThreshold, livenessEnabled,
+                                config = new FacePassConfig(searchThreshold, livenessThreshold, livenessEnabled, smileEnabled,
                                         faceMinThreshold, poseThreshold, blurThreshold,
                                         lowBrightnessThreshold, highBrightnessThreshold, brightnessSTDThreshold,
-                                        retryCount, rotation, fileRootPath,
-                                        trackModel, poseModel, blurModel, livenessModel, searchModel, detectModel, ageGenderModel);
+                                        retryCount, cameraRotation, fileRootPath,
+                                        poseModel, blurModel, livenessModel, searchModel, detectModel,
+                                        detectRectModel, landmarkModel, smileModel);
+
                                 /* 创建SDK实例 */
                                 mFacePassHandler = new FacePassHandler(config);
                                 MyApplication.myApplication.setFacePassHandler(mFacePassHandler);
@@ -110,7 +117,7 @@ public class FacePassUtil {
                                 float lowBrightnessThreshold2 = 70f;
                                 float highBrightnessThreshold2 = 210f;
                                 float brightnessSTDThreshold2 = 60f;
-                                FacePassConfig config1=new FacePassConfig(faceMinThreshold2,30f,30f,30f,blurThreshold2,
+                                FacePassConfig config1=new FacePassConfig(faceMinThreshold2,25f,25f,25f,blurThreshold2,
                                         lowBrightnessThreshold2,highBrightnessThreshold2,brightnessSTDThreshold2);
                                 boolean is=   mFacePassHandler.setAddFaceConfig(config1);
 
@@ -125,10 +132,6 @@ public class FacePassUtil {
                                        MyApplication.myApplication.setFacePassHandler(mFacePassHandler);
                                         EventBus.getDefault().post("mFacePassHandler");
                                         chaxuncuowu();
-
-
-
-
 
 
                                     }

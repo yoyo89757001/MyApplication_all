@@ -928,7 +928,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
                                                     Log.d("RecognizeThread", "识别的qq" + result.trackId);
                                                     //转向
-//                                                    Bitmap fileBitmap = FileUtil.adjustPhotoRotation(bitmapTX, 90);
+                                                    Bitmap fileBitmap = FileUtil.adjustPhotoRotation(bitmapTX, 90);
 //
 //                                                    if (fileBitmap == null) {
 //                                                        isLink = true;

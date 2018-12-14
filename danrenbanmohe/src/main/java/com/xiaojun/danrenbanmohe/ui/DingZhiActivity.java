@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
@@ -24,6 +25,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
@@ -135,13 +137,15 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
     RelativeLayout l1;
     @BindView(R.id.l3)
     LinearLayout l3;
+    @BindView(R.id.baozha)
+    View baozha;
+
 
 
     private static final String authIP = "https://api-cn.faceplusplus.com";
     private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
     private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
-    @BindView(R.id.baozha)
-    View baozha;
+
     private int[] baozhaiSZ = {R.drawable.baiselizi, R.drawable.baiselizi2, R.drawable.baiselizi3, R.drawable.baiselizi4, R.drawable.baiselizi5, R.drawable.baiselizi6};
     private long tID = -1;
     private ConcurrentHashMap<Long, Integer> concurrentHashMap = new ConcurrentHashMap<Long, Integer>();
@@ -295,7 +299,7 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                                                     @Override
                                                     public void run() {
                                                         final View view_xiaoxi = View.inflate(DingZhiActivity.this, R.layout.paihang_item_min, null);
-                                                        ScreenAdapterTools.getInstance().loadView(view_xiaoxi);
+                                                       // ScreenAdapterTools.getInstance().loadView(view_xiaoxi);
                                                         RelativeLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
                                                         TextView yanzhi = view_xiaoxi.findViewById(R.id.yanzhi3);
                                                         Button xuhao = view_xiaoxi.findViewById(R.id.xuhao1);
@@ -1080,8 +1084,8 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                             biaoti.setText("颜 值 贷 款");
                             dibutv.setTextSize(46);
                             dibutv2.setTextSize(42);
-                            dibutv.setText("颜 值 等 级 测 试 贷 款 机");
-                            dibutv2.setText("Face Level Test Loan Machine");
+                            dibutv.setText("颜 值 贷 款 机");
+                            dibutv2.setText("Face Loan Machine");
 
                             isLink = true;
                         }
@@ -1210,7 +1214,7 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                 screenState = 0;
             }
 
-            FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+            // FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
 
             cameraFacingFront = true;
@@ -1239,8 +1243,8 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
             biaoti.setText("颜 值 贷 款");
             dibutv.setTextSize(46);
             dibutv2.setTextSize(42);
-            dibutv.setText("颜 值 等 级 测 试 贷 款 机");
-            dibutv2.setText("Face Level Test Loan Machine");
+            dibutv.setText("颜 值 贷 款 机");
+            dibutv2.setText("Face Loan Machine");
 
 
             RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) l1.getLayoutParams();
@@ -1253,6 +1257,20 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
             params2.height = (int) (dh * 0.36f);
             l3.setLayoutParams(params2);
             l3.invalidate();
+
+
+
+            RelativeLayout.LayoutParams paramstopview = (RelativeLayout.LayoutParams) cameraView.getLayoutParams();
+            paramstopview.topMargin=-(int) (dh * 0.34f);
+            paramstopview.height=dh;
+            cameraView.setLayoutParams(paramstopview);
+            cameraView.invalidate();
+
+            RelativeLayout.LayoutParams paramstopview2 = (RelativeLayout.LayoutParams) faceView.getLayoutParams();
+            paramstopview2.topMargin=-(int) (dh * 0.34f);
+            paramstopview2.height=dh;
+            faceView.setLayoutParams(paramstopview2);
+            faceView.invalidate();
 
 
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) erweima.getLayoutParams();
@@ -1774,15 +1792,15 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
 
                             diKu.setCishu(diKu.getCishu() + 1);
                             diKu.setFuzhi(kk.get(a[3]));
-                            diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3);
+                           // diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 5);
                             diKu.setXingbie(xb);
                             diKu.setGuanzhu(System.currentTimeMillis());
                             float yan = (float) (xb.equals("女") ? menBean.getFaces().get(0).getAttributes().getBeauty().getFemale_score() : menBean.getFaces().get(0).getAttributes().getBeauty().getMale_score());
-                            float fl = (yan + 22) >= 100 ? 99.9f : (yan + 22);
+                            float fl = (yan + 25) >= 100 ? 99.9f : (yan + 25);
                             if (fl < 80) {
                                 fl = (80.0f + (fl / 100f));
                             }
-                            DecimalFormat decimalFormat = new DecimalFormat("0.00");
+                            DecimalFormat decimalFormat = new DecimalFormat("0.0");
                             diKu.setYanzhi(Float.valueOf(decimalFormat.format(fl)));
                             diKu.setBiaoqing(kk2.get(a2[6]));
                             diKu.setBytes(bitmabToBytes(bitmap));
@@ -1790,6 +1808,8 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
 
 
                             if (diKu.getXingbie().equals("女")) {
+                                diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 10);
+
                                 int min = 0;
                                 int max = 14;
                                 Random random = new Random();
@@ -1823,6 +1843,9 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                                 }
 
                             } else {
+
+                                diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 5);
+
                                 if (yz > 80 && yz <= 85) {
                                     Message message = new Message();
                                     message.obj = diKu;
@@ -1892,11 +1915,11 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
 
                                     diKu.setCishu(paiHangBeanVector.get(i).getCishu() + 1);
 
-                                    if (paiHangBeanVector.get(i).getNianl() > (menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3)) {
-                                        diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3);
-                                    } else {
-                                        diKu.setNianl(paiHangBeanVector.get(i).getNianl());
-                                    }
+//                                    if (paiHangBeanVector.get(i).getNianl() > (menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3)) {
+//                                        diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3);
+//                                    } else {
+//                                        diKu.setNianl(paiHangBeanVector.get(i).getNianl());
+//                                    }
 
                                     //  diKu.setXingbie(xb);
 //                                    //  diKu.setGuanzhu(System.currentTimeMillis());
@@ -1965,7 +1988,7 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                                 //  Log.d("YanShiActivityttttt", "bitmabToBytes(bitmap):" + bitmabToBytes(bitmap).length);
                                 //  diKu.setTrackId(trackId);
                                 diKu.setCishu(diKu.getCishu() + 1);
-                                diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3);
+                                // diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3);
                                 // diKu.setXingbie(xb);
                                 diKu.setGuanzhu(System.currentTimeMillis());
 
@@ -2023,7 +2046,7 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                             //  Log.d("YanShiActivityttttt", "bitmabToBytes(bitmap):" + bitmabToBytes(bitmap).length);
                             // diKu.setTrackId(trackId);
                             diKu.setCishu(diKu.getCishu() + 1);
-                            diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3);
+                            //   diKu.setNianl(menBean.getFaces().get(0).getAttributes().getAge().getValue() - 3);
                             //  diKu.setXingbie(xb);
                             diKu.setGuanzhu(System.currentTimeMillis());
 
@@ -2087,13 +2110,11 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
                             @Override
                             public int compare(PaiHangBean o1, PaiHangBean o2) {
                                 if (o1.getYanzhi() != o2.getYanzhi()) {
-
                                     if ((o2.getYanzhi() - o1.getYanzhi()) < 1) {
-                                        return (int) ((o2.getYanzhi() - o1.getYanzhi()) * 100);
+                                        return (int) ((o2.getYanzhi() - o1.getYanzhi()) * 10);
                                     } else {
                                         return (int) (o2.getYanzhi() - o1.getYanzhi());
                                     }
-
                                 }
                                 return 0;
                             }
@@ -2175,6 +2196,26 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
         }
         Log.d("MainActivity", "返回空byte[]");
         return new byte[0];
+    }
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+
+        Log.d("MainActivity", "ev.getPointerCount()1:" + ev.getPointerCount());
+        Log.d("MainActivity", "ev.getAction()1:" + ev.getAction());
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            isAnXia = true;
+        }
+        if (isAnXia) {
+            if (ev.getPointerCount() == 4) {
+                isAnXia = false;
+                startActivity(new Intent(DingZhiActivity.this, SheZhiActivity.class));
+                finish();
+            }
+        }
+
+        return super.dispatchTouchEvent(ev);
     }
 
 

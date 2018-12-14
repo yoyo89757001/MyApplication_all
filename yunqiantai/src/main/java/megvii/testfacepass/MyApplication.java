@@ -61,6 +61,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     @Override
     public void onCreate() {
         super.onCreate();
+
         myApplication = this;
         mBoxStore = MyObjectBox.builder().androidContext(this).build();
 
@@ -155,6 +156,8 @@ public class MyApplication extends Application implements Application.ActivityLi
         facePassHandler=facePassHandler1;
     }
 
+
+
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         if(activity.getParent()!=null){
@@ -162,8 +165,6 @@ public class MyApplication extends Application implements Application.ActivityLi
         }else{
             CommonData.mNowContext = activity;
         }
-
-
 
         Intent intent = new Intent(activity, MyService.class);
         bindService(intent, serviceConnection,  Context.BIND_AUTO_CREATE);

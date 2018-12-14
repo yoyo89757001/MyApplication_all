@@ -28,15 +28,15 @@ public class BaseActivity extends AppCompatActivity {
             baoCunBean = new BaoCunBean();
             baoCunBean.setId(123456L);
             baoCunBean.setHoutaiDiZhi("http://hy.inteyeligence.com/front");
-            baoCunBean.setShibieFaceSize(10);
+            baoCunBean.setShibieFaceSize(20);
             baoCunBean.setShibieFaZhi(70);
             baoCunBean.setYudiao(5);
             baoCunBean.setYusu(5);
             baoCunBean.setBoyingren(4);
             baoCunBean.setRuKuFaceSize(60);
-            baoCunBean.setRuKuMoHuDu(0.4f);
+            baoCunBean.setRuKuMoHuDu(0.3f);
             baoCunBean.setHuoTiFZ(70);
-            baoCunBean.setHuoTi(true);
+            baoCunBean.setHuoTi(false);
             baoCunBean.setDangqianShiJian("d");
             baoCunBean.setTianQi(false);
             if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {

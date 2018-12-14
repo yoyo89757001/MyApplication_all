@@ -431,12 +431,9 @@
     <ImageView
         android:scaleType="fitXY"
         android:id="@+id/ceshi"
-        android:background="@color/white"
-        android:visibility="gone"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="100dp"
-        android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+
 
 
 

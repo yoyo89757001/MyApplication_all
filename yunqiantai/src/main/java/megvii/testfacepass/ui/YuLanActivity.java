@@ -61,6 +61,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.sdsmdg.tastytoast.TastyToast;
 
 
 import org.apache.http.HttpEntity;
@@ -83,6 +84,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
+import io.objectbox.Box;
 import megvii.facepass.FacePassException;
 import megvii.facepass.FacePassHandler;
 import megvii.facepass.types.FacePassAddFaceResult;
@@ -98,14 +100,19 @@ import megvii.facepass.types.FacePassPose;
 import megvii.facepass.types.FacePassRecognitionResult;
 import megvii.facepass.types.FacePassRecognitionResultType;
 import megvii.facepass.types.FacePassSyncResult;
+import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.adapter.FaceTokenAdapter;
 import megvii.testfacepass.adapter.GroupNameAdapter;
+import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.BenDiJiLuBean;
+import megvii.testfacepass.beans.TodayBean;
 import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
 
 import megvii.testfacepass.network.ByteRequest;
+import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.SettingVar;
 import megvii.testfacepass.view.FaceView;
@@ -193,7 +200,9 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     FacePassModel livenessModel;
     FacePassModel searchModel;
     FacePassModel detectModel;
-    FacePassModel ageGenderModel;
+    FacePassModel detectRectModel;
+    FacePassModel landmarkModel;
+    FacePassModel smileModel;
 
     Button visible;
     LinearLayout ll;
@@ -218,6 +227,10 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
     private Handler mAndroidHandler;
 
+    private Box<BaoCunBean> baoCunBeanDao = null;
+    private BaoCunBean baoCunBean = null;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,6 +240,8 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         mDetectResultQueue = new ArrayBlockingQueue<byte[]>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
         initAndroidHandler();
+        baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+        baoCunBean = baoCunBeanDao.get(123456L);
 
         if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
             recognize_url = "http://" + serverIP_online + ":8080/api/service/recognize/v1";
@@ -241,10 +256,18 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         if (!hasPermission()) {
             requestPermission();
         } else {
-          //  initFacePassSDK();
+            FacePassHandler.initSDK(getApplicationContext());
         }
 
-        initFaceHandler();
+        if (baoCunBean != null) {
+            FacePassUtil util = new FacePassUtil();
+            util.init(YuLanActivity.this, getApplicationContext(), cameraRotation, baoCunBean);
+        } else {
+            Toast tastyToast = TastyToast.makeText(YuLanActivity.this, "获取本地设置失败,请进入设置界面设置基本信息", TastyToast.LENGTH_LONG, TastyToast.INFO);
+            tastyToast.setGravity(Gravity.CENTER, 0, 0);
+            tastyToast.show();
+        }
+      //  initFaceHandler();
         /* 初始化网络请求库 */
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
@@ -280,71 +303,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         };
     }
 
-//    private void initFacePassSDK() {
-//        FacePassHandler.getAuth(authIP, apiKey, apiSecret);
-//        FacePassHandler.initSDK(getApplicationContext());
-//        Log.d("WJY", FacePassHandler.getVersion());
-//
-//    }
 
-    private void initFaceHandler() {
-
-        new Thread() {
-            @Override
-            public void run() {
-                while (true && !isFinishing()) {
-                    if (FacePassHandler.isAvailable()) {
-                        Log.d(DEBUG_TAG, "start to build FacePassHandler");
-                         /* FacePass SDK 所需模型， 模型在assets目录下 */
-                        trackModel = FacePassModel.initModel(getApplicationContext().getAssets(), "tracker.DT1.4.1.dingding.20180315.megface2.9.bin");
-                        poseModel = FacePassModel.initModel(getApplicationContext().getAssets(), "pose.alfa.tiny.170515.bin");
-                        blurModel = FacePassModel.initModel(getApplicationContext().getAssets(), "blurness.v5.l2rsmall.bin");
-                        livenessModel = FacePassModel.initModel(getApplicationContext().getAssets(), "panorama.facepass.offline.180312.bin");
-                        searchModel = FacePassModel.initModel(getApplicationContext().getAssets(), "feat.small.facepass.v2.9.bin");
-                        detectModel = FacePassModel.initModel(getApplicationContext().getAssets(), "detector.mobile.v5.fast.bin");
-                        ageGenderModel = FacePassModel.initModel(getApplicationContext().getAssets(), "age_gender.bin");
-                        /* SDK 配置 */
-                        float searchThreshold = 75f;
-                        float livenessThreshold = 70f;
-                        boolean livenessEnabled = true;
-                        int faceMinThreshold = 50;
-                        FacePassPose poseThreshold = new FacePassPose(30f, 30f, 30f);
-                        float blurThreshold = 0.2f;
-                        float lowBrightnessThreshold = 70f;
-                        float highBrightnessThreshold = 210f;
-                        float brightnessSTDThreshold = 60f;
-                        int retryCount = 2;
-                        int rotation = cameraRotation;
-                        String fileRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                        FacePassConfig config;
-                        try {
-
-                            /* 填入所需要的配置 */
-                            config = new FacePassConfig(searchThreshold, livenessThreshold, livenessEnabled,
-                                    faceMinThreshold, poseThreshold, blurThreshold,
-                                    lowBrightnessThreshold, highBrightnessThreshold, brightnessSTDThreshold,
-                                    retryCount, rotation, fileRootPath,
-                                    trackModel, poseModel, blurModel, livenessModel, searchModel, detectModel, ageGenderModel);
-                            /* 创建SDK实例 */
-                            mFacePassHandler = new FacePassHandler(config);
-                            //checkGroup();
-                        } catch (FacePassException e) {
-                            e.printStackTrace();
-                            Log.d(DEBUG_TAG, "FacePassHandler is null");
-                            return;
-                        }
-                        return;
-                    }
-                    try {
-                        /* 如果SDK初始化未完成则需等待 */
-                        sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
-    }
 
     @Override
     protected void onResume() {
@@ -616,7 +575,8 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                         Toast.makeText(getApplicationContext(), "需要开启摄像头网络文件存储权限", Toast.LENGTH_SHORT).show();
                     }
             } else {
-               // initFacePassSDK();
+
+                FacePassHandler.initSDK(getApplicationContext());
             }
         }
     }
@@ -798,19 +758,19 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                     StringBuilder faceBlurString = new StringBuilder();
                     faceBlurString.append("模糊: ").append(String.format("%.2f", face.blur));
                     StringBuilder faceAgeString = new StringBuilder();
-                    faceAgeString.append("年龄: ").append(face.age);
+                 //   faceAgeString.append("年龄: ").append(face.age);
                     StringBuilder faceGenderString = new StringBuilder();
 
-                    switch (face.gender) {
-                        case 0:
-                            faceGenderString.append("性别: 男");
-                            break;
-                        case 1:
-                            faceGenderString.append("性别: 女");
-                            break;
-                        default:
-                            faceGenderString.append("性别: ?");
-                    }
+//                    switch (face.gender) {
+//                        case 0:
+//                            faceGenderString.append("性别: 男");
+//                            break;
+//                        case 1:
+//                            faceGenderString.append("性别: 女");
+//                            break;
+//                        default:
+//                            faceGenderString.append("性别: ?");
+//                    }
 
                     Matrix mat = new Matrix();
                     int w = cameraView.getMeasuredWidth();

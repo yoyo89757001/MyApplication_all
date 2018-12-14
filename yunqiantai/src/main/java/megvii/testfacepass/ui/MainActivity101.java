@@ -129,7 +129,6 @@ import megvii.testfacepass.beans.XinXiIdBean_;
 import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
-import megvii.testfacepass.dialog.XiuGaiGaoKuanDialog;
 import megvii.testfacepass.dialogall.ToastUtils;
 import megvii.testfacepass.dialogall.XiuGaiListener;
 import megvii.testfacepass.tts.control.InitConfig;
@@ -257,15 +256,15 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
     /* 相机实例 */
     private CameraManager manager;
     /* 显示人脸位置角度信息 */
-    private XiuGaiGaoKuanDialog dialog = null;
+   // private XiuGaiGaoKuanDialog dialog = null;
     /* 相机预览界面 */
     private CameraPreview cameraView;
     private boolean isAnXia = true;
     private ConcurrentHashMap<Long, Integer> concurrentHashMap = new ConcurrentHashMap<Long, Integer>();
     private static boolean cameraFacingFront = true;
     private int cameraRotation;
-    private static final int cameraWidth = 1280;
-    private static final int cameraHeight = 720;
+    private static final int cameraWidth = 640;
+    private static final int cameraHeight = 480;
     // private IjkVideoView shipingView;
     private int heightPixels;
     private int widthPixels;
@@ -276,7 +275,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
     private static boolean isDH = false;
     private static boolean isLink = true;
     private long tID = -1;
-    private boolean isNet = false;
+   // private boolean isNet = false;
     /*DetectResult queue*/
     ArrayBlockingQueue<FacePassDetectionResult> mDetectResultQueue;
     ArrayBlockingQueue<FacePassImage> mFeedFrameQueue;
@@ -294,8 +293,11 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
     private TimeChangeReceiver timeChangeReceiver;
     private WeakHandler mHandler;
     private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "JHt8TdGoELfkEKYkjQMogR8GPLIPAfRM";
-    private static final String apiSecret = "qgPwtgw9Yiqn2aL9KQyv1ukigAV7xWup";
+    private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
+    private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
+
+ //   private static final String apiKey = "JHt8TdGoELfkEKYkjQMogR8GPLIPAfRM";
+  //  private static final String apiSecret = "qgPwtgw9Yiqn2aL9KQyv1ukigAV7xWup";
     private List<Integer> topZuoBiao = new ArrayList<>();
     private List<Integer> bootomZuoBiao = new ArrayList<>();
     private int[] topIm = new int[]{R.drawable.sp1, R.drawable.sp2, R.drawable.sp3, R.drawable.sp4, R.drawable.sp5,
@@ -336,8 +338,8 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
             }
-
         };
+
 
         baoCunBean = baoCunBeanDao.get(123456L);
         subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
@@ -423,7 +425,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
             requestPermission();
         } else {
             //初始化
-            FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+          //  FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
             Log.d("MainActivity201", FacePassHandler.getVersion());
         }
@@ -2087,7 +2089,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
                     }
             } else {
 
-                FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+               // FacePassHandler.getAuth(authIP, apiKey, apiSecret);
                 FacePassHandler.initSDK(getApplicationContext());
                 Log.d("MainActivity2013", FacePassHandler.getVersion());
             }
@@ -2177,48 +2179,50 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
         ceshi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivity(new Intent(MainActivity101.this, SheZhiActivity.class));
+                finish();
 
-                if (usbPath != null) {
-
-                    ToastUtils.getInstances().showDialog("获取图片", "获取图片", 0);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            List<String> strings = new ArrayList<>();
-                            FileUtil.getAllFiles(usbPath + File.separator + "入库照片2", strings);
-                            FacePassHandler facePassHandler = MyApplication.myApplication.getFacePassHandler();
-
-                            int size = strings.size();
-                            for (int i = 0; i < size; i++) {
-                                try {
-                                    String sp = strings.get(i);
-                                    Log.d("SheZhiActivity", sp);
-                                    Log.d("SheZhiActivity", "i" + i);
-                                    FacePassAddFaceResult result = facePassHandler.addFace(BitmapFactory.decodeFile(sp));
-                                    if (result.result == 0) {
-                                        facePassHandler.bindGroup(group_name, result.faceToken);
-                                        Subject subject = new Subject();
-                                        int oo = sp.length();
-                                        subject.setName(sp.substring(oo - 6, oo - 1));
-                                        subject.setTeZhengMa(new String(result.faceToken));
-                                        subject.setPeopleType("员工");
-                                        subject.setId(System.currentTimeMillis());
-                                        subjectBox.put(subject);
-
-                                    } else {
-                                        shibai++;
-                                    }
-
-                                    ToastUtils.getInstances().showDialog("入库中", "失败了:" + shibai, (i / size) * 100);
-                                } catch (FacePassException e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-                        }
-
-                    }).start();
-                }
+//                if (usbPath != null) {
+//
+//                    ToastUtils.getInstances().showDialog("获取图片", "获取图片", 0);
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            List<String> strings = new ArrayList<>();
+//                            FileUtil.getAllFiles(usbPath + File.separator + "入库照片2", strings);
+//                            FacePassHandler facePassHandler = MyApplication.myApplication.getFacePassHandler();
+//
+//                            int size = strings.size();
+//                            for (int i = 0; i < size; i++) {
+//                                try {
+//                                    String sp = strings.get(i);
+//                                    Log.d("SheZhiActivity", sp);
+//                                    Log.d("SheZhiActivity", "i" + i);
+//                                    FacePassAddFaceResult result = facePassHandler.addFace(BitmapFactory.decodeFile(sp));
+//                                    if (result.result == 0) {
+//                                        facePassHandler.bindGroup(group_name, result.faceToken);
+//                                        Subject subject = new Subject();
+//                                        int oo = sp.length();
+//                                        subject.setName(sp.substring(oo - 6, oo - 1));
+//                                        subject.setTeZhengMa(new String(result.faceToken));
+//                                        subject.setPeopleType("员工");
+//                                        subject.setId(System.currentTimeMillis());
+//                                        subjectBox.put(subject);
+//
+//                                    } else {
+//                                        shibai++;
+//                                    }
+//
+//                                    ToastUtils.getInstances().showDialog("入库中", "失败了:" + shibai, (i / size) * 100);
+//                                } catch (FacePassException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                            }
+//                        }
+//
+//                    }).start();
+//                }
             }
         });
 
@@ -2379,7 +2383,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
         ppp0.topMargin = -10;
         zidongtext.setLayoutParams(ppp0);
         zidongtext.invalidate();
-        Log.d("MainActivity101", baoCunBean.getWenzi1() + "jjjjj");
+     //   Log.d("MainActivity101", baoCunBean.getWenzi1() + "jjjjj");
         if (baoCunBean.getWenzi1() != null)
             zidongtext.setText(baoCunBean.getWenzi1());
         if (baoCunBean.getTouxiangzhuji() != null)
@@ -2686,18 +2690,18 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
                         //  b.setAge(face.age);
 
                         String sex = "";
-                        switch (face.gender) {
-                            case 0:
-                                sex = "男";
-                                b.setName("先生");
-                                break;
-                            case 1:
-                                sex = "女";
-                                b.setName("女士");
-                                break;
-                            default:
-                                sex = "未知";
-                        }
+//                        switch (face.gender) {
+//                            case 0:
+//                                sex = "男";
+//                                b.setName("先生");
+//                                break;
+//                            case 1:
+//                                sex = "女";
+//                                b.setName("女士");
+//                                break;
+//                            default:
+//                                sex = "未知";
+//                        }
 
                         //  b.setDepartmentName(bumenString.get((int) (Math.random()*5)));
                         b.setSex(sex);
@@ -2799,6 +2803,9 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
+
 
 
     @Override
@@ -3423,10 +3430,10 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
                 //获取移动数据连接的信息
                 NetworkInfo dataNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
                 if (wifiNetworkInfo1.isConnected() || wifiNetworkInfo.isConnected() || dataNetworkInfo.isConnected()) {
-                    isNet = true;
+                   // isNet = true;
 
                 } else {
-                    isNet = false;
+                   // isNet = false;
                 }
 
 
@@ -3452,14 +3459,14 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
                 //通过循环将网络信息逐个取出来
                 //  Log.d(TAG, "networks.length:" + networks.length);
                 if (networks.length == 0) {
-                    isNet = false;
+                    //isNet = false;
                 }
                 for (int i = 0; i < networks.length; i++) {
                     //获取ConnectivityManager对象对应的NetworkInfo对象
                     NetworkInfo networkInfo = connMgr.getNetworkInfo(networks[i]);
 
                     if (networkInfo != null && networkInfo.isConnected()) {
-                        isNet = true;
+                        //isNet = true;
 
                     }
                 }

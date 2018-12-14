@@ -3254,19 +3254,19 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                       //  b.setAge(face.age);
 
                         String sex = "";
-                        switch (face.gender) {
-                            case 0:
-                                sex = "男";
-                                b.setName("先生");
-                                break;
-                            case 1:
-                                sex = "女";
-                                b.setName("女士");
-                                break;
-                            default:
-                                b.setName("先生");
-                                sex = "未知";
-                        }
+//                        switch (face.gender) {
+//                            case 0:
+//                                sex = "男";
+//                                b.setName("先生");
+//                                break;
+//                            case 1:
+//                                sex = "女";
+//                                b.setName("女士");
+//                                break;
+//                            default:
+//                                b.setName("先生");
+//                                sex = "未知";
+//                        }
 
                         b.setDepartmentName(bumenString.get((int) (Math.random()*5)));
                         b.setSex(sex);

@@ -1666,20 +1666,20 @@ public class MainActivity202 extends Activity implements CameraManager.CameraLis
                         final Bitmap bitmap = Bitmap.createBitmap(bmp, x1, y1, x2, y2);
 
                         MSRBean b=new MSRBean();
-                        b.setAge(face.age);
-                        String sex="未知";
-
-                        switch (face.gender) {
-                            case 0:
-                                sex="男";
-                                break;
-                            case 1:
-                                sex="女";
-                                break;
-                            default:
-                                sex="未知";
-                        }
-                        b.setSex(sex);
+//                        b.setAge(face.age);
+//                        String sex="未知";
+//
+//                        switch (face.gender) {
+//                            case 0:
+//                                sex="男";
+//                                break;
+//                            case 1:
+//                                sex="女";
+//                                break;
+//                            default:
+//                                sex="未知";
+//                        }
+                   //     b.setSex(sex);
                         b.setBitmap(bitmabToBytes2(bitmap));
                         Message message= Message.obtain();
                         message.obj=b;

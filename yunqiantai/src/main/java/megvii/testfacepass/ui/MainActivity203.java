@@ -260,8 +260,8 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
     private ConcurrentHashMap<Long, Integer> concurrentHashMap = new ConcurrentHashMap<Long, Integer>();
     private static boolean cameraFacingFront = true;
     private int cameraRotation;
-    private static final int cameraWidth = 1280;
-    private static final int cameraHeight = 720;
+    private static final int cameraWidth = 640;
+    private static final int cameraHeight = 480;
     private IjkVideoView shipingView;
     private int heightPixels;
     private int widthPixels;
@@ -311,8 +311,9 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
     private FragmentManager fragmentManager = null;
     private List<GuanHuai> guanHuaiList = new ArrayList<>();
     private List<String> bumenString = new ArrayList<>();
-    private String leixing[] = new String[]{"员工", "普通访客", "白名单", "陌生人"};
+   // private String leixing[] = new String[]{"员工", "普通访客", "白名单", "陌生人"};
     private Box<XinXiIdBean> xinXiIdBeanBox = null;
+
 
 
     @Override
@@ -427,7 +428,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
             requestPermission();
         } else {
             //初始化
-            //  FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+           // FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
             Log.d("MainActivity201", FacePassHandler.getVersion());
         }
@@ -980,7 +981,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                                                             public void run() {
                                                                 final View view_xiaoxi = View.inflate(MainActivity203.this, R.layout.xiaoxi_item, null);
                                                                 ScreenAdapterTools.getInstance().loadView(view_xiaoxi);
-                                                                RelativeLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
+                                                                LinearLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
                                                                 TextView neirong = view_xiaoxi.findViewById(R.id.neirong);
                                                                 TextView lingqu = view_xiaoxi.findViewById(R.id.lingqu);
                                                                 TextView biaoti = view_xiaoxi.findViewById(R.id.biaoti);
@@ -1258,7 +1259,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                                                     public void run() {
                                                         final View view_xiaoxi = View.inflate(MainActivity203.this, R.layout.xiaoxi_item, null);
                                                         ScreenAdapterTools.getInstance().loadView(view_xiaoxi);
-                                                        RelativeLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
+                                                        LinearLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
                                                         TextView neirong = view_xiaoxi.findViewById(R.id.neirong);
                                                         TextView lingqu = view_xiaoxi.findViewById(R.id.lingqu);
                                                         TextView biaoti = view_xiaoxi.findViewById(R.id.biaoti);
@@ -1622,7 +1623,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                                                             public void run() {
                                                                 final View view_xiaoxi = View.inflate(MainActivity203.this, R.layout.xiaoxi_item, null);
                                                                 ScreenAdapterTools.getInstance().loadView(view_xiaoxi);
-                                                                RelativeLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
+                                                                LinearLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
                                                                 TextView neirong = view_xiaoxi.findViewById(R.id.neirong);
                                                                 TextView lingqu = view_xiaoxi.findViewById(R.id.lingqu);
                                                                 TextView biaoti = view_xiaoxi.findViewById(R.id.biaoti);
@@ -1869,7 +1870,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                                                     public void run() {
                                                         final View view_xiaoxi = View.inflate(MainActivity203.this, R.layout.xiaoxi_item, null);
                                                         ScreenAdapterTools.getInstance().loadView(view_xiaoxi);
-                                                        RelativeLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
+                                                        LinearLayout rl_xiaoxi = view_xiaoxi.findViewById(R.id.rl_xiaoxi);
                                                         TextView neirong = view_xiaoxi.findViewById(R.id.neirong);
                                                         TextView lingqu = view_xiaoxi.findViewById(R.id.lingqu);
                                                         TextView biaoti = view_xiaoxi.findViewById(R.id.biaoti);
@@ -3468,23 +3469,23 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
                        // b.setPeopleType("员工");
                         //  b.setAge(face.age);
 
-                        String sex = "";
-                        switch (face.gender) {
-                            case 0:
-                                sex = "男";
-                                b.setName("先生");
-                                break;
-                            case 1:
-                                sex = "女";
-                                b.setName("女士");
-                                break;
-                            default:
-                                sex = "未知";
-                        }
+//                        String sex = "";
+//                        switch (face.gender) {
+//                            case 0:
+//                                sex = "男";
+//                                b.setName("先生");
+//                                break;
+//                            case 1:
+//                                sex = "女";
+//                                b.setName("女士");
+//                                break;
+//                            default:
+//                                sex = "未知";
+//                        }
 
                         b.setDepartmentName("");
                         b.setName("WELCOME");
-                        b.setSex(sex);
+                      //  b.setSex(sex);
                         b.setId(System.currentTimeMillis());
                         b.setBitmap(bitmabToBytes2(bitmap));
 

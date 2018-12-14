@@ -78,7 +78,7 @@ public class SheZhiActivity extends Activity {
         ButterKnife.bind(this);
         //ScreenAdapterTools.getInstance().reset(this);//如果希望android7.0分屏也适配的话,加上这句
         //在setContentView();后面加上适配语句
-        ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
+//        ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
         baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
         baoCunBean=baoCunBeanDao.get(123456L);
         if (baoCunBean == null) {
@@ -287,7 +287,7 @@ public class SheZhiActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);//解除订阅
-        startActivity(new Intent(SheZhiActivity.this, MainActivity.class));
+        startActivity(new Intent(SheZhiActivity.this, DingZhiActivity.class));
     }
 
 
