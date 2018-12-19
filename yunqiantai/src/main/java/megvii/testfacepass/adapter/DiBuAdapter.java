@@ -32,7 +32,7 @@ import megvii.facepass.FacePassHandler;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.Subject;
-import megvii.testfacepass.ui.MainActivity201;
+
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.GlideUtils;
 import megvii.testfacepass.view.GlideCircleTransform;

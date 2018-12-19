@@ -4,20 +4,22 @@ public class BeiJingBean {
 
 
     /**
-     * verifyIp : z2JyOAO9s+kbUycYRymMR3mMfuVYkhqNIcADbSmO2iA=
-     * backgroundUrl : http://hy.inteyeligence.com/userfiles/fileupload/201811/1063012015602200576.jpg
-     * machineCode : 3ee07eb6b1ded3f
-     * apiKey : OaZdu67IqVhLItE1CaUdQI5pYaN8vKl0iIBA9FlYNxXdr/Obc7hpbA==
-     * apiSecret : iDiUZNS0cf2LY9dd+bHE7m3CvlMw3do3G6gFpfdws1SvZdlKTVtLRw==
-     * machineName : 广州富贵机器
-     * backgroundTitle : ddd
-     * sdkPwd : treter
-     * backgroundLog : http://hy.inteyeligence.com/userfiles/fileupload/201810/1049623809404231680.png
-     * id : 1061809899086741504
+     * verifyIp : mI+HkeHVQKLxC89cXhbRcX139p4amcPq6ygdKZJpvTA=
+     * backgroundUrl : http://hy.inteyeligence.com/userfiles/fileupload/201812/1075274402874851328.jpg
+     * machineCode : 36b37aa3a432a105
+     * apiKey : Z/6omONvqr/ecaEDea4F2mRP+RxsQ8n2kI5LH+D+D5GMvCIB06dguw==
+     * apiSecret : op6eHJpXHEvjv32/BRTqhBesAy1SKfAbJIv0XDRoOQfnVPAn3AnLKA==
+     * machineName : 华为平板
+     * backgroundTitle : 广州瑞瞳智能科技
+     * sdkPwd : dddewq
+     * backgroundLog :
+     * id : 1065547327008288768
      * accredit : G7002
-     * validity : 2018-11-12 10:36
-     * registerCode : 1061-8098-9908-2547-2007
-     * keyiv : 10630098
+     * validity : 2018-11-22 18:07
+     * carouselImg : /userfiles/fileupload/201812/1075275871258738688.jpg|/userfiles/fileupload/201811/1059410276904022016.jpg|/userfiles/fileupload/201812/1075275969468366848.png
+     * carouselVideo : http://hy.inteyeligence.com/userfiles/fileupload/201812/1075273379401760768.mp4
+     * registerCode : 1065-5473-2699-9900-1602
+     * keyiv : 10655473
      */
 
     private String verifyIp;
@@ -32,6 +34,8 @@ public class BeiJingBean {
     private String id;
     private String accredit;
     private String validity;
+    private String carouselImg;
+    private String carouselVideo;
     private String registerCode;
     private String keyiv;
 
@@ -129,6 +133,22 @@ public class BeiJingBean {
 
     public void setValidity(String validity) {
         this.validity = validity;
+    }
+
+    public String getCarouselImg() {
+        return carouselImg;
+    }
+
+    public void setCarouselImg(String carouselImg) {
+        this.carouselImg = carouselImg;
+    }
+
+    public String getCarouselVideo() {
+        return carouselVideo;
+    }
+
+    public void setCarouselVideo(String carouselVideo) {
+        this.carouselVideo = carouselVideo;
     }
 
     public String getRegisterCode() {

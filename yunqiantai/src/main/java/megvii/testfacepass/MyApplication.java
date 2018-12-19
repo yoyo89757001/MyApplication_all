@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -17,10 +18,13 @@ import android.view.WindowManager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.liulishuo.filedownloader.FileDownloader;
+import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
 import com.tencent.bugly.Bugly;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 
+import java.io.File;
 import java.io.IOException;
 
 import cn.jpush.android.api.JPushInterface;
@@ -51,6 +55,9 @@ public class MyApplication extends Application implements Application.ActivityLi
     public static MyApplication myApplication;
     private Box<ChengShiIDBean> chengShiIDBeanBox;
     private MyService myService=null;
+    private final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"ruitongzip";
+    public static final String SDPATH2 = Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"ruitongpopho";
+
 
     static {
         System.loadLibrary("ruitongnative");
@@ -66,6 +73,23 @@ public class MyApplication extends Application implements Application.ActivityLi
         mBoxStore = MyObjectBox.builder().androidContext(this).build();
 
         Bugly.init(getApplicationContext(), "acd60de457", false);
+        File file = new File(SDPATH);
+        if (!file.exists()) {
+            Log.d("ggg", "file.mkdirs():" + file.mkdirs());
+        }
+        File file2 = new File(SDPATH2);
+        if (!file2.exists()) {
+            Log.d("ggg", "file.mkdirs():" + file2.mkdirs());
+        }
+        FileDownloader.setupOnApplicationOnCreate(this)
+                .connectionCreator(new FileDownloadUrlConnection
+                        .Creator(new FileDownloadUrlConnection.Configuration()
+                        .connectTimeout(15_000) // set connection timeout.
+                        .readTimeout(15_000) // set read timeout.
+                ))
+                .commit();
+
+
 
         //适配
         ScreenAdapterTools.init(this);

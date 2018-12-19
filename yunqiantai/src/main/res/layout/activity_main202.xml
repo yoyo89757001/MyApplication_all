@@ -117,7 +117,6 @@
 
             <View
                 android:layout_width="match_parent"
-                android:id="@+id/v11"
                 android:layout_alignParentBottom="true"
                 android:background="#b4b5b6"
                 android:layout_height="1dp"/>
@@ -259,14 +258,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.jude.rollviewpager.RollPagerView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/lunboview"
-                    app:rollviewpager_hint_color="#a95015e6"
-                    app:rollviewpager_hint_alpha="80"
-                    android:layout_centerVertical="true"
-                    app:rollviewpager_play_delay="3000"/>
+                <!--<com.jude.rollviewpager.RollPagerView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:id="@+id/lunboview"-->
+                    <!--app:rollviewpager_hint_color="#a95015e6"-->
+                    <!--app:rollviewpager_hint_alpha="80"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--app:rollviewpager_play_delay="3000"/>-->
 
             </android.support.v7.widget.CardView>
 

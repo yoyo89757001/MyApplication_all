@@ -2413,7 +2413,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
             manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
         }
         query = subjectBox.query().equal(Subject_.peopleType, "员工").build();
-        adaptFrameLayout();
+       // adaptFrameLayout();
         super.onResume();
     }
 
@@ -2889,7 +2889,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
 //
 //
 
-        shipingView.setHudView(mHudView); //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
+       // shipingView.setHudView(mHudView); //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
         shipingView.setVideoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "laowang.mp4");
         // shipingView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
         shipingView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {

@@ -62,7 +62,7 @@ public class BaseActivity extends AppCompatActivity {
         //1代表横  2代表竖
         switch (baoCunBean.getMoban()){
             case 101://横屏
-                startActivity(new Intent(BaseActivity.this,MainActivity101.class));
+                startActivity(new Intent(BaseActivity.this,MainActivity102.class));
                 finish();
 
                 break;

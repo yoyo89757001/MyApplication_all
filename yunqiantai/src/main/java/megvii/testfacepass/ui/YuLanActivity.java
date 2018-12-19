@@ -70,6 +70,9 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.CharsetUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -243,6 +246,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
         baoCunBean = baoCunBeanDao.get(123456L);
 
+        EventBus.getDefault().register(this);//订阅
         if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
             recognize_url = "http://" + serverIP_online + ":8080/api/service/recognize/v1";
             serverIP = serverIP_online;
@@ -301,6 +305,39 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                 }
             }
         };
+    }
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
+    public void onDataSynEvent(String event) {
+        if (event.equals("mFacePassHandler")) {
+            mFacePassHandler = MyApplication.myApplication.getFacePassHandler();
+            // diBuAdapter = new DiBuAdapter(dibuList, MainActivity202.this, dibuliebiao.getWidth(), dibuliebiao.getHeight(), mFacePassHandler);
+            //  dibuliebiao.setLayoutManager(gridLayoutManager);
+            //  dibuliebiao.setAdapter(diBuAdapter);
+            return;
+        }
+//        if (event.equals("ditu123")) {
+//            if (baoCunBean.getTouxiangzhuji() != null)
+//                daBg.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getTouxiangzhuji()));
+//            if (baoCunBean.getWenzi1() != null)
+//                zidongtext.setText(baoCunBean.getWenzi1());
+//
+//            if (baoCunBean.getXiaBanTime() != null) {
+//                logo.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getXiaBanTime()));
+//            }
+//            daBg.invalidate();
+//            logo.invalidate();
+//            zidongtext.invalidate();
+//            Log.d("MainActivity101", "dfgdsgfdgfdgfdg");
+//            return;
+//        }
+
+        Toast tastyToast = TastyToast.makeText(YuLanActivity.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
+        tastyToast.setGravity(Gravity.CENTER, 0, 0);
+        tastyToast.show();
+
     }
 
 
@@ -733,6 +770,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         if (mFeedFrameQueue != null) {
             mFeedFrameQueue.clear();
         }
+        EventBus.getDefault().unregister(this);//解除订阅
         super.onDestroy();
     }
 

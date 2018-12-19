@@ -70,6 +70,7 @@ import megvii.testfacepass.beans.FangKeBean;
 import megvii.testfacepass.beans.GuanHuai;
 import megvii.testfacepass.beans.GuanHuai_;
 import megvii.testfacepass.beans.LingShiSubject;
+import megvii.testfacepass.beans.LunBoBean;
 import megvii.testfacepass.beans.MOBan;
 import megvii.testfacepass.beans.RenYuanInFo;
 import megvii.testfacepass.beans.Subject;
@@ -107,6 +108,7 @@ public class MyReceiver extends BroadcastReceiver {
 	private Box<BaoCunBean> baoCunBeanDao=null;
 	private Box<Subject> subjectBox=null;
 	private boolean isA=true;
+	private Box<LunBoBean> lunBoBeanBox=MyApplication.myApplication.getBoxStore().boxFor(LunBoBean.class);
 	private static final String group_name = "face-pass-test-x";
 	private Box<BenDiMBbean> benDiMBbeanDao=null;
 	//private Box<RenYuanInFo> renYuanInFoDao=null;
@@ -212,6 +214,8 @@ public class MyReceiver extends BroadcastReceiver {
 						Log.d(TAG, "进入下载");
 						FileDownloader.getImpl().create(path2)
 								.setPath(SDPATH + File.separator + System.currentTimeMillis() + ".zip")
+								.setCallbackProgressTimes(300)
+								.setMinIntervalUpdateSpeed(400)
 								.setListener(new FileDownloadListener() {
 									@Override
 									protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
@@ -1516,7 +1520,7 @@ public class MyReceiver extends BroadcastReceiver {
 								.get();
 					} catch (InterruptedException | ExecutionException e) {
 						e.printStackTrace();
-						showNotifictionIcon( 0,"底图更新","下载背景底图失败"+e.getMessage());
+						showNotifictionIcon( 0,"底图更新","下载背景Log失败"+e.getMessage());
 					}
 					if (bitmapLog!=null ) {
 						try {
@@ -1554,11 +1558,141 @@ public class MyReceiver extends BroadcastReceiver {
 							showNotifictionIcon( 0,"底图更新","出现异常"+e.getMessage());
 						}
 
-
-
 					}else {
 						showNotifictionIcon( 0,"底图更新","下载背景底图失败");
 					}
+					final String vv=beiJingBean.getCarouselVideo();
+					String voiddd=null;
+					if (vv!=null){
+						 voiddd=vv.substring(vv.lastIndexOf("/"),vv.length());
+					}
+					Log.d("MyReceiver",  SDPATH+voiddd+"\n"+vv);
+					//下载视频
+					final String finalVoiddd = voiddd;
+					FileDownloader.getImpl().create(vv)
+							.setPath(SDPATH +  voiddd)
+							.setCallbackProgressTimes(300)
+							.setMinIntervalUpdateSpeed(400)
+							.setListener(new FileDownloadListener() {
+								@Override
+								protected void pending(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+									//Log.d(TAG, "pending"+soFarBytes);
+									Log.d("MyReceiver", task.getUrl()+"pending");
+								}
+
+								@Override
+								protected void connected(BaseDownloadTask task, String etag, boolean isContinue, int soFarBytes, int totalBytes) {
+									//已经连接上
+									Log.d("MyReceiver", task.getUrl()+"connected");
+									//Log.d(TAG, "isContinue:" + isContinue);
+									showNotifictionIcon(((float)soFarBytes/(float) totalBytes)*100,"下载中","下载人脸库中"+((float)soFarBytes/(float) totalBytes)*100+"%");
+
+								}
+
+								@Override
+								protected void progress(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+									Log.d("MyReceiver", "soFarBytes:" + soFarBytes+task.getUrl());
+									//进度
+									//isDW=false;
+									if (task.getUrl().equals(vv)){
+										ToastUtils.getInstances().setDate("下载中",((float)soFarBytes/(float) totalBytes)*100,"下载人脸库中"+((float)soFarBytes/(float) totalBytes)*100+"%");
+										//	showNotifictionIcon(,,);
+									}
+								}
+
+								@Override
+								protected void blockComplete(BaseDownloadTask task) {
+									//完成
+									Log.d("MyReceiver", task.getUrl()+"完成2");
+								}
+
+								@Override
+								protected void retry(final BaseDownloadTask task, final Throwable ex, final int retryingTimes, final int soFarBytes) {
+									//重试
+									Log.d("MyReceiver", ex.getMessage()+"重试 "+retryingTimes);
+								}
+
+								@Override
+								protected void completed(BaseDownloadTask task) {
+									Log.d("MyReceiver", task.getUrl()+"完成1");
+									//完成整个下载过程
+									if (task.getUrl().equals(vv)){
+									 baoCunBean.setShiPingWeiZhi(SDPATH + finalVoiddd);
+									 baoCunBeanDao.put(baoCunBean);
+										EventBus.getDefault().post("shiping");
+									}
+								}
+
+								@Override
+								protected void paused(BaseDownloadTask task, int soFarBytes, int totalBytes) {
+									Log.d("MyReceiver", task.getUrl()+"暂停");
+								}
+
+								@Override
+								protected void error(BaseDownloadTask task, Throwable e) {
+									Log.d("MyReceiver", "task.isRunning():" + task.getFilename()+"失败"+e);
+									//出错
+									if (task.getUrl().equals(vv)){
+
+									}
+									showNotifictionIcon(0,"下载失败",""+e);
+								}
+
+								@Override
+								protected void warn(BaseDownloadTask task) {
+									//在下载队列中(正在等待/正在下载)已经存在相同下载连接与相同存储路径的任务
+									Log.d("MyReceiver", task.getUrl()+"等待");
+								}
+							}).start();
+					//下载轮播图片
+
+					List<LunBoBean> bbbb=lunBoBeanBox.getAll();
+					for (LunBoBean bb:bbbb){
+						File file=new File(bb.getPath());
+						Log.d("MyReceiver", "删除原有轮播图:" + file.delete());
+					}
+
+					lunBoBeanBox.removeAll();
+					String lb=beiJingBean.getCarouselImg();
+					Log.d("MyReceiver", lb);
+					String []lunbg=lb.split(",");
+					//Log.d("MyReceiver", "lunbg.length:" + lunbg.length);
+					for (String slb :lunbg){
+						Bitmap bitmapLB=null;
+						try {
+							bitmapLB = Glide.with(context).asBitmap()
+									.load(slb)
+									// .sizeMultiplier(0.5f)
+									.submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+									.get();
+						} catch (InterruptedException | ExecutionException e) {
+							e.printStackTrace();
+							showNotifictionIcon( 0,"底图更新","下载轮播图失败"+e.getMessage());
+						}
+						if (bitmapLB!=null ){
+							try {
+								String ph=FileUtil.SDPATH+File.separator+System.currentTimeMillis()+".png";
+								File file = new File(ph);
+								FileOutputStream out = new FileOutputStream(file);
+								bitmapLB.compress(Bitmap.CompressFormat.PNG, 100, out);
+								out.flush();
+								out.close();
+								LunBoBean bb=new LunBoBean();
+								bb.setPath(ph);
+								lunBoBeanBox.put(bb);
+								Log.d("MyReceiver222", "添加轮播图"+bb);
+
+							} catch (Exception e) {
+								e.printStackTrace();
+								showNotifictionIcon( 0,"轮播图更新","出现异常"+e.getMessage());
+							}
+
+						}else {
+							showNotifictionIcon( 0,"轮播图更新","下载背景底图失败");
+						}
+					}
+					if (lunBoBeanBox.getAll().size()>0)
+					EventBus.getDefault().post("lunbotu");
 
 
 				}catch (Exception e){

@@ -50,8 +50,6 @@ public class XiuGaiDiZhiDialog extends Dialog {
     }
 
 
-
-
     @Override
     public void setContentView(int layoutResID) {
 

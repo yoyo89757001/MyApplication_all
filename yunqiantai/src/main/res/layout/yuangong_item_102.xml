@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:autofit="http://schemas.android.com/tools"
+    android:id="@+id/root_rl"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:background="@color/white"
+        android:layout_weight="2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+
+        <megvii.testfacepass.view.YGTopView_102
+            android:id="@+id/ygtopview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/wangluo"
+            android:layout_centerHorizontal="true"
+            android:layout_width="80px"
+            android:layout_height="80px"
+            app:lottie_fileName="check.json"
+            app:lottie_loop="false"
+            app:lottie_autoPlay="true" />
+
+
+    </RelativeLayout>
+
+
+<RelativeLayout
+    android:background="#62b641"
+    android:layout_weight="1"
+    android:layout_width="match_parent"
+    android:layout_height="0dp">
+
+    <ImageView
+        android:id="@+id/laba"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="16dp"
+        android:src="@drawable/laba2"
+        android:layout_width="22dp"
+        android:layout_height="22dp" />
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <me.grantland.widget.AutofitTextView
+            android:maxLines="1"
+            android:layout_weight="1"
+            autofit:minTextSize="12sp"
+            android:id="@+id/biaoti"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+
+        <me.grantland.widget.AutofitTextView
+            android:maxLines="3"
+            autofit:minTextSize="12sp"
+            android:id="@+id/xiaoxi"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <me.grantland.widget.AutofitTextView
+            android:maxLines="1"
+            android:layout_weight="1"
+            autofit:minTextSize="12sp"
+            android:id="@+id/biaoqian"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+
+
+</LinearLayout>

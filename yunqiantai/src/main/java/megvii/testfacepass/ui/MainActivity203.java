@@ -260,8 +260,8 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
     private ConcurrentHashMap<Long, Integer> concurrentHashMap = new ConcurrentHashMap<Long, Integer>();
     private static boolean cameraFacingFront = true;
     private int cameraRotation;
-    private static final int cameraWidth = 640;
-    private static final int cameraHeight = 480;
+    private static final int cameraWidth = 1280;
+    private static final int cameraHeight = 720;
     private IjkVideoView shipingView;
     private int heightPixels;
     private int widthPixels;
@@ -3097,7 +3097,7 @@ public class MainActivity203 extends AppCompatActivity implements CameraManager.
 //
 //
 
-        shipingView.setHudView(mHudView); //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
+      //  shipingView.setHudView(mHudView); //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
         shipingView.setVideoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "laowang.mp4");
         // shipingView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
         shipingView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {

@@ -52,14 +52,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.MainActivity201"
-            android:configChanges="fontScale"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.MainActivity202"
-            android:configChanges="fontScale"
-            android:screenOrientation="portrait" />
+
+        <!--<activity-->
+            <!--android:name=".ui.MainActivity201"-->
+            <!--android:configChanges="fontScale"-->
+            <!--android:screenOrientation="portrait" />-->
+        <!---->
+        <!--<activity-->
+            <!--android:name=".ui.MainActivity202"-->
+            <!--android:configChanges="fontScale"-->
+            <!--android:screenOrientation="portrait" />-->
+
         <activity
             android:name=".ui.MainActivity203_demo"
             android:configChanges="fontScale"
@@ -71,11 +74,11 @@
         <activity
             android:name=".ui.SettingActivity"
             android:configChanges="fontScale"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="user" />
         <activity
             android:name=".ui.YuLanActivity"
             android:configChanges="fontScale"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="user" />
 
         <service
             android:name=".utils.killSelfService"
@@ -259,6 +262,8 @@
             <!--android:persistent="true" />-->
 
         <activity android:name=".ui.MainActivity101" android:screenOrientation="landscape"/>
+        <activity android:name=".ui.MainActivity102" android:screenOrientation="landscape"/>
+
     </application>
 
 </manifest>

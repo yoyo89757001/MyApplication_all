@@ -60,7 +60,7 @@ import javax.crypto.spec.IvParameterSpec;
  */
 
 public class FileUtil {
-    public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+    public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"ruitongpopho";
 
     public static String getSerialNumber(Context context){
 

@@ -208,7 +208,6 @@
                         <me.grantland.widget.AutofitTextView
                             android:maxLines="1"
                             android:layout_centerVertical="true"
-                            android:id="@+id/sssddd"
                             autofit:minTextSize="10sp"
                             android:textColor="@color/white"
                             android:textSize="20sp"
@@ -358,7 +357,6 @@
                     android:layout_marginRight="60dp"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:id="@+id/ghgh"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
@@ -386,7 +384,6 @@
                         android:layout_height="wrap_content">
 
                         <ImageView
-                            android:id="@+id/hg"
                             android:src="@drawable/yghghg"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
