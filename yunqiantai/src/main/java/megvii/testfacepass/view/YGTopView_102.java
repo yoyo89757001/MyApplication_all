@@ -214,7 +214,7 @@ public class YGTopView_102 extends View {
             canvas.drawText(name,width/2-jj/2,rectF.bottom+100,namePaint);
             namePaint.setTextSize(30);
             float kk=namePaint.measureText(bumen);
-            canvas.drawText(bumen,width/2-kk/2,rectF.bottom+180,namePaint);
+            canvas.drawText(bumen,width/2-kk/2,rectF.bottom+160,namePaint);
         }
 
         if (bitmapHG!=null && ismaozi){

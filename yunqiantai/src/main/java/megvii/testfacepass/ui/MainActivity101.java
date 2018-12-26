@@ -238,16 +238,9 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
 
     private LinkedBlockingQueue<Subject> linkedBlockingQueue;
     /* 人脸识别Group */
-    private static final String group_name = "face-pass-test-x";
+    private static final String group_name = "facepasstestx";
     /* 程序所需权限 ：相机 文件存储 网络访问 */
-    private static final int PERMISSIONS_REQUEST = 1;
-    private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
-    private static final String PERMISSION_WRITE_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-    private static final String PERMISSION_READ_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
-    private static final String PERMISSION_INTERNET = Manifest.permission.INTERNET;
-    private static final String PERMISSION_ACCESS_NETWORK_STATE = Manifest.permission.ACCESS_NETWORK_STATE;
-    private String[] Permission = new String[]{PERMISSION_CAMERA, PERMISSION_WRITE_STORAGE, PERMISSION_READ_STORAGE, PERMISSION_INTERNET, PERMISSION_ACCESS_NETWORK_STATE};
-    //  private WindowManager wm;
+ //  private WindowManager wm;
     /* SDK 实例对象 */
     public FacePassHandler mFacePassHandler;
     /* 相机实例 */
@@ -289,12 +282,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
     private IntentFilter intentFilter;
     private TimeChangeReceiver timeChangeReceiver;
     private WeakHandler mHandler;
-    private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
-    private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
 
- //   private static final String apiKey = "JHt8TdGoELfkEKYkjQMogR8GPLIPAfRM";
-  //  private static final String apiSecret = "qgPwtgw9Yiqn2aL9KQyv1ukigAV7xWup";
     private List<Integer> topZuoBiao = new ArrayList<>();
     private List<Integer> bootomZuoBiao = new ArrayList<>();
     private int[] topIm = new int[]{R.drawable.sp1, R.drawable.sp2, R.drawable.sp3, R.drawable.sp4, R.drawable.sp5,
@@ -323,13 +311,13 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
         mToastBlockQueue = new LinkedBlockingQueue<>();
         mDetectResultQueue = new ArrayBlockingQueue<FacePassDetectionResult>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
-        todayBeanBox = MyApplication.myApplication.getBoxStore().boxFor(TodayBean.class);
+        todayBeanBox = MyApplication.myApplication.getTodayBeanBox();
         todayBean = todayBeanBox.get(123456L);
-        benDiJiLuBeanBox = MyApplication.myApplication.getBoxStore().boxFor(BenDiJiLuBean.class);
-        guanHuaiBox = MyApplication.myApplication.getBoxStore().boxFor(GuanHuai.class);
-        xinXiAllBox = MyApplication.myApplication.getBoxStore().boxFor(XinXiAll.class);
-        xinXiIdBeanBox = MyApplication.myApplication.getBoxStore().boxFor(XinXiIdBean.class);
-        baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+        benDiJiLuBeanBox = MyApplication.myApplication.getBenDiJiLuBeanBox();
+        guanHuaiBox = MyApplication.myApplication.getGuanHuaiBox();
+        xinXiAllBox = MyApplication.myApplication.getXinXiAllBox();
+        xinXiIdBeanBox = MyApplication.myApplication.getXinXiIdBeanBox();
+        baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
         mainHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -339,7 +327,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
 
 
         baoCunBean = baoCunBeanDao.get(123456L);
-        subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
+        subjectBox = MyApplication.myApplication.getSubjectBox();
         //网络状态关闭
         if (netWorkStateReceiver == null) {
             netWorkStateReceiver = new NetWorkStateReceiver();
@@ -417,15 +405,8 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
 //                    }
 //
 //                });
-        /* 申请程序所需权限 */
-        if (!hasPermission()) {
-            requestPermission();
-        } else {
-            //初始化
-          //  FacePassHandler.getAuth(authIP, apiKey, apiSecret);
-            FacePassHandler.initSDK(getApplicationContext());
-            Log.d("MainActivity201", FacePassHandler.getVersion());
-        }
+
+
 
         if (baoCunBean != null)
             initialTts();
@@ -1820,9 +1801,8 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
     protected void onResume() {
         initToast();
         /* 打开相机 */
-        if (hasPermission()) {
-            manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
-        }
+        manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
+
         query = subjectBox.query().equal(Subject_.peopleType, "员工").build();
         adaptFrameLayout();
         super.onResume();
@@ -2045,53 +2025,6 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
     }
 
 
-    /* 判断程序是否有所需权限 android22以上需要自申请权限 */
-    private boolean hasPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_READ_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_WRITE_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_INTERNET) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
-        } else {
-            return true;
-        }
-    }
-
-    /* 请求程序所需权限 */
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(Permission, PERMISSIONS_REQUEST);
-        }
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST) {
-            boolean granted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED)
-                    granted = false;
-            }
-            if (!granted) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    if (!shouldShowRequestPermissionRationale(PERMISSION_CAMERA)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_READ_STORAGE)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_WRITE_STORAGE)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_INTERNET)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_ACCESS_NETWORK_STATE)) {
-                        Toast.makeText(getApplicationContext(), "需要开启摄像头网络文件存储权限", Toast.LENGTH_SHORT).show();
-                    }
-            } else {
-
-               // FacePassHandler.getAuth(authIP, apiKey, apiSecret);
-                FacePassHandler.initSDK(getApplicationContext());
-                Log.d("MainActivity2013", FacePassHandler.getVersion());
-            }
-        }
-    }
 
     private void adaptFrameLayout() {
         SettingVar.isButtonInvisible = false;

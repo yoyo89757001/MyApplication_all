@@ -15,6 +15,7 @@
     <RelativeLayout
         android:layout_below="@+id/topbg"
         android:id="@+id/rlrlrl"
+        android:gravity="center_horizontal"
         android:background="#93d778"
         android:layout_centerHorizontal="true"
         android:layout_width="match_parent"

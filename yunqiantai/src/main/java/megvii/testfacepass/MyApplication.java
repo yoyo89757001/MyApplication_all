@@ -2,44 +2,39 @@ package megvii.testfacepass;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.util.DisplayMetrics;
-
 import android.util.Log;
 import android.view.WindowManager;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
 import com.tencent.bugly.Bugly;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
-
-
 import java.io.File;
 import java.io.IOException;
-
-import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import megvii.facepass.FacePassHandler;
+import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.BenDiJiLuBean;
 import megvii.testfacepass.beans.ChengShiIDBean;
+import megvii.testfacepass.beans.GuanHuai;
+import megvii.testfacepass.beans.LunBoBean;
 import megvii.testfacepass.beans.MyObjectBox;
+import megvii.testfacepass.beans.Subject;
+import megvii.testfacepass.beans.TodayBean;
+import megvii.testfacepass.beans.XinXiAll;
+import megvii.testfacepass.beans.XinXiIdBean;
 import megvii.testfacepass.beans.ZhiChiChengShi;
 import megvii.testfacepass.dialogall.CommonData;
 import megvii.testfacepass.dialogall.CommonDialogService;
 import megvii.testfacepass.dialogall.ToastUtils;
-import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.GsonUtil;
-import megvii.testfacepass.utils.MyService;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -50,13 +45,23 @@ import okhttp3.ResponseBody;
  */
 
 public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
-    public  FacePassHandler facePassHandler=null;
-    private static BoxStore mBoxStore;
+    private FacePassHandler facePassHandler=null;
     public static MyApplication myApplication;
-    private Box<ChengShiIDBean> chengShiIDBeanBox;
-    private MyService myService=null;
-    private final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"ruitongzip";
+    private Box<ChengShiIDBean> chengShiIDBeanBox=null;
+    private Box<BaoCunBean> baoCunBeanBox=null;
+    private Box<Subject> subjectBox=null;
+    private Box<LunBoBean> lunBoBeanBox=null;
+    private Box<XinXiAll> xinXiAllBox=null;
+    private Box<XinXiIdBean> xinXiIdBeanBox= null;
+    private Box<GuanHuai> guanHuaiBox=null;
+    private Box<TodayBean> todayBeanBox = null;
+    private Box<BenDiJiLuBean> benDiJiLuBeanBox = null;
+
+
+    public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"ruitongzip";
     public static final String SDPATH2 = Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"ruitongpopho";
+
+
 
 
     static {
@@ -70,7 +75,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         super.onCreate();
 
         myApplication = this;
-        mBoxStore = MyObjectBox.builder().androidContext(this).build();
+        BoxStore mBoxStore = MyObjectBox.builder().androidContext(this).build();
 
         Bugly.init(getApplicationContext(), "acd60de457", false);
         File file = new File(SDPATH);
@@ -89,14 +94,13 @@ public class MyApplication extends Application implements Application.ActivityLi
                 ))
                 .commit();
 
-
-
         //适配
         ScreenAdapterTools.init(this);
-        JPushInterface.setDebugMode(false); 	// 设置开启日志,发布时请关闭日志
-        JPushInterface.init(getApplicationContext());
-        JPushInterface.setAlias(getApplicationContext(),1, FileUtil.getSerialNumber(this)==null?FileUtil.getIMSI():FileUtil.getSerialNumber(this));
-        Log.d("MyApplication","机器码"+ FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this));
+
+     //   JPushInterface.setDebugMode(false); 	// 设置开启日志,发布时请关闭日志
+     //   JPushInterface.init(getApplicationContext());
+     //   JPushInterface.setAlias(getApplicationContext(),1, FileUtil.getSerialNumber(this)==null?FileUtil.getIMSI():FileUtil.getSerialNumber(this));
+      //  Log.d("MyApplication","机器码"+ FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this));
         //全局dialog
         this.registerActivityLifecycleCallbacks(this);//注册
         CommonData.applicationContext = this;
@@ -107,7 +111,16 @@ public class MyApplication extends Application implements Application.ActivityLi
         Intent dialogservice = new Intent(this, CommonDialogService.class);
         startService(dialogservice);
 
-        chengShiIDBeanBox=mBoxStore.boxFor(ChengShiIDBean.class);
+        baoCunBeanBox= mBoxStore.boxFor(BaoCunBean.class);
+        subjectBox= mBoxStore.boxFor(Subject.class);
+        lunBoBeanBox= mBoxStore.boxFor(LunBoBean.class);
+        xinXiAllBox= mBoxStore.boxFor(XinXiAll.class);
+        xinXiIdBeanBox= mBoxStore.boxFor(XinXiIdBean.class);
+        guanHuaiBox= mBoxStore.boxFor(GuanHuai.class);
+        chengShiIDBeanBox= mBoxStore.boxFor(ChengShiIDBean.class);
+        todayBeanBox= mBoxStore.boxFor(TodayBean.class);
+        benDiJiLuBeanBox= mBoxStore.boxFor(BenDiJiLuBean.class);
+
         if(chengShiIDBeanBox.getAll().size()==0){
             OkHttpClient okHttpClient= new OkHttpClient();
             okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
@@ -128,7 +141,6 @@ public class MyApplication extends Application implements Application.ActivityLi
                     Log.d("AllConnects", "请求成功"+call.request().toString());
                     //获得返回体
                     try{
-
                         ResponseBody body = response.body();
                         String ss=body.string().trim();
                         Log.d("AllConnects", "天气"+ss);
@@ -167,8 +179,40 @@ public class MyApplication extends Application implements Application.ActivityLi
     }
 
 
-    public BoxStore getBoxStore(){
-        return mBoxStore;
+//    public BoxStore getBoxStore(){
+//        return mBoxStore;
+//    }
+
+    public Box<TodayBean> getTodayBeanBox(){
+        return todayBeanBox;
+    }
+
+    public Box<BenDiJiLuBean> getBenDiJiLuBeanBox(){
+        return benDiJiLuBeanBox;
+    }
+    public Box<ChengShiIDBean> getChengShiIDBeanBox(){
+        return chengShiIDBeanBox;
+    }
+
+    public Box<Subject> getSubjectBox(){
+        return subjectBox;
+    }
+
+    public Box<LunBoBean> getLunBoBeanBox(){
+        return lunBoBeanBox;
+    }
+
+    public Box<XinXiAll> getXinXiAllBox(){
+        return xinXiAllBox;
+    }
+    public Box<XinXiIdBean> getXinXiIdBeanBox(){
+        return xinXiIdBeanBox;
+    }
+    public Box<GuanHuai> getGuanHuaiBox(){
+        return guanHuaiBox;
+    }
+    public Box<BaoCunBean> getBaoCunBeanBox(){
+        return baoCunBeanBox;
     }
 
     public FacePassHandler getFacePassHandler() {
@@ -190,8 +234,8 @@ public class MyApplication extends Application implements Application.ActivityLi
             CommonData.mNowContext = activity;
         }
 
-        Intent intent = new Intent(activity, MyService.class);
-        bindService(intent, serviceConnection,  Context.BIND_AUTO_CREATE);
+      //  Intent intent = new Intent(activity, MyService.class);
+      //  bindService(intent, serviceConnection,  Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -228,23 +272,23 @@ public class MyApplication extends Application implements Application.ActivityLi
       //  unbindService(serviceConnection);
     }
 
-    // 在Activity中，我们通过ServiceConnection接口来取得建立连接与连接意外丢失的回调
-   private  ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-        // 建立连接
-        // 获取服务的操作对象
-            MyService.MyBinder binder = (MyService.MyBinder) service;
-            myService= binder.getService();// 获取到的Service即MyService
-            Log.d("MyService", "myService:" + myService);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d("MyService", "name:" + name);
-        // 连接断开
-        }
-    };
+//    // 在Activity中，我们通过ServiceConnection接口来取得建立连接与连接意外丢失的回调
+//   private  ServiceConnection serviceConnection = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//        // 建立连接
+//        // 获取服务的操作对象
+//          //  MyService.MyBinder binder = (MyService.MyBinder) service;
+//          //  myService= binder.getService();// 获取到的Service即MyService
+//           // Log.d("MyService", "myService:" + myService);
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//           // Log.d("MyService", "name:" + name);
+//        // 连接断开
+//        }
+//    };
 
 
 

@@ -137,16 +137,9 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     private static String serverIP;
     private static String recognize_url;
     /* 人脸识别Group */
-    private static final String group_name = "face-pass-test-x";
-    /* 程序所需权限 ：相机 文件存储 网络访问 */
-    private static final int PERMISSIONS_REQUEST = 1;
-    private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
-    private static final String PERMISSION_WRITE_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-    private static final String PERMISSION_READ_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
-    private static final String PERMISSION_INTERNET = Manifest.permission.INTERNET;
-    private static final String PERMISSION_ACCESS_NETWORK_STATE = Manifest.permission.ACCESS_NETWORK_STATE;
-    private String[] Permission = new String[]{PERMISSION_CAMERA, PERMISSION_WRITE_STORAGE, PERMISSION_READ_STORAGE, PERMISSION_INTERNET, PERMISSION_ACCESS_NETWORK_STATE};
-    /* SDK 实例对象 */
+    private static final String group_name = "facepasstestx";
+
+  /* SDK 实例对象 */
     FacePassHandler mFacePassHandler;
 
     /* 相机实例 */
@@ -197,15 +190,6 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     /* 网络请求队列*/
     RequestQueue requestQueue;
 
-    FacePassModel trackModel;
-    FacePassModel poseModel;
-    FacePassModel blurModel;
-    FacePassModel livenessModel;
-    FacePassModel searchModel;
-    FacePassModel detectModel;
-    FacePassModel detectRectModel;
-    FacePassModel landmarkModel;
-    FacePassModel smileModel;
 
     Button visible;
     LinearLayout ll;
@@ -243,7 +227,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         mDetectResultQueue = new ArrayBlockingQueue<byte[]>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
         initAndroidHandler();
-        baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+        baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
         baoCunBean = baoCunBeanDao.get(123456L);
 
         EventBus.getDefault().register(this);//订阅
@@ -256,21 +240,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
         /* 初始化界面 */
         initView();
-        /* 申请程序所需权限 */
-        if (!hasPermission()) {
-            requestPermission();
-        } else {
-            FacePassHandler.initSDK(getApplicationContext());
-        }
 
-        if (baoCunBean != null) {
-            FacePassUtil util = new FacePassUtil();
-            util.init(YuLanActivity.this, getApplicationContext(), cameraRotation, baoCunBean);
-        } else {
-            Toast tastyToast = TastyToast.makeText(YuLanActivity.this, "获取本地设置失败,请进入设置界面设置基本信息", TastyToast.LENGTH_LONG, TastyToast.INFO);
-            tastyToast.setGravity(Gravity.CENTER, 0, 0);
-            tastyToast.show();
-        }
       //  initFaceHandler();
         /* 初始化网络请求库 */
         requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -280,7 +250,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
         mFeedFrameThread = new FeedFrameThread();
         mFeedFrameThread.start();
-
+        mFacePassHandler = MyApplication.myApplication.getFacePassHandler();
     }
 
     private void initAndroidHandler() {
@@ -347,9 +317,8 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         //checkGroup();
         initToast();
         /* 打开相机 */
-        if (hasPermission()) {
-            manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
-        }
+        manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
+
         adaptFrameLayout();
         super.onResume();
     }
@@ -572,51 +541,8 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
     }
 
-    /* 判断程序是否有所需权限 android22以上需要自申请权限 */
-    private boolean hasPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_READ_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_WRITE_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_INTERNET) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
-        } else {
-            return true;
-        }
-    }
-
-    /* 请求程序所需权限 */
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(Permission, PERMISSIONS_REQUEST);
-        }
-    }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST) {
-            boolean granted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED)
-                    granted = false;
-            }
-            if (!granted) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    if (!shouldShowRequestPermissionRationale(PERMISSION_CAMERA)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_READ_STORAGE)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_WRITE_STORAGE)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_INTERNET)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_ACCESS_NETWORK_STATE)) {
-                        Toast.makeText(getApplicationContext(), "需要开启摄像头网络文件存储权限", Toast.LENGTH_SHORT).show();
-                    }
-            } else {
-
-                FacePassHandler.initSDK(getApplicationContext());
-            }
-        }
-    }
 
     private void adaptFrameLayout() {
         SettingVar.isButtonInvisible = false;

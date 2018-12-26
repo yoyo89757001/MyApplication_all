@@ -36,21 +36,23 @@ import okhttp3.ResponseBody;
 
 
 public class FacePassUtil {
-    FacePassModel trackModel;
-    FacePassModel poseModel;
-    FacePassModel blurModel;
-    FacePassModel livenessModel;
-    FacePassModel searchModel;
-    FacePassModel detectModel;
-    FacePassModel detectRectModel;
-    FacePassModel landmarkModel;
-    FacePassModel smileModel;
+    private   FacePassModel poseModel;
+    private   FacePassModel blurModel;
+    private   FacePassModel livenessModel;
+    private   FacePassModel searchModel;
+    private   FacePassModel detectModel;
+    private   FacePassModel detectRectModel;
+    private   FacePassModel landmarkModel;
+    private   FacePassModel smileModel;
+    private   FacePassModel ageGenderModel;
+
+
     /* SDK 实例对象 */
     private Context context;
     private int TIMEOUT=30*1000;
 
     private    FacePassHandler mFacePassHandler;  /* 人脸识别Group */
-    private  final String group_name = "face-pass-test-x";
+    private  final String group_name = "facepasstestx";
     private  boolean isLocalGroupExist = false;
     private   BaoCunBean baoCunBean;
 
@@ -69,41 +71,45 @@ public class FacePassUtil {
                             livenessModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "panorama.facepass.181129_3288_3models_1core.combine.bin");
                             searchModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "feat.inu.3comps.inp96.200ms.e6000.pca512.bin");
                             detectModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "detector.retinanet.facei2head.x14.180910.bin");
-//                        detectRectModel = FacePassModel.initModel(getApplicationContext().getAssets(), "det.retinanet.head2face.x20.180613.bin");
                             detectRectModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "det.retinanet.face2head.x14.180906.bin");
 
                             landmarkModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "lmk.postfilter.tiny.dt1.4.1.20180602.3dpose.bin");
                             smileModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "attr.blur.align.gray.general.mgf29.0.1.0.181127.smile.bin");
-
+                            ageGenderModel = FacePassModel.initModel(context.getApplicationContext().getAssets(), "age_gender.v2.bin");
                             /* SDK 配置 */
-                            boolean smileEnabled = false;
                             float searchThreshold = baoCunBean.getShibieFaZhi();
                             float livenessThreshold = baoCunBean.getHuoTiFZ();
                             boolean livenessEnabled = baoCunBean.isHuoTi();
-                            int faceMinThreshold =baoCunBean.getShibieFaceSize();
+                            boolean smileEnabled = false;
+                            boolean ageGenderEnabled = false;
+                            int faceMinThreshold = baoCunBean.getShibieFaceSize();
                             FacePassPose poseThreshold = new FacePassPose(30f, 30f, 30f);
-                            float blurThreshold = 0.3f;
+                            float blurThreshold = 0.2f;
                             float lowBrightnessThreshold = 70f;
                             float highBrightnessThreshold = 210f;
                             float brightnessSTDThreshold = 60f;
                             int retryCount = 2;
+
+                            int rotation = cameraRotation;
                             String fileRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
                             FacePassConfig config;
                             try {
                                 /* 填入所需要的配置 */
-                                config = new FacePassConfig(searchThreshold, livenessThreshold, livenessEnabled, smileEnabled,
+                                config = new FacePassConfig(searchThreshold, livenessThreshold, livenessEnabled, smileEnabled, ageGenderEnabled,
                                         faceMinThreshold, poseThreshold, blurThreshold,
                                         lowBrightnessThreshold, highBrightnessThreshold, brightnessSTDThreshold,
-                                        retryCount, cameraRotation, fileRootPath,
+                                        retryCount, rotation, fileRootPath,
                                         poseModel, blurModel, livenessModel, searchModel, detectModel,
-                                        detectRectModel, landmarkModel, smileModel);
+                                        detectRectModel, landmarkModel, smileModel, ageGenderModel);
+
 
                                 /* 创建SDK实例 */
                                 mFacePassHandler = new FacePassHandler(config);
                                 MyApplication.myApplication.setFacePassHandler(mFacePassHandler);
+                                boolean a = false;
                                 try {
 
-                                    boolean a=  mFacePassHandler.createLocalGroup(group_name);
+                                     a=  mFacePassHandler.createLocalGroup(group_name);
 
                                 } catch (FacePassException e) {
                                     e.printStackTrace();
@@ -121,7 +127,7 @@ public class FacePassUtil {
                                         lowBrightnessThreshold2,highBrightnessThreshold2,brightnessSTDThreshold2);
                                 boolean is=   mFacePassHandler.setAddFaceConfig(config1);
 
-                                Log.d("YanShiActivity", "设置入库质量配置"+is );
+                                Log.d("YanShiActivity", a+" 设置入库质量配置"+is );
 
                                 activity.runOnUiThread(new Runnable() {
                                     @Override

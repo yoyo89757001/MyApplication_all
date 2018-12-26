@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">瑞瞳云前台</string>
+    <string name="app_name">瑞瞳面板机云前台</string>
     <string name="N_A">N/A</string>
     <string name="close">Close</string>
     <string name="vdec">vdec</string>
@@ -56,5 +56,33 @@
     <string name="VideoView_player_AndroidMediaPlayer">Player: AndroidMediaPlayer</string>
     <string name="VideoView_player_IjkMediaPlayer">Player: IjkMediaPlayer</string>
     <string name="VideoView_player_IjkExoMediaPlayer">Player: IjkExoMediaPlayer</string>
+
+
+
+    <string name="bt_flush_led_title">红外LED灯</string>
+    <string name="bt_flush_led_open">打开</string>
+    <string name="bt_flush_led_close">关闭</string>
+
+    <string name="bt_proximity_sensor_title">接近传感器</string>
+    <string name="tv_proximity_sensor_someone">有人</string>
+    <string name="tv_proximity_sensor_none">无人</string>
+    <string name="tv_proximity_sensor_error">出错</string>
+
+    <string name="bt_relay_title">继电器</string>
+    <string name="bt_relay_open">打开</string>
+    <string name="bt_relay_close">关闭</string>
+    <string name="bt_blue_open">打开蓝灯</string>
+    <string name="bt_blue_close">关闭蓝灯</string>
+    <string name="bt_red_open">打开红灯</string>
+    <string name="bt_red_close">关闭红灯</string>
+
+    <string name="bt_rs485_title">RS485</string>
+    <string name="bt_rs485_send">切换到发送模式</string>
+    <string name="bt_rs485_receive">切换到接收模式</string>
+
+    <string name="bt_nfc_title">NFC</string>
+    <string name="tv_nfc_notsupport">设备不支持NFC</string>
+    <string name="tv_nfc_working">请刷卡</string>
+    <string name="tv_nfc_notwork">请先去设置里面打开NFC开关</string>
 
 </resources>

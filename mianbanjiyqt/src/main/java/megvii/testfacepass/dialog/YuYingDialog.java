@@ -43,7 +43,7 @@ public class YuYingDialog extends Dialog implements View.OnFocusChangeListener, 
                 attr.gravity = Gravity.CENTER;//设置dialog 在布局中的位置
             }
         }
-        baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+        baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
         baoCunBean=baoCunBeanDao.get(123456L);
         setCustomDialog();
     }

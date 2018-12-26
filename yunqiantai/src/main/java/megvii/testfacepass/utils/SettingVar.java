@@ -7,7 +7,7 @@ import megvii.facepass.types.FacePassImageRotation;
  */
 
 public class SettingVar {
-    public static boolean cameraFacingFront = false;
+    public static boolean cameraFacingFront = true;
     public static int faceRotation = FacePassImageRotation.DEG0;
     public static boolean isSettingAvailable = true;
     public static int cameraPreviewRotation = 0;
@@ -15,7 +15,7 @@ public class SettingVar {
     public static String SharedPrefrence = "user";
     public static int mHeight;
     public static int mWidth;
-    public static boolean cameraSettingOk = false;
-    public static boolean iscameraNeedConfig = false;
-    public static boolean isButtonInvisible = false;
+    public static boolean cameraSettingOk = true;
+    public static boolean iscameraNeedConfig = true;
+    public static boolean isButtonInvisible = true;
 }

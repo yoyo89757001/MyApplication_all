@@ -64,8 +64,6 @@ import com.xiaojun.danrenbanmohe.utils.FileUtil;
 import com.xiaojun.danrenbanmohe.utils.GsonUtil;
 import com.xiaojun.danrenbanmohe.view.FaceView;
 import com.xiaojun.danrenbanmohe.view.GlideCircleTransform;
-import com.yatoooon.screenadaptation.ScreenAdapterTools;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -89,7 +87,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
@@ -113,6 +110,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
+
+
 
 
 public class DingZhiActivity extends Activity implements CameraManager.CameraListener, EasyPermissions.PermissionCallbacks {
@@ -141,10 +140,6 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
     View baozha;
 
 
-
-    private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
-    private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
 
     private int[] baozhaiSZ = {R.drawable.baiselizi, R.drawable.baiselizi2, R.drawable.baiselizi3, R.drawable.baiselizi4, R.drawable.baiselizi5, R.drawable.baiselizi6};
     private long tID = -1;
@@ -1301,15 +1296,13 @@ public class DingZhiActivity extends Activity implements CameraManager.CameraLis
         if (event.equals("mFacePassHandler")) {
             mFacePassHandler = MyApplication.myApplication.getFacePassHandler();
         }
-
-
     }
+
 
 
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
-
 
         super.onDestroy();
 

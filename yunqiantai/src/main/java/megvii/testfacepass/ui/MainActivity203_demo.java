@@ -60,7 +60,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+
 import com.badoo.mobile.util.WeakHandler;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
@@ -127,9 +127,9 @@ import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.beans.Subject_;
 import megvii.testfacepass.beans.TianQiBean;
 import megvii.testfacepass.beans.TodayBean;
-import megvii.testfacepass.box2d.Box2DFragment;
-import megvii.testfacepass.box2d.Box2dEffectView;
-import megvii.testfacepass.box2d.Tools.BoxFragmentInit;
+
+
+
 import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
@@ -167,7 +167,7 @@ import okhttp3.ResponseBody;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 
-public class MainActivity203_demo extends AppCompatActivity implements CameraManager.CameraListener, XiuGaiListener, AndroidFragmentApplication.Callbacks, BoxFragmentInit {
+public class MainActivity203_demo extends AppCompatActivity implements CameraManager.CameraListener, XiuGaiListener {
 
 
     protected Handler mainHandler;
@@ -200,7 +200,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
     @BindView(R.id.boxfargment)
     FrameLayout boxfargment;
 
-    private Box2dEffectView box2dEffectView=null;
+   // private Box2dEffectView box2dEffectView=null;
     private String oneTzm = "";
     private final Timer timer = new Timer();
     private TimerTask task;
@@ -233,16 +233,8 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
 
     private LinkedBlockingQueue<Subject> linkedBlockingQueue;
     /* 人脸识别Group */
-    private static final String group_name = "face-pass-test-x";
-    /* 程序所需权限 ：相机 文件存储 网络访问 */
-    private static final int PERMISSIONS_REQUEST = 1;
-    private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
-    private static final String PERMISSION_WRITE_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-    private static final String PERMISSION_READ_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
-    private static final String PERMISSION_INTERNET = Manifest.permission.INTERNET;
-    private static final String PERMISSION_ACCESS_NETWORK_STATE = Manifest.permission.ACCESS_NETWORK_STATE;
-    private String[] Permission = new String[]{PERMISSION_CAMERA, PERMISSION_WRITE_STORAGE, PERMISSION_READ_STORAGE, PERMISSION_INTERNET, PERMISSION_ACCESS_NETWORK_STATE};
-    //  private WindowManager wm;
+    private static final String group_name = "facepasstestx";
+//  private WindowManager wm;
     /* SDK 实例对象 */
     public FacePassHandler mFacePassHandler;
     /* 相机实例 */
@@ -282,12 +274,10 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
     private BaoCunBean baoCunBean = null;
     private TodayBean todayBean = null;
     private IntentFilter intentFilter;
-    private BoxThread boxThread=null;
+   // private BoxThread boxThread=null;
     private TimeChangeReceiver timeChangeReceiver;
     private WeakHandler mHandler;
-    private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
-    private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
+
     private List<Integer> topZuoBiao = new ArrayList<>();
     private List<Integer> bootomZuoBiao = new ArrayList<>();
     private int[] topIm = new int[]{R.drawable.sp1, R.drawable.sp2, R.drawable.sp3, R.drawable.sp4, R.drawable.sp5,
@@ -301,7 +291,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
     private Query<Subject> query = null;
     private NetWorkStateReceiver netWorkStateReceiver = null;
     private Box<GuanHuai> guanHuaiBox = null;
-    private Box2DFragment m_box2dFgm;
+   // private Box2DFragment m_box2dFgm;
     private FragmentManager fragmentManager = null;
     private List<GuanHuai> guanHuaiList=new ArrayList<>();
     private List<String> bumenString=new ArrayList<>();
@@ -316,13 +306,13 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
         mToastBlockQueue = new LinkedBlockingQueue<>();
         mDetectResultQueue = new ArrayBlockingQueue<FacePassDetectionResult>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
-        todayBeanBox = MyApplication.myApplication.getBoxStore().boxFor(TodayBean.class);
+        todayBeanBox = MyApplication.myApplication.getTodayBeanBox();
         todayBean = todayBeanBox.get(123456L);
-        benDiJiLuBeanBox = MyApplication.myApplication.getBoxStore().boxFor(BenDiJiLuBean.class);
-        guanHuaiBox = MyApplication.myApplication.getBoxStore().boxFor(GuanHuai.class);
+        benDiJiLuBeanBox = MyApplication.myApplication.getBenDiJiLuBeanBox();
+        guanHuaiBox = MyApplication.myApplication.getGuanHuaiBox();
         // initAndroidHandler();
         //  isOne = true;
-        baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+        baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
         mainHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -332,7 +322,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
         };
 
         baoCunBean = baoCunBeanDao.get(123456L);
-        subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
+        subjectBox = MyApplication.myApplication.getSubjectBox();
         //网络状态关闭
         if (netWorkStateReceiver == null) {
             netWorkStateReceiver = new NetWorkStateReceiver();
@@ -398,14 +388,14 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
 
         /* 初始化界面 */
         initView();
-        fragmentManager = getSupportFragmentManager();
-        m_box2dFgm = new Box2DFragment();
-        m_box2dFgm.setBoxFragmentInit(this);
-        fragmentManager.beginTransaction().add(R.id.boxfargment, m_box2dFgm).commit();
-
-        boxfargment.setScaleX(0.001f);
-        boxfargment.setScaleY(0.001f);
-        boxfargment.invalidate();
+//        fragmentManager = getSupportFragmentManager();
+//        m_box2dFgm = new Box2DFragment();
+//        m_box2dFgm.setBoxFragmentInit(this);
+//        fragmentManager.beginTransaction().add(R.id.boxfargment, m_box2dFgm).commit();
+//
+//        boxfargment.setScaleX(0.001f);
+//        boxfargment.setScaleY(0.001f);
+//        boxfargment.invalidate();
 
 //        dibuliebiao.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
 //                    @Override
@@ -416,15 +406,7 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
 //                    }
 //
 //                });
-        /* 申请程序所需权限 */
-        if (!hasPermission()) {
-            requestPermission();
-        } else {
-            //初始化
-            FacePassHandler.getAuth(authIP, apiKey, apiSecret);
-            FacePassHandler.initSDK(getApplicationContext());
-            Log.d("MainActivity201", FacePassHandler.getVersion());
-        }
+
 
         if (baoCunBean != null)
             initialTts();
@@ -454,12 +436,12 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
             public boolean handleMessage(Message msg) {
                 switch (msg.what) {
                     case 111: {
-                        if (box2dEffectView!=null){
-                            box2dEffectView.pause();
-                            boxfargment.setScaleX(0.001f);
-                            boxfargment.setScaleY(0.001f);
-                            boxfargment.invalidate();
-                        }
+//                        if (box2dEffectView!=null){
+//                            box2dEffectView.pause();
+//                            boxfargment.setScaleX(0.001f);
+//                            boxfargment.setScaleY(0.001f);
+//                            boxfargment.invalidate();
+//                        }
 
                         if (shengRiThierd!=null){
                             shengRiThierd.interrupt();
@@ -744,12 +726,12 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                     }
 
                     case 444: {
-                        if (box2dEffectView!=null){
-                            box2dEffectView.pause();
-                            boxfargment.setScaleX(0.001f);
-                            boxfargment.setScaleY(0.001f);
-                            boxfargment.invalidate();
-                        }
+//                        if (box2dEffectView!=null){
+//                            box2dEffectView.pause();
+//                            boxfargment.setScaleX(0.001f);
+//                            boxfargment.setScaleY(0.001f);
+//                            boxfargment.invalidate();
+//                        }
                         if (fangkeThired != null) {
                             fangkeThired.interrupt();
                             fangkeThired = null;
@@ -858,21 +840,21 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                                         //有消息
                                         linearygwenzi.setVisibility(View.GONE);
                                         scrollView_03.setVisibility(View.VISIBLE);
-                                        if (box2dEffectView!=null)
-                                            box2dEffectView.pause();
-                                            boxfargment.setScaleX(0.001f);
-                                            boxfargment.setScaleY(0.001f);
-                                            boxfargment.invalidate();
+//                                        if (box2dEffectView!=null)
+//                                            box2dEffectView.pause();
+//                                            boxfargment.setScaleX(0.001f);
+//                                            boxfargment.setScaleY(0.001f);
+//                                            boxfargment.invalidate();
 
                                     } else {
                                         //没消息
                                         Log.d("MainActivity203", "没消息");
-                                        boxfargment.setVisibility(View.VISIBLE);
-                                        if (box2dEffectView!=null)
-                                            box2dEffectView.resume();
-                                            boxfargment.setScaleX(1f);
-                                            boxfargment.setScaleY(1f);
-                                            boxfargment.invalidate();
+//                                        boxfargment.setVisibility(View.VISIBLE);
+//                                        if (box2dEffectView!=null)
+//                                            box2dEffectView.resume();
+//                                            boxfargment.setScaleX(1f);
+//                                            boxfargment.setScaleY(1f);
+//                                            boxfargment.invalidate();
                                             linearygwenzi.setVisibility(View.VISIBLE);
                                             scrollView_03.setVisibility(View.GONE);
                                     }
@@ -1098,11 +1080,11 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
 
                                 @Override
                                 public void start() {
-                                    if (box2dEffectView!=null)
-                                    box2dEffectView.pause();
-                                    boxfargment.setScaleX(0.001f);
-                                    boxfargment.setScaleY(0.001f);
-                                    boxfargment.invalidate();
+//                                    if (box2dEffectView!=null)
+//                                    box2dEffectView.pause();
+//                                    boxfargment.setScaleX(0.001f);
+//                                    boxfargment.setScaleY(0.001f);
+//                                    boxfargment.invalidate();
                                 }
                             });
                             utils.animator(0, -dw, 300, 0, 0);
@@ -1116,22 +1098,22 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                             //有消息
                             linearygwenzi.setVisibility(View.GONE);
                             scrollView_03.setVisibility(View.VISIBLE);
-                            if (box2dEffectView!=null)
-                            box2dEffectView.pause();
-                            boxfargment.setScaleX(0.001f);
-                            boxfargment.setScaleY(0.001f);
-                            boxfargment.invalidate();
+//                            if (box2dEffectView!=null)
+//                            box2dEffectView.pause();
+//                            boxfargment.setScaleX(0.001f);
+//                            boxfargment.setScaleY(0.001f);
+//                            boxfargment.invalidate();
 
 
                         } else {
                             //没消息
                             Log.d("MainActivity203", "没消息");
-                            boxfargment.setVisibility(View.VISIBLE);
-                            if (box2dEffectView!=null)
-                            box2dEffectView.resume();
-                            boxfargment.setScaleX(1f);
-                            boxfargment.setScaleY(1f);
-                            boxfargment.invalidate();
+//                            boxfargment.setVisibility(View.VISIBLE);
+//                            if (box2dEffectView!=null)
+//                            box2dEffectView.resume();
+//                            boxfargment.setScaleX(1f);
+//                            boxfargment.setScaleY(1f);
+//                            boxfargment.invalidate();
                             linearygwenzi.setVisibility(View.VISIBLE);
                             scrollView_03.setVisibility(View.GONE);
                         }
@@ -1353,12 +1335,12 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
 
                     case 555: {
 
-                        if (box2dEffectView!=null){
-                            box2dEffectView.pause();
-                            boxfargment.setScaleX(0.001f);
-                            boxfargment.setScaleY(0.001f);
-                            boxfargment.invalidate();
-                        }
+//                        if (box2dEffectView!=null){
+//                            box2dEffectView.pause();
+//                            boxfargment.setScaleX(0.001f);
+//                            boxfargment.setScaleY(0.001f);
+//                            boxfargment.invalidate();
+//                        }
                        // Log.d("MainActivity203", "收到555");
                         //零时陌生人
                         final Subject bean2 = (Subject) msg.obj;
@@ -1441,22 +1423,22 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                                         //有消息
                                         linearygwenzi.setVisibility(View.GONE);
                                         scrollView_03.setVisibility(View.VISIBLE);
-                                        if (box2dEffectView != null)
-                                            box2dEffectView.pause();
-                                        boxfargment.setScaleX(0.001f);
-                                        boxfargment.setScaleY(0.001f);
-                                        boxfargment.invalidate();
+//                                        if (box2dEffectView != null)
+//                                            box2dEffectView.pause();
+//                                        boxfargment.setScaleX(0.001f);
+//                                        boxfargment.setScaleY(0.001f);
+//                                        boxfargment.invalidate();
 
 
                                     } else {
                                         //没消息
                                         //  Log.d("MainActivity203", "没消息");
-                                        boxfargment.setVisibility(View.VISIBLE);
-                                        if (box2dEffectView != null)
-                                            box2dEffectView.resume();
-                                        boxfargment.setScaleX(1f);
-                                        boxfargment.setScaleY(1f);
-                                        boxfargment.invalidate();
+//                                        boxfargment.setVisibility(View.VISIBLE);
+//                                        if (box2dEffectView != null)
+//                                            box2dEffectView.resume();
+//                                        boxfargment.setScaleX(1f);
+//                                        boxfargment.setScaleY(1f);
+//                                        boxfargment.invalidate();
                                         linearygwenzi.setVisibility(View.VISIBLE);
                                         scrollView_03.setVisibility(View.GONE);
                                     }
@@ -1670,11 +1652,11 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
 
                                 @Override
                                 public void start() {
-                                    if (box2dEffectView!=null)
-                                        box2dEffectView.pause();
-                                    boxfargment.setScaleX(0.001f);
-                                    boxfargment.setScaleY(0.001f);
-                                    boxfargment.invalidate();
+//                                    if (box2dEffectView!=null)
+//                                        box2dEffectView.pause();
+//                                    boxfargment.setScaleX(0.001f);
+//                                    boxfargment.setScaleY(0.001f);
+//                                    boxfargment.invalidate();
                                 }
                             });
                             utils.animator(0, -dw, 300, 0, 0);
@@ -1690,22 +1672,22 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                                 //有消息
                                 linearygwenzi.setVisibility(View.GONE);
                                 scrollView_03.setVisibility(View.VISIBLE);
-                                if (box2dEffectView != null)
-                                    box2dEffectView.pause();
-                                boxfargment.setScaleX(0.001f);
-                                boxfargment.setScaleY(0.001f);
-                                boxfargment.invalidate();
+//                                if (box2dEffectView != null)
+//                                    box2dEffectView.pause();
+//                                boxfargment.setScaleX(0.001f);
+//                                boxfargment.setScaleY(0.001f);
+//                                boxfargment.invalidate();
 
 
                             } else {
                                 //没消息
                                 //  Log.d("MainActivity203", "没消息");
-                                boxfargment.setVisibility(View.VISIBLE);
-                                if (box2dEffectView != null)
-                                    box2dEffectView.resume();
-                                boxfargment.setScaleX(1f);
-                                boxfargment.setScaleY(1f);
-                                boxfargment.invalidate();
+//                                boxfargment.setVisibility(View.VISIBLE);
+//                                if (box2dEffectView != null)
+//                                    box2dEffectView.resume();
+//                                boxfargment.setScaleX(1f);
+//                                boxfargment.setScaleY(1f);
+//                                boxfargment.invalidate();
                                 linearygwenzi.setVisibility(View.VISIBLE);
                                 scrollView_03.setVisibility(View.GONE);
                             }
@@ -1915,12 +1897,12 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                     }
                     case 666: {
                         //普通访客
-                        if (box2dEffectView!=null){
-                            box2dEffectView.pause();
-                            boxfargment.setScaleX(0.001f);
-                            boxfargment.setScaleY(0.001f);
-                            boxfargment.invalidate();
-                        }
+//                        if (box2dEffectView!=null){
+//                            box2dEffectView.pause();
+//                            boxfargment.setScaleX(0.001f);
+//                            boxfargment.setScaleY(0.001f);
+//                            boxfargment.invalidate();
+//                        }
                         if (shengRiThierd != null) {
                             shengRiThierd.interrupt();
                             shengRiThierd = null;
@@ -2226,11 +2208,11 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
                                 }
                                 @Override
                                 public void start() {
-                                    if (box2dEffectView!=null)
-                                    box2dEffectView.pause();
-                                    boxfargment.setScaleX(0.001f);
-                                    boxfargment.setScaleY(0.001f);
-                                    boxfargment.invalidate();
+//                                    if (box2dEffectView!=null)
+//                                    box2dEffectView.pause();
+//                                    boxfargment.setScaleX(0.001f);
+//                                    boxfargment.setScaleY(0.001f);
+//                                    boxfargment.invalidate();
                                    // boxfargment.setVisibility(View.GONE);
                                 }
                             });
@@ -2409,9 +2391,8 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
     protected void onResume() {
         initToast();
         /* 打开相机 */
-        if (hasPermission()) {
-            manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
-        }
+        manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
+
         query = subjectBox.query().equal(Subject_.peopleType, "员工").build();
        // adaptFrameLayout();
         super.onResume();
@@ -2437,37 +2418,37 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
 
     }
 
-    @Override
-    public void exit() {
-        //box退出回调
-        //   m_box2dFgm.preDestory();
-        //  m_box2dFgm.exit();
-
-    }
-
-    @Override
-    public void initCompelte(Box2dEffectView box2dEffectView) {
-        Log.d("MainActivity203", "好了");
-        //box开始渲染的回调
-
-        if (boxThread==null){
-
-            boxThread=new BoxThread();
-            boxThread.start();
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //boxfargment.setScaleX(0.01f);
-                    //boxfargment.setScaleY(0.01f);
-
-                  //  boxfargment.invalidate();
-                }
-            });
-        }
-        this.box2dEffectView=box2dEffectView;
-
-    }
+//    @Override
+//    public void exit() {
+//        //box退出回调
+//        //   m_box2dFgm.preDestory();
+//        //  m_box2dFgm.exit();
+//
+//    }
+//
+//    @Override
+//    public void initCompelte(Box2dEffectView box2dEffectView) {
+//        Log.d("MainActivity203", "好了");
+//        //box开始渲染的回调
+//
+//        if (boxThread==null){
+//
+//            boxThread=new BoxThread();
+//            boxThread.start();
+//
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    //boxfargment.setScaleX(0.01f);
+//                    //boxfargment.setScaleY(0.01f);
+//
+//                  //  boxfargment.invalidate();
+//                }
+//            });
+//        }
+//        this.box2dEffectView=box2dEffectView;
+//
+//    }
 
 
     private class FeedFrameThread extends Thread {
@@ -2673,67 +2654,14 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
     protected void onPause() {
         Log.d("MainActivity203", "onPauseonPause");
 
-        if (box2dEffectView!=null)
-            box2dEffectView.pause();
+       // if (box2dEffectView!=null)
+        //    box2dEffectView.pause();
 
         super.onPause();
 //        shipingView.pause();
     }
 
 
-
-    /* 判断程序是否有所需权限 android22以上需要自申请权限 */
-    private boolean hasPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_READ_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_WRITE_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_INTERNET) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
-        } else {
-            return true;
-        }
-    }
-
-    /* 请求程序所需权限 */
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(Permission, PERMISSIONS_REQUEST);
-        }
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST) {
-            boolean granted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED)
-                    granted = false;
-            }
-            if (!granted) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    if (!shouldShowRequestPermissionRationale(PERMISSION_CAMERA)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_READ_STORAGE)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_WRITE_STORAGE)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_INTERNET)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_ACCESS_NETWORK_STATE)) {
-                        Toast.makeText(getApplicationContext(), "需要开启摄像头网络文件存储权限", Toast.LENGTH_SHORT).show();
-                    }
-            } else {
-
-                FacePassHandler.getAuth(authIP, apiKey, apiSecret);
-                FacePassHandler.initSDK(getApplicationContext());
-                Log.d("MainActivity2013", FacePassHandler.getVersion());
-            }
-        }
-    }
-
-    private void adaptFrameLayout() {
-        SettingVar.isButtonInvisible = false;
-        SettingVar.iscameraNeedConfig = false;
-    }
 
     private void initToast() {
         SettingVar.isButtonInvisible = false;
@@ -3088,8 +3016,8 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
         //  if (shipingView!=null)
         // shipingView.start();
 
-        if (box2dEffectView!=null)
-            box2dEffectView.resume();
+      //  if (box2dEffectView!=null)
+          //  box2dEffectView.resume();
 
         super.onRestart();
     }
@@ -3126,10 +3054,10 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
             tanChuangThread.interrupt();
         }
 
-        if (boxThread!=null){
-            boxThread.sisu=false;
-            boxThread.interrupt();
-        }
+//        if (boxThread!=null){
+//            boxThread.sisu=false;
+//            boxThread.interrupt();
+//        }
 
 
         if (mRecognizeThread != null) {
@@ -3811,31 +3739,31 @@ public class MainActivity203_demo extends AppCompatActivity implements CameraMan
     private long jjkk=0;
     private boolean isLeft=false;
 
-    private class BoxThread extends Thread{
-        private boolean sisu=true;
-
-        @Override
-        public void run() {
-            while (sisu){
-                if (jjkk%2==0){
-                    jjkk++;
-                    isLeft=true;
-                }else {
-                    jjkk++;
-                    isLeft=false;
-                }
-                m_box2dFgm.addStar(isLeft,false);
-                SystemClock.sleep(100);
-            }
-
-        }
-
-        @Override
-        public void interrupt() {
-            sisu=false;
-            super.interrupt();
-        }
-    }
+//    private class BoxThread extends Thread{
+//        private boolean sisu=true;
+//
+//        @Override
+//        public void run() {
+//            while (sisu){
+//                if (jjkk%2==0){
+//                    jjkk++;
+//                    isLeft=true;
+//                }else {
+//                    jjkk++;
+//                    isLeft=false;
+//                }
+//                m_box2dFgm.addStar(isLeft,false);
+//                SystemClock.sleep(100);
+//            }
+//
+//        }
+//
+//        @Override
+//        public void interrupt() {
+//            sisu=false;
+//            super.interrupt();
+//        }
+//    }
 
 
     private class ShengRiThierd extends Thread {

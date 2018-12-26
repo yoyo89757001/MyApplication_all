@@ -130,7 +130,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     private static String serverIP;
     private static String recognize_url;
     /* 人脸识别Group */
-    private static final String group_name = "face-pass-test-x";
+    private static final String group_name = "facepasstestx";
     /* 程序所需权限 ：相机 文件存储 网络访问 */
     private static final int PERMISSIONS_REQUEST = 1;
     private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
@@ -240,7 +240,8 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         if (!hasPermission()) {
             requestPermission();
         } else {
-          //  initFacePassSDK();
+
+
         }
 
         initFaceHandler();
@@ -279,12 +280,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         };
     }
 
-//    private void initFacePassSDK() {
-//        FacePassHandler.getAuth(authIP, apiKey, apiSecret);
-//        FacePassHandler.initSDK(getApplicationContext());
-//        Log.d("WJY", FacePassHandler.getVersion());
-//
-//    }
+
 
     private void initFaceHandler() {
 

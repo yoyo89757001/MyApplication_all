@@ -15,7 +15,7 @@
 
         <LinearLayout
             android:gravity="center_horizontal"
-            android:layout_weight="1"
+            android:layout_weight="0.9"
             android:orientation="vertical"
             android:background="#edc920"
             android:layout_width="0dp"
@@ -26,12 +26,14 @@
                 android:layout_height="0dp"/>
 
 
-       <megvii.testfacepass.utils.ScaleTextView
+           <me.grantland.widget.AutofitTextView
            android:layout_width="wrap_content"
            android:ems="1"
+           android:gravity="center_horizontal"
+           android:textStyle="bold"
            android:layout_weight="6"
            android:text="广州瑞瞳智能科技有限公司"
-           android:textSize="60sp"
+           android:textSize="40sp"
            android:textColor="@color/white"
            android:id="@+id/companyName"
            android:layout_height="0dp" />
@@ -49,12 +51,13 @@
 
         <RelativeLayout
             android:id="@+id/rl_02"
-            android:layout_weight="3"
+            android:layout_weight="2.9"
             android:layout_width="0dp"
             android:layout_height="match_parent">
 
             <megvii.testfacepass.camera.CameraPreview
                 android:id="@+id/preview"
+                android:layout_centerHorizontal="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -121,12 +124,11 @@
 
 
                 <LinearLayout
-                    android:layout_weight="1"
                     android:id="@+id/fgrt"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
 
                     <ImageView
                         android:layout_gravity="center_vertical"
@@ -139,37 +141,49 @@
                         android:maxLines="1"
                         autofit:minTextSize="10sp"
                         android:id="@+id/tianqi"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginLeft="20dp"
                         android:gravity="center"
                         android:textColor="@color/white"
                         android:textSize="40sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/fgrt2"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <me.grantland.widget.AutofitTextView
+                        android:maxLines="1"
+                        android:layout_weight="1"
+                        autofit:minTextSize="12sp"
+                        android:id="@+id/wendu"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="30sp"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <me.grantland.widget.AutofitTextView
+                        android:maxLines="1"
+                        android:layout_weight="1"
+                        autofit:minTextSize="12sp"
+                        android:id="@+id/shidu"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="30sp"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
 
                 </LinearLayout>
 
-                <me.grantland.widget.AutofitTextView
-                    android:maxLines="1"
-                    android:layout_weight="1"
-                    autofit:minTextSize="12sp"
-                    android:id="@+id/wendu"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="30sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
 
-                <me.grantland.widget.AutofitTextView
-                    android:maxLines="1"
-                    android:layout_weight="1"
-                    autofit:minTextSize="12sp"
-                    android:id="@+id/shidu"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="30sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
 
 
             </LinearLayout>
@@ -185,9 +199,9 @@
             android:layout_height="match_parent">
 
             <RelativeLayout
-                android:layout_weight="3"
+                android:id="@+id/shipingrl"
                 android:layout_width="match_parent"
-                android:layout_height="0dp">
+                android:layout_height="200dp">
 
                 <megvii.testfacepass.ljkplay.widget.media.IjkVideoView
                     android:layout_width="match_parent"
@@ -210,9 +224,8 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:id="@+id/bottom_ll"
-                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="0dp">
+                android:layout_height="match_parent">
 
             </LinearLayout>
         </LinearLayout>
@@ -223,8 +236,9 @@
 
     <ImageView
         android:visibility="gone"
-        android:background="#97262626"
+        android:background="#b0262626"
         android:id="@+id/dabg"
+        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -241,6 +255,26 @@
 
     </com.google.android.flexbox.FlexboxLayout>
 
+
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:id="@+id/vip_ll"
+        android:focusable="false"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </RelativeLayout>
+
+
+        <Button
+            android:background="@color/transparent"
+            android:id="@+id/shezhi_tv"
+            android:onClick="oncv"
+            android:layout_width="55dp"
+            android:layout_height="55dp" />
 
 
 </RelativeLayout>

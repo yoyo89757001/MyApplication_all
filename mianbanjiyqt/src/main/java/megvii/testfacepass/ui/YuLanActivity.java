@@ -1,13 +1,12 @@
 package megvii.testfacepass.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -20,13 +19,10 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.YuvImage;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -60,7 +56,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-
+import com.sdsmdg.tastytoast.TastyToast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -68,6 +64,9 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.util.CharsetUtils;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -81,29 +80,27 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
+import io.objectbox.Box;
 import megvii.facepass.FacePassException;
 import megvii.facepass.FacePassHandler;
 import megvii.facepass.types.FacePassAddFaceResult;
-import megvii.facepass.types.FacePassConfig;
 import megvii.facepass.types.FacePassDetectionResult;
 import megvii.facepass.types.FacePassFace;
 import megvii.facepass.types.FacePassGroupSyncDetail;
 import megvii.facepass.types.FacePassImage;
 import megvii.facepass.types.FacePassImageRotation;
 import megvii.facepass.types.FacePassImageType;
-import megvii.facepass.types.FacePassModel;
-import megvii.facepass.types.FacePassPose;
 import megvii.facepass.types.FacePassRecognitionResult;
 import megvii.facepass.types.FacePassRecognitionResultType;
 import megvii.facepass.types.FacePassSyncResult;
+import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.adapter.FaceTokenAdapter;
 import megvii.testfacepass.adapter.GroupNameAdapter;
+import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
-
 import megvii.testfacepass.network.ByteRequest;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.SettingVar;
@@ -126,16 +123,9 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     private static String serverIP;
     private static String recognize_url;
     /* 人脸识别Group */
-    private static final String group_name = "face-pass-test-x";
-    /* 程序所需权限 ：相机 文件存储 网络访问 */
-    private static final int PERMISSIONS_REQUEST = 1;
-    private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
-    private static final String PERMISSION_WRITE_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-    private static final String PERMISSION_READ_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE;
-    private static final String PERMISSION_INTERNET = Manifest.permission.INTERNET;
-    private static final String PERMISSION_ACCESS_NETWORK_STATE = Manifest.permission.ACCESS_NETWORK_STATE;
-    private String[] Permission = new String[]{PERMISSION_CAMERA, PERMISSION_WRITE_STORAGE, PERMISSION_READ_STORAGE, PERMISSION_INTERNET, PERMISSION_ACCESS_NETWORK_STATE};
-    /* SDK 实例对象 */
+    private static final String group_name = "facepasstestx";
+
+  /* SDK 实例对象 */
     FacePassHandler mFacePassHandler;
 
     /* 相机实例 */
@@ -161,7 +151,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     private static boolean cameraFacingFront = true;
     /* 相机图片旋转角度，请根据实际情况来设置
      * 对于标准设备，可以如下计算旋转角度rotation
-     * int windowRotation = ((WindowManager)(getApplicationgetApplicationContext()().getSystemService(getApplicationContext().WINDOW_SERVICE))).getDefaultDisplay().getRotation() * 90;
+     * int windowRotation = ((WindowManager)(getApplicationContext().getSystemService(Context.WINDOW_SERVICE))).getDefaultDisplay().getRotation() * 90;
      * Camera.CameraInfo info = new Camera.CameraInfo();
      * Camera.getCameraInfo(cameraFacingFront ? Camera.CameraInfo.CAMERA_FACING_FRONT : Camera.CameraInfo.CAMERA_FACING_BACK, info);
      * int cameraOrientation = info.orientation;
@@ -186,15 +176,6 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     /* 网络请求队列*/
     RequestQueue requestQueue;
 
-    private   FacePassModel trackModel;
-    FacePassModel poseModel;
-    FacePassModel blurModel;
-    FacePassModel livenessModel;
-    FacePassModel searchModel;
-    FacePassModel detectModel;
-    FacePassModel detectRectModel;
-    FacePassModel landmarkModel;
-    FacePassModel smileModel;
 
     Button visible;
     LinearLayout ll;
@@ -219,6 +200,10 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
     private Handler mAndroidHandler;
 
+    private Box<BaoCunBean> baoCunBeanDao = null;
+    private BaoCunBean baoCunBean = null;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,7 +213,10 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         mDetectResultQueue = new ArrayBlockingQueue<byte[]>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
         initAndroidHandler();
+        baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
+        baoCunBean = baoCunBeanDao.get(123456L);
 
+        EventBus.getDefault().register(this);//订阅
         if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
             recognize_url = "http://" + serverIP_online + ":8080/api/service/recognize/v1";
             serverIP = serverIP_online;
@@ -238,14 +226,8 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
         /* 初始化界面 */
         initView();
-        /* 申请程序所需权限 */
-        if (!hasPermission()) {
-            requestPermission();
-        } else {
-          //  initFacePassSDK();
-        }
 
-        initFaceHandler();
+      //  initFaceHandler();
         /* 初始化网络请求库 */
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
@@ -254,7 +236,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
         mFeedFrameThread = new FeedFrameThread();
         mFeedFrameThread.start();
-
+        mFacePassHandler = MyApplication.myApplication.getFacePassHandler();
     }
 
     private void initAndroidHandler() {
@@ -281,90 +263,48 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         };
     }
 
-//    private void initFacePassSDK() {
-//        FacePassHandler.getAuth(authIP, apiKey, apiSecret);
-//        FacePassHandler.initSDK(getApplicationgetApplicationContext()());
-//        Log.d("WJY", FacePassHandler.getVersion());
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
+    public void onDataSynEvent(String event) {
+        if (event.equals("mFacePassHandler")) {
+            mFacePassHandler = MyApplication.myApplication.getFacePassHandler();
+            // diBuAdapter = new DiBuAdapter(dibuList, MainActivity202.this, dibuliebiao.getWidth(), dibuliebiao.getHeight(), mFacePassHandler);
+            //  dibuliebiao.setLayoutManager(gridLayoutManager);
+            //  dibuliebiao.setAdapter(diBuAdapter);
+            return;
+        }
+//        if (event.equals("ditu123")) {
+//            if (baoCunBean.getTouxiangzhuji() != null)
+//                daBg.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getTouxiangzhuji()));
+//            if (baoCunBean.getWenzi1() != null)
+//                zidongtext.setText(baoCunBean.getWenzi1());
 //
-//    }
+//            if (baoCunBean.getXiaBanTime() != null) {
+//                logo.setImageBitmap(BitmapFactory.decodeFile(baoCunBean.getXiaBanTime()));
+//            }
+//            daBg.invalidate();
+//            logo.invalidate();
+//            zidongtext.invalidate();
+//            Log.d("MainActivity101", "dfgdsgfdgfdgfdg");
+//            return;
+//        }
 
-    private void initFaceHandler() {
+        Toast tastyToast = TastyToast.makeText(YuLanActivity.this, event, TastyToast.LENGTH_LONG, TastyToast.INFO);
+        tastyToast.setGravity(Gravity.CENTER, 0, 0);
+        tastyToast.show();
 
-        new Thread() {
-            @Override
-            public void run() {
-                while (true && !isFinishing()) {
-                    if (FacePassHandler.isAvailable()) {
-                        Log.d(DEBUG_TAG, "start to build FacePassHandler");
-                         /* FacePass SDK 所需模型， 模型在assets目录下 */
-
-                        trackModel = FacePassModel.initModel(getApplicationContext().getAssets(), "tracker.retina.x20.20180607.bin");
-                        poseModel = FacePassModel.initModel(getApplicationContext().getAssets(), "pose.alfa.tiny.170515.bin");
-                        blurModel = FacePassModel.initModel(getApplicationContext().getAssets(), "blurness.v5.l2rsmall.bin");
-                        livenessModel = FacePassModel.initModel(getApplicationContext().getAssets(), "panorama.facepass.181129_3288_3models_1core.combine.bin");
-                        searchModel = FacePassModel.initModel(getApplicationContext().getAssets(), "feat.inu.3comps.inp96.200ms.e6000.pca512.bin");
-                        detectModel = FacePassModel.initModel(getApplicationContext().getAssets(), "detector.retinanet.facei2head.x14.180910.bin");
-//                        detectRectModel = FacePassModel.initModel(getApplicationContext().getAssets(), "det.retinanet.head2face.x20.180613.bin");
-                        detectRectModel = FacePassModel.initModel(getApplicationContext().getAssets(), "det.retinanet.face2head.x14.180906.bin");
-
-                        landmarkModel = FacePassModel.initModel(getApplicationContext().getAssets(), "lmk.postfilter.tiny.dt1.4.1.20180602.3dpose.bin");
-                        smileModel = FacePassModel.initModel(getApplicationContext().getAssets(), "attr.blur.align.gray.general.mgf29.0.1.0.181127.smile.bin");
-
-
-                        /* SDK 配置 */
-                        boolean smileEnabled = false;
-                        float searchThreshold = 70;
-                        float livenessThreshold = 70;
-                        boolean livenessEnabled = false;
-                        int faceMinThreshold =20;
-                        FacePassPose poseThreshold = new FacePassPose(26f, 26f, 26f);
-                        float blurThreshold = 0.3f;
-                        float lowBrightnessThreshold = 70f;
-                        float highBrightnessThreshold = 210f;
-                        float brightnessSTDThreshold = 60f;
-                        int retryCount = 2;
-                        int rotation = cameraRotation;
-                        String fileRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                        FacePassConfig config;
-                        try {
-
-                            /* 填入所需要的配置 */
-                            config = new FacePassConfig(searchThreshold, livenessThreshold, livenessEnabled, smileEnabled,
-                                    faceMinThreshold, poseThreshold, blurThreshold,
-                                    lowBrightnessThreshold, highBrightnessThreshold, brightnessSTDThreshold,
-                                    retryCount, rotation, fileRootPath,
-                                    poseModel, blurModel, livenessModel, searchModel, detectModel,
-                                    detectRectModel, landmarkModel, smileModel);
-                            
-                            /* 创建SDK实例 */
-                            mFacePassHandler = new FacePassHandler(config);
-                            //checkGroup();
-                        } catch (FacePassException e) {
-                            e.printStackTrace();
-                            Log.d(DEBUG_TAG, "FacePassHandler is null");
-                            return;
-                        }
-                        return;
-                    }
-                    try {
-                        /* 如果SDK初始化未完成则需等待 */
-                        sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
     }
+
+
 
     @Override
     protected void onResume() {
         //checkGroup();
         initToast();
         /* 打开相机 */
-        if (hasPermission()) {
-            manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
-        }
+        manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
+
         adaptFrameLayout();
         super.onResume();
     }
@@ -587,50 +527,8 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
     }
 
-    /* 判断程序是否有所需权限 android22以上需要自申请权限 */
-    private boolean hasPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_READ_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_WRITE_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_INTERNET) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(PERMISSION_ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED;
-        } else {
-            return true;
-        }
-    }
-
-    /* 请求程序所需权限 */
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(Permission, PERMISSIONS_REQUEST);
-        }
-    }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST) {
-            boolean granted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED)
-                    granted = false;
-            }
-            if (!granted) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    if (!shouldShowRequestPermissionRationale(PERMISSION_CAMERA)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_READ_STORAGE)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_WRITE_STORAGE)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_INTERNET)
-                            || !shouldShowRequestPermissionRationale(PERMISSION_ACCESS_NETWORK_STATE)) {
-                        Toast.makeText(getApplication(), "需要开启摄像头网络文件存储权限", Toast.LENGTH_SHORT).show();
-                    }
-            } else {
-               // initFacePassSDK();
-            }
-        }
-    }
 
     private void adaptFrameLayout() {
         SettingVar.isButtonInvisible = false;
@@ -643,7 +541,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
     private void initView() {
 
-        int windowRotation = ((WindowManager) (getApplication().getSystemService(getApplicationContext().WINDOW_SERVICE))).getDefaultDisplay().getRotation() * 90;
+        int windowRotation = ((WindowManager) (getApplicationContext().getSystemService(Context.WINDOW_SERVICE))).getDefaultDisplay().getRotation() * 90;
         if (windowRotation == 0) {
             cameraRotation = FacePassImageRotation.DEG90;
         } else if (windowRotation == 90) {
@@ -655,7 +553,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         }
         Log.i(DEBUG_TAG, "cameraRation: " + cameraRotation);
         cameraFacingFront = true;
-        SharedPreferences preferences = getSharedPreferences(SettingVar.SharedPrefrence, getApplicationContext().MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(SettingVar.SharedPrefrence, Context.MODE_PRIVATE);
         SettingVar.isSettingAvailable = preferences.getBoolean("isSettingAvailable", SettingVar.isSettingAvailable);
         SettingVar.isCross = preferences.getBoolean("isCross", SettingVar.isCross);
         SettingVar.faceRotation = preferences.getInt("faceRotation", SettingVar.faceRotation);
@@ -784,6 +682,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         if (mFeedFrameQueue != null) {
             mFeedFrameQueue.clear();
         }
+        EventBus.getDefault().unregister(this);//解除订阅
         super.onDestroy();
     }
 
@@ -809,7 +708,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                     StringBuilder faceBlurString = new StringBuilder();
                     faceBlurString.append("模糊: ").append(String.format("%.2f", face.blur));
                     StringBuilder faceAgeString = new StringBuilder();
-                   // faceAgeString.append("年龄: ").append(face.age);
+                 //   faceAgeString.append("年龄: ").append(face.age);
                     StringBuilder faceGenderString = new StringBuilder();
 
 //                    switch (face.gender) {
@@ -877,13 +776,13 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
                     mat.mapRect(drect, srect);
                     faceView.addRect(drect);
-                    faceView.addId(faceIdString.toString());
-                    faceView.addRoll(faceRollString.toString());
-                    faceView.addPitch(facePitchString.toString());
-                    faceView.addYaw(faceYawString.toString());
-                    faceView.addBlur(faceBlurString.toString());
-                    faceView.addAge(faceAgeString.toString());
-                    faceView.addGenders(faceGenderString.toString());
+                  //  faceView.addId(faceIdString.toString());
+                  //  faceView.addRoll(faceRollString.toString());
+                  //  faceView.addPitch(facePitchString.toString());
+                  //  faceView.addYaw(faceYawString.toString());
+                  //  faceView.addBlur(faceBlurString.toString());
+                 //   faceView.addAge(faceAgeString.toString());
+                  //  faceView.addGenders(faceGenderString.toString());
                 }
                 faceView.invalidate();
             }
@@ -965,7 +864,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                     }
                     if (TextUtils.isEmpty(path)) {
                         try {
-                            path = FileUtil.getPath(getApplication(), uri);
+                            path = FileUtil.getPath(getApplicationContext(), uri);
                         } catch (Exception e) {
                         }
                     }

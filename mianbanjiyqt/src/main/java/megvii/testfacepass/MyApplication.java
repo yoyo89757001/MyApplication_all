@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 
 import android.util.Log;
@@ -12,24 +13,32 @@ import android.view.WindowManager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.liulishuo.filedownloader.FileDownloader;
+import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
 import com.tencent.bugly.Bugly;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 
+import java.io.File;
 import java.io.IOException;
 
-import cn.jpush.android.api.JPushInterface;
 import io.objectbox.Box;
 import io.objectbox.BoxStore;
 import megvii.facepass.FacePassHandler;
 import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.BenDiJiLuBean;
 import megvii.testfacepass.beans.ChengShiIDBean;
+import megvii.testfacepass.beans.GuanHuai;
+import megvii.testfacepass.beans.LunBoBean;
 import megvii.testfacepass.beans.MyObjectBox;
+import megvii.testfacepass.beans.Subject;
+import megvii.testfacepass.beans.TodayBean;
+import megvii.testfacepass.beans.XinXiAll;
+import megvii.testfacepass.beans.XinXiIdBean;
 import megvii.testfacepass.beans.ZhiChiChengShi;
 import megvii.testfacepass.dialogall.CommonData;
 import megvii.testfacepass.dialogall.CommonDialogService;
 import megvii.testfacepass.dialogall.ToastUtils;
-import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.GsonUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,11 +50,23 @@ import okhttp3.ResponseBody;
  */
 
 public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
-    public  FacePassHandler facePassHandler=null;
-    private static BoxStore mBoxStore;
+    private FacePassHandler facePassHandler=null;
     public static MyApplication myApplication;
-    private Box<ChengShiIDBean> chengShiIDBeanBox;
-    private BaoCunBean baoCunBean = null;
+    private Box<ChengShiIDBean> chengShiIDBeanBox=null;
+    private Box<BaoCunBean> baoCunBeanBox=null;
+    private Box<Subject> subjectBox=null;
+    private Box<LunBoBean> lunBoBeanBox=null;
+    private Box<XinXiAll> xinXiAllBox=null;
+    private Box<XinXiIdBean> xinXiIdBeanBox= null;
+    private Box<GuanHuai> guanHuaiBox=null;
+    private Box<TodayBean> todayBeanBox = null;
+    private Box<BenDiJiLuBean> benDiJiLuBeanBox = null;
+    private BoxStore mBoxStore=null;
+
+    public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"ruitongzip";
+    public static final String SDPATH2 = Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"ruitongpopho";
+
+
 
     @Override
     public void onCreate() {
@@ -56,10 +77,16 @@ public class MyApplication extends Application implements Application.ActivityLi
         Bugly.init(getApplicationContext(), "b1f6250dc0", false);
         //适配
         ScreenAdapterTools.init(this);
-        JPushInterface.setDebugMode(false); 	// 设置开启日志,发布时请关闭日志
-        JPushInterface.init(getApplicationContext());
-        JPushInterface.setAlias(getApplicationContext(),1, FileUtil.getSerialNumber(this)==null?FileUtil.getIMSI():FileUtil.getSerialNumber(this));
-        Log.d("MyApplication","机器码"+ FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this));
+        File file = new File(SDPATH);
+        if (!file.exists()) {
+            Log.d("ggg", "file.mkdirs():" + file.mkdirs());
+        }
+        File file2 = new File(SDPATH2);
+        if (!file2.exists()) {
+            Log.d("ggg", "file.mkdirs():" + file2.mkdirs());
+        }
+
+      //  Log.d("MyApplication","机器码"+ FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this));
         //全局dialog
         this.registerActivityLifecycleCallbacks(this);//注册
         CommonData.applicationContext = this;
@@ -70,7 +97,17 @@ public class MyApplication extends Application implements Application.ActivityLi
         Intent dialogservice = new Intent(this, CommonDialogService.class);
         startService(dialogservice);
 
+        baoCunBeanBox= mBoxStore.boxFor(BaoCunBean.class);
+        subjectBox= mBoxStore.boxFor(Subject.class);
+        lunBoBeanBox= mBoxStore.boxFor(LunBoBean.class);
+        xinXiAllBox= mBoxStore.boxFor(XinXiAll.class);
+        xinXiIdBeanBox= mBoxStore.boxFor(XinXiIdBean.class);
+        guanHuaiBox= mBoxStore.boxFor(GuanHuai.class);
+        chengShiIDBeanBox= mBoxStore.boxFor(ChengShiIDBean.class);
+        todayBeanBox= mBoxStore.boxFor(TodayBean.class);
+        benDiJiLuBeanBox= mBoxStore.boxFor(BenDiJiLuBean.class);
         chengShiIDBeanBox=mBoxStore.boxFor(ChengShiIDBean.class);
+
         if(chengShiIDBeanBox.getAll().size()==0){
             OkHttpClient okHttpClient= new OkHttpClient();
             okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
@@ -122,30 +159,65 @@ public class MyApplication extends Application implements Application.ActivityLi
 
 
 
-        baoCunBean = getBoxStore().boxFor(BaoCunBean.class).get(123456L);
+      BaoCunBean  baoCunBean = mBoxStore.boxFor(BaoCunBean.class).get(123456L);
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
             baoCunBean.setId(123456L);
             baoCunBean.setHoutaiDiZhi("http://hy.inteyeligence.com/front");
-            baoCunBean.setShibieFaceSize(30);
+            baoCunBean.setShibieFaceSize(50);
             baoCunBean.setShibieFaZhi(70);
-            baoCunBean.setRuKuFaceSize(60);
-            baoCunBean.setRuKuMoHuDu(0.4f);
+            baoCunBean.setRuKuFaceSize(70);
+            baoCunBean.setRuKuMoHuDu(0.3f);
             baoCunBean.setHuoTiFZ(70);
-            baoCunBean.setHuoTi(true);
+            baoCunBean.setHuoTi(false);
             baoCunBean.setDangqianShiJian("d");
             baoCunBean.setTianQi(false);
 
-            getBoxStore().boxFor(BaoCunBean.class).put(baoCunBean);
+            mBoxStore.boxFor(BaoCunBean.class).put(baoCunBean);
         }
 
 
+        FileDownloader.setupOnApplicationOnCreate(this)
+                .connectionCreator(new FileDownloadUrlConnection
+                        .Creator(new FileDownloadUrlConnection.Configuration()
+                        .connectTimeout(15_000) // set connection timeout.
+                        .readTimeout(15_000) // set read timeout.
+                ))
+                .commit();
+
     }
 
-    public BoxStore getBoxStore(){
-        return mBoxStore;
+    public Box<TodayBean> getTodayBeanBox(){
+        return todayBeanBox;
     }
 
+    public Box<BenDiJiLuBean> getBenDiJiLuBeanBox(){
+        return benDiJiLuBeanBox;
+    }
+    public Box<ChengShiIDBean> getChengShiIDBeanBox(){
+        return chengShiIDBeanBox;
+    }
+
+    public Box<Subject> getSubjectBox(){
+        return subjectBox;
+    }
+
+    public Box<LunBoBean> getLunBoBeanBox(){
+        return lunBoBeanBox;
+    }
+
+    public Box<XinXiAll> getXinXiAllBox(){
+        return xinXiAllBox;
+    }
+    public Box<XinXiIdBean> getXinXiIdBeanBox(){
+        return xinXiIdBeanBox;
+    }
+    public Box<GuanHuai> getGuanHuaiBox(){
+        return guanHuaiBox;
+    }
+    public Box<BaoCunBean> getBaoCunBeanBox(){
+        return baoCunBeanBox;
+    }
 
 
     public FacePassHandler getFacePassHandler() {

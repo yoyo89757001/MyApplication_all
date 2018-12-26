@@ -43,7 +43,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation(name: 'FacePassAndroidSDK-release', ext: 'aar')
+    implementation(name: 'FacePassAndroidSDK-release1', ext: 'aar')
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.liulishuo.filedownloader:library:1.7.4'
     //文件下载库

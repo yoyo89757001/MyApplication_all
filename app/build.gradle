@@ -3,8 +3,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.mac.myapplication"
-        minSdkVersion 15
+        applicationId "com.ruitong.menkoumianbanji"
+        minSdkVersion 20
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -13,6 +13,15 @@ android {
             cmake {
                 cppFlags "-frtti -fexceptions"
             }
+        }
+        ndk {
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters  'armeabi-v7a'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+            manifestPlaceholders = [
+                    XG_ACCESS_ID:"2100321295",
+                    XG_ACCESS_KEY:"AV61168GDJFX",
+            ]
         }
     }
     buildTypes {
@@ -35,4 +44,14 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    //信鸽jar，不包含厂商通道
+    implementation  'com.tencent.xinge:xinge:4.0.3-Release'
+   // implementation 'com.tencent.xinge:xinge:4.0.3-otherpush-Release'
+    //compile 'com.tencent.xinge:xinge:4.2.0-otherpush-Beta'
+    //jg包
+    implementation'com.tencent.jg:jg:1.1'
+    //wup包
+    implementation 'com.tencent.wup:wup:1.0.0.E-release'
+    //mid包
+    implementation 'com.tencent.mid:mid:4.0.7'
 }

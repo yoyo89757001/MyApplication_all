@@ -12,6 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tencent.android.tpush.XGPushConfig;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -122,8 +123,12 @@ public class FaceInit {
     }
 
     public void init(String registration, String url){
+        if (!XGPushConfig.getToken(context).equals("0")){
+            link_uplod(registration,url);
+        }else {
+            EventBus.getDefault().post("获取唯一设备标识失败,请重启程序再试一次");
+        }
 
-        link_uplod(registration,url);
 
     }
 
@@ -134,7 +139,8 @@ public class FaceInit {
         //RequestBody requestBody = RequestBody.create(JSON, json);
         RequestBody body = new FormBody.Builder()
                 .add(init(System.currentTimeMillis()),zhucema)
-                .add("machineCode", getSerialNumber(context) == null ? getIMSI() : getSerialNumber(context))
+                .add("machineCode", XGPushConfig.getToken(context))
+                .add("packagesName", AppUtils.getPackageName(context)+"")
                 .build();
         Request.Builder requestBuilder = new Request.Builder()
 //				.header("Content-Type", "application/json")

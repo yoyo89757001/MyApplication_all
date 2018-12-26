@@ -28,7 +28,7 @@ import megvii.testfacepass.beans.BaoCunBean;
 public class MoBanActivity extends AppCompatActivity implements MoBanAdapter.OnRvItemClick {
     @BindView(R.id.recycerview)
     RecyclerView recycerview;
-    private Box<BaoCunBean> baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+    private Box<BaoCunBean> baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
     private BaoCunBean baoCunBean = null;
     private List<Integer> integerList = new ArrayList<>();
     private MoBanAdapter adapter = null;

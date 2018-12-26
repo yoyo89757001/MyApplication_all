@@ -91,7 +91,7 @@ public class SheZhiActivity extends Activity {
     private Box<ChengShiIDBean> chengShiIDBeanBox;
     private static String usbPath = null;
     private int shibai;
-    private Box<Subject> subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
+    private Box<Subject> subjectBox = MyApplication.myApplication.getSubjectBox();
 
 
     @Override
@@ -103,8 +103,8 @@ public class SheZhiActivity extends Activity {
         //在setContentView();后面加上适配语句
         ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
 
-        baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
-        chengShiIDBeanBox = MyApplication.myApplication.getBoxStore().boxFor(ChengShiIDBean.class);
+        baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
+        chengShiIDBeanBox = MyApplication.myApplication.getChengShiIDBeanBox();
         baoCunBean = baoCunBeanDao.get(123456L);
 
         if (baoCunBean.getDangqianChengShi2() == null) {

@@ -270,9 +270,9 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     // private LinkedBlockingQueue<Subject> linkedBlockingQueue;
     /* 人脸识别Group */
     private String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "ruitongfile" + File.separator;
-    private static final String group_name = "face-pass-test-x";
-    private static final String group_name_mxNan = "face-pass-test-xnan";
-    private static final String group_name_mxNv = "face-pass-test-xnv";
+    private static final String group_name = "facepasstestx";
+  //  private static final String group_name_mxNan = "face-pass-test-xnan";
+  //  private static final String group_name_mxNv = "face-pass-test-xnv";
     private static Vector<Subject> dibuList = new Vector<>();//下面的弹窗
     /* 程序所需权限 ：相机 文件存储 网络访问 */
     private static final int PERMISSIONS_REQUEST = 1;
@@ -350,9 +350,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
     private WeakHandler mHandler;
     private DiBuAdapter diBuAdapter = null;
     private GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, 2, LinearLayoutManager.HORIZONTAL, false);
-    private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "VIA9tPfCsx0_UXpf1oGmh6_dMqHvbmm9";
-    private static final String apiSecret = "SYqy-J0lvdNpBpTfXz8ZOtsaXGsyHEQf";
     private byte[] nanT, nvT;
     private float yanzhiP;
     private int nianlingP;
@@ -408,15 +405,16 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 //
 //                });
 
+        Log.d("MainActivity", "辅导费是非得失2222");
+
         /* 申请程序所需权限 */
         if (!hasPermission()) {
             requestPermission();
         } else {
             //初始化
-            FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+
             FacePassHandler.initSDK(getApplicationContext());
-            //  FaceInit init = new FaceInit(getApplicationContext());
-            // init.initFacePass();
+
             long t = System.currentTimeMillis();
             String fname = DateUtils.timesTwo(t + "");
             File file = new File(filePath + fname);
@@ -424,8 +422,9 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                 file.mkdirs();
             }
             filePath = filePath + fname;
-
+            Log.d("MainActivity", "辅导费是非得失2222");
             if (baoCunBean != null) {
+                Log.d("MainActivity", "辅导费是非得失222211111");
                 facePassUtil = new FacePassUtil();
                 facePassUtil.init(MainActivity.this, getApplicationContext(), cameraRotation, baoCunBean);
             } else {
@@ -437,8 +436,6 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
 
         if (baoCunBean != null)
             initialTts();
-
-
 
         /* 初始化网络请求库 */
         //   requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -1111,7 +1108,7 @@ public class MainActivity extends Activity implements CameraManager.CameraListen
                     }
             } else {
 
-                FacePassHandler.getAuth(authIP, apiKey, apiSecret);
+
                 FacePassHandler.initSDK(getApplicationContext());
 
                 long t = System.currentTimeMillis();

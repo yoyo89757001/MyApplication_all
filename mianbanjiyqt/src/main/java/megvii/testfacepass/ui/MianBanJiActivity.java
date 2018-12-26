@@ -38,7 +38,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
@@ -55,6 +54,9 @@ import com.baidu.tts.client.TtsMode;
 import com.bumptech.glide.request.RequestOptions;
 import com.jude.rollviewpager.adapter.StaticPagerAdapter;
 import com.sdsmdg.tastytoast.TastyToast;
+import com.tencent.android.tpush.XGIOperateCallback;
+import com.tencent.android.tpush.XGPushConfig;
+import com.tencent.android.tpush.XGPushManager;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -95,7 +97,7 @@ import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.BenDiJiLuBean;
 import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.beans.Subject_;
-import megvii.testfacepass.beans.TodayBean;
+import megvii.testfacepass.beans.XGBean;
 import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
@@ -104,6 +106,8 @@ import megvii.testfacepass.tts.control.MySyntherizer;
 import megvii.testfacepass.tts.control.NonBlockSyntherizer;
 import megvii.testfacepass.tts.listener.UiMessageListener;
 import megvii.testfacepass.tts.util.OfflineResource;
+import megvii.testfacepass.tuisong_jg.TSXXChuLi;
+import megvii.testfacepass.utils.AppUtils;
 import megvii.testfacepass.utils.DateUtils;
 import megvii.testfacepass.utils.FacePassUtil;
 import megvii.testfacepass.utils.FileUtil;
@@ -217,7 +221,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
     private MianBanJiView mianBanJiView;
   //  private LinkedBlockingQueue<Subject> linkedBlockingQueue;
     /* 人脸识别Group */
-    private static final String group_name = "face-pass-test-x";
+    private static final String group_name = "facepasstestx";
 
     /* 程序所需权限 ：相机 文件存储 网络访问 */
     private static final int PERMISSIONS_REQUEST = 1;
@@ -288,7 +292,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
     //  private FaceImageCache mImageCache;
     // private Handler mAndroidHandler;
     private Box<BaoCunBean> baoCunBeanDao = null;
-    private Box<TodayBean> todayBeanBox = null;
+   // private Box<TodayBean> todayBeanBox = null;
     private BaoCunBean baoCunBean = null;
    // private TodayBean todayBean = null;
     private IntentFilter intentFilter;
@@ -297,25 +301,19 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
   //  private ClockView clockView;
    // private DiBuAdapter diBuAdapter = null;
    // private GridLayoutManager gridLayoutManager = new GridLayoutManager(MianBanJiActivity.this, 2, LinearLayoutManager.HORIZONTAL, false);
-    private static final String authIP = "https://api-cn.faceplusplus.com";
-    private static final String apiKey = "zIvtfbe_qPHpLZzmRAE-zVg7-EaVhKX2";
-    private static final String apiSecret = "-H4Ik0iZ_5YTyw5NPT8LfnJREz_NCbo7";
+    private TSXXChuLi tsxxChuLi=null;
     private static boolean isSC=true;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // mImageCache = new FaceImageCache();
+
         mToastBlockQueue = new LinkedBlockingQueue<>();
         mDetectResultQueue = new ArrayBlockingQueue<byte[]>(5);
         mFeedFrameQueue = new ArrayBlockingQueue<FacePassImage>(1);
-        benDiJiLuBeanBox = MyApplication.myApplication.getBoxStore().boxFor(BenDiJiLuBean.class);
-       // todayBeanBox = MyApplication.myApplication.getBoxStore().boxFor(TodayBean.class);
-       // todayBean = todayBeanBox.get(123456L);
-        // initAndroidHandler();
-       // isOne = true;
-        baoCunBeanDao = MyApplication.myApplication.getBoxStore().boxFor(BaoCunBean.class);
+        benDiJiLuBeanBox = MyApplication.myApplication.getBenDiJiLuBeanBox();
+        baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
         mainHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -324,7 +322,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
 
         };
         baoCunBean = baoCunBeanDao.get(123456L);
-        subjectBox = MyApplication.myApplication.getBoxStore().boxFor(Subject.class);
+        subjectBox = MyApplication.myApplication.getSubjectBox();
 
         //每分钟的广播
         intentFilter = new IntentFilter();
@@ -341,7 +339,7 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         dw = dm.widthPixels;
         dh = dm.heightPixels;
-
+        tsxxChuLi=new TSXXChuLi();
 
         /* 初始化界面 */
         initView();
@@ -360,9 +358,29 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
             requestPermission();
         } else {
             //初始化
-            FacePassHandler.getAuth(authIP, apiKey, apiSecret);
             FacePassHandler.initSDK(getApplicationContext());
+            //开启信鸽的日志输出，线上版本不建议调用
+            XGPushConfig.enableDebug(this, true);
+            //ed02bf3dc1780d644f0797a9153963b37ed570a5
+ /*
+        注册信鸽服务的接口
+        如果仅仅需要发推送消息调用这段代码即可
+        */
+            XGPushManager.registerPush(getApplicationContext(),
+                    new XGIOperateCallback() {
+                        @Override
+                        public void onSuccess(Object data, int flag) {
+                            Log.w("MainActivity", "+++ register push sucess. token:" + data + "flag" + flag);
+                            Log.d("MainActivity", AppUtils.getPackageName(MianBanJiActivity.this) + "lllooo11");
+                            Log.d("MainActivity", XGPushConfig.getToken(MianBanJiActivity.this)+"lllll11");
+                        }
+                        @Override
+                        public void onFail(Object data, int errCode, String msg) {
+                            Log.d("MainActivity", AppUtils.getPackageName(MianBanJiActivity.this) + "lllooo22");
+                            Log.d("MainActivity", XGPushConfig.getToken(MianBanJiActivity.this)+"lllll22");
 
+                        }
+                    });
         }
 
         if (baoCunBean != null)
@@ -1526,7 +1544,28 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
             } else {
 
          FacePassHandler.initSDK(getApplicationContext());
+                //开启信鸽的日志输出，线上版本不建议调用
+                XGPushConfig.enableDebug(this, true);
+                //ed02bf3dc1780d644f0797a9153963b37ed570a5
+        /*
+        注册信鸽服务的接口
+        如果仅仅需要发推送消息调用这段代码即可
+        */
+                XGPushManager.registerPush(getApplicationContext(),
+                        new XGIOperateCallback() {
+                            @Override
+                            public void onSuccess(Object data, int flag) {
+                                Log.w("MainActivity", "+++ register push sucess. token:" + data + "flag" + flag);
+                                Log.d("MainActivity", AppUtils.getPackageName(MianBanJiActivity.this) + "lllooo11");
+                                Log.d("MainActivity", XGPushConfig.getToken(MianBanJiActivity.this)+"lllll11");
+                            }
+                            @Override
+                            public void onFail(Object data, int errCode, String msg) {
+                                Log.d("MainActivity", AppUtils.getPackageName(MianBanJiActivity.this) + "lllooo22");
+                                Log.d("MainActivity", XGPushConfig.getToken(MianBanJiActivity.this)+"lllll22");
 
+                            }
+                        });
             }
         }
     }
@@ -3132,6 +3171,14 @@ public class MianBanJiActivity extends Activity implements CameraManager.CameraL
             }
         });
     }
+
+    //信鸽信息处理
+    @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
+    public void onDataSynEvent(XGBean xgBean) {
+        tsxxChuLi.setData(xgBean, MianBanJiActivity.this, MyApplication.myApplication.getFacePassHandler());
+    }
+
+
 
     //上传识别记录2
     private void link_shangchuanjilu2(final BenDiJiLuBean subject) {

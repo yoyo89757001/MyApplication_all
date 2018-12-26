@@ -27,7 +27,7 @@ public class BaseActivity extends Activity {
             baoCunBean.setId(123456L);
             baoCunBean.setHoutaiDiZhi("http://192.168.2.187:8980/js/f");
             baoCunBean.setShibieFaceSize(20);
-            baoCunBean.setShibieFaZhi(90);
+            baoCunBean.setShibieFaZhi(99);
             baoCunBean.setRuKuFaceSize(20);
             baoCunBean.setRuKuMoHuDu(0.4f);
             baoCunBean.setHuoTiFZ(60);

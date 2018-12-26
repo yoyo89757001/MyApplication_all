@@ -41,17 +41,19 @@ public class MyTest extends View {
     Shader sweepGradient;
     private PorterDuffXfermode porterDuffXfermode=null;
 
-    //private static final int RED = 230, GREEN = 85, BLUE = 35; //基础颜色，这里是橙红色
-    private static final int RED = 89, GREEN = 213, BLUE = 234; //基础颜色，这里是橙红色
+    private static final int RED = 255, GREEN = 255, BLUE = 255; //基础颜色，这里是橙红色
+   // private static final int RED = 89, GREEN = 213, BLUE = 234; //基础颜色，这里是橙红色
     private static final int MIN_ALPHA =70; //最小不透明度
-    private static final int MAX_ALPHA = 235; //最大不透明度
+    private static final int MAX_ALPHA = 230; //最大不透明度
     private int mywidth,myhight;
 
     private static int[] changeColors = new int[]{
             Color.argb(MIN_ALPHA, RED, GREEN, BLUE),
+            Color.argb(235,89,213,234),
            // Color.argb(MIN_ALPHA, RED, GREEN, BLUE),
             Color.argb(MAX_ALPHA, RED, GREEN, BLUE),
-            Color.argb(235,89,213,234)
+            Color.argb(230,255,255,255)
+
     };
 
     private  Matrix matrix = new Matrix();
