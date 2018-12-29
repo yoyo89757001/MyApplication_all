@@ -1,6 +1,8 @@
 package megvii.testfacepass.ui;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -32,7 +34,7 @@ public class BaseActivity extends AppCompatActivity {
     private static final String PERMISSION_ACCESS_NETWORK_STATE = Manifest.permission.ACCESS_NETWORK_STATE;
     private String[] Permission = new String[]{PERMISSION_CAMERA, PERMISSION_WRITE_STORAGE, PERMISSION_READ_STORAGE, PERMISSION_INTERNET, PERMISSION_ACCESS_NETWORK_STATE};
     private BaoCunBean baoCunBean=null;
-
+    private Box<BaoCunBean> baoCunBeanDao;
 
 
     @Override
@@ -41,7 +43,8 @@ public class BaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_base);
 //        ScreenAdapterTools.getInstance().loadView(getWindow().getDecorView());
 
-        Box<BaoCunBean> baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
+        baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
+
         baoCunBean = baoCunBeanDao.get(123456L);
         if (baoCunBean == null) {
             baoCunBean = new BaoCunBean();
@@ -145,6 +148,8 @@ public class BaseActivity extends AppCompatActivity {
                             //m.sendToTarget();0e88ac1601c0cf20c0682f8dcd917b39c98c395f
                             Log.d("MainActivity", AppUtils.getPackageName(BaseActivity.this) + "lllooo11");
                             Log.d("MainActivity", XGPushConfig.getToken(BaseActivity.this)+"lllll11");
+                            baoCunBean.setTuisongDiZhi(XGPushConfig.getToken(BaseActivity.this));
+                            baoCunBeanDao.put(baoCunBean);
                         }
                         @Override
                         public void onFail(Object data, int errCode, String msg) {
@@ -280,6 +285,21 @@ public class BaseActivity extends AppCompatActivity {
                             }
                         });
 
+            }
+        }
+    }
+
+    public static class MyReceiver extends BroadcastReceiver {
+        public MyReceiver() {
+
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+                Intent i = new Intent(context, BaseActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
             }
         }
     }

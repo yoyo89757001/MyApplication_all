@@ -6,9 +6,14 @@
     <permission
         android:name="com.ruitong.yunqiantai.permission.JPUSH_MESSAGE"
         android:protectionLevel="signature" />
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
+
+    <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"/>
 
     <!-- Required  一些系统要求的权限，如访问网络等 -->
-
+    <uses-permission android:name="android.permission.STATUS_BAR"/>
+    <uses-permission android:name="android.permission.DISABLE_STATUS_BAR"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="com.ruitong.yunqiantai.permission.JPUSH_MESSAGE" />
@@ -74,8 +79,14 @@
         </provider>
 
 
-
-
+        <!--自动重启-->
+        <receiver android:name=".ui.MianBanJiActivity2$MyReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <!--<category android:name="android.intent.category.HOME" />-->
+            </intent-filter>
+        </receiver>
 
 
         <activity android:name=".ui.SheZhiActivity2"/>
@@ -121,6 +132,24 @@
             android:name=".tps401test.nfc.NFCActivity"
             android:launchMode="singleTask" >
         </activity>
+
+        <!--<service-->
+            <!--android:name=".severs.AutoSendMsgService"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true"-->
+            <!--android:label="@string/app_name"-->
+            <!--android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.accessibilityservice.AccessibilityService"/>-->
+            <!--</intent-filter>-->
+
+            <!--<meta-data-->
+                <!--android:name="android.accessibilityservice"-->
+                <!--android:resource="@xml/auto_reply_service_config"/>-->
+        <!--</service>-->
+
+
+
 
     </application>
 

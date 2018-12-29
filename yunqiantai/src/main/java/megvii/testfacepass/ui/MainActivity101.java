@@ -3100,7 +3100,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
                 .add("subjectId", subject.getId() + "") //员工ID
                 .add("subjectType", subject.getPeopleType()) //人员类型
                 // .add("department", subject.getPosition()+"") //部门
-                .add("discernPlace", FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this))//识别地点
+                .add("discernPlace",baoCunBean.getTuisongDiZhi()+"")//识别地点
                 // .add("discernAvatar",  "") //头像
                 .add("identificationTime", DateUtils.time(System.currentTimeMillis() + ""))//时间
                 .build();
@@ -3121,7 +3121,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 BenDiJiLuBean bean = new BenDiJiLuBean();
                 bean.setSubjectId(subject.getId());
-                bean.setDiscernPlace(FileUtil.getSerialNumber(MainActivity101.this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(MainActivity101.this));
+                bean.setDiscernPlace(baoCunBean.getTuisongDiZhi()+"");
                 bean.setSubjectType(subject.getPeopleType());
                 bean.setIdentificationTime(DateUtils.time(System.currentTimeMillis() + ""));
                 benDiJiLuBeanBox.put(bean);
@@ -3140,7 +3140,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
                 } catch (Exception e) {
                     BenDiJiLuBean bean = new BenDiJiLuBean();
                     bean.setSubjectId(subject.getId());
-                    bean.setDiscernPlace(FileUtil.getSerialNumber(MainActivity101.this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(MainActivity101.this));
+                    bean.setDiscernPlace(baoCunBean.getTuisongDiZhi()+"");
                     bean.setSubjectType(subject.getPeopleType());
                     bean.setIdentificationTime(DateUtils.time(System.currentTimeMillis() + ""));
                     benDiJiLuBeanBox.put(bean);
@@ -3172,7 +3172,7 @@ public class MainActivity101 extends AppCompatActivity implements CameraManager.
                 .add("subjectId", subject.getSubjectId() + "") //员工ID
                 .add("subjectType", subject.getSubjectType() + "") //人员类型
                 // .add("department", subject.getPosition()+"") //部门
-                .add("discernPlace", subject.getDiscernPlace() + "")//识别地点
+                .add("discernPlace", baoCunBean.getTuisongDiZhi()+ "")//识别地点
                 // .add("discernAvatar",  "") //头像
                 .add("identificationTime", subject.getIdentificationTime() + "")//时间
                 .build();

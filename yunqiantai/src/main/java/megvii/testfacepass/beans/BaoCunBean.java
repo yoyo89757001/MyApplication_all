@@ -14,7 +14,7 @@ public class BaoCunBean {
     private String shipingIP;
     private String zhujiDiZhi;
     private int moban;
-    private String tuisongDiZhi;
+    private String tuisongDiZhi; //用来存信鸽的token
     private String gonggao;
     private boolean isShowMoshengren;
     private boolean isShowShiPingLiu;

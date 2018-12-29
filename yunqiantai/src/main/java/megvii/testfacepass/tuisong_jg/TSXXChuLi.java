@@ -133,6 +133,7 @@ public class TSXXChuLi {
             if (!file.exists()) {
                 Log.d(TAG, "file.mkdirs():" + file.mkdirs());
             }
+
             if (isDW) {
                 isDW = false;
                 Log.d(TAG, "进入下载");
@@ -150,7 +151,7 @@ public class TSXXChuLi {
                             protected void connected(BaseDownloadTask task, String etag, boolean isContinue, int soFarBytes, int totalBytes) {
                                 //已经连接上
                                 Log.d(TAG, "isContinue:" + isContinue);
-                                showNotifictionIcon(((float) soFarBytes / (float) totalBytes) * 100, "下载中", "下载人脸库中" + ((float) soFarBytes / (float) totalBytes) * 100 + "%");
+                                showNotifictionIcon(100, "下载中", "下载入库图片中 " + ((float)soFarBytes/1048576.0f) + "M");
 
                             }
 
@@ -161,7 +162,7 @@ public class TSXXChuLi {
                                 isDW = false;
                                 if (task.getUrl().equals(path2)) {
 
-                                    ToastUtils.getInstances().setDate("下载中", ((float) soFarBytes / (float) totalBytes) * 100, "下载人脸库中" + ((float) soFarBytes / (float) totalBytes) * 100 + "%");
+                                    ToastUtils.getInstances().setDate("下载中", 100, "下载入库图片中 " + ((float)soFarBytes/1048576.0f) + "M");
                                     //	showNotifictionIcon(,,);
                                 }
                             }
@@ -1162,6 +1163,7 @@ public class TSXXChuLi {
                                 .get();
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
+                        if (beiJingBean.getBackgroundUrl()!=null && !beiJingBean.getBackgroundUrl().equals(""))
                         showNotifictionIcon( 0,"底图更新","下载背景底图失败"+e.getMessage());
                     }
                     try {
@@ -1172,6 +1174,7 @@ public class TSXXChuLi {
                                 .get();
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
+                        if (beiJingBean.getBackgroundLog()!=null && !beiJingBean.getBackgroundLog().equals(""))
                         showNotifictionIcon( 0,"底图更新","下载背景Log失败"+e.getMessage());
                     }
                     if (bitmapLog!=null ) {
@@ -1189,6 +1192,7 @@ public class TSXXChuLi {
 
                         } catch (Exception e) {
                             e.printStackTrace();
+
                             showNotifictionIcon(0, "底图更新", "出现异常" + e.getMessage());
                         }
                     }
@@ -1246,7 +1250,7 @@ public class TSXXChuLi {
                                         //	Log.d("MyReceiver", "task.getSmallFileTotalBytes():" + task.getSmallFileTotalBytes());
                                         //	Log.d("MyReceiver", task.getUrl() + "connected"+totalBytes);
                                         //Log.d(TAG, "isContinue:" + isContinue);
-                                        showNotifictionIcon(((float) soFarBytes / (float) totalBytes) * 100, "下载中", "下载视频中 " + (soFarBytes /1048576)  + "M");
+                                        showNotifictionIcon( 100, "下载中", "下载视频中 " + (soFarBytes /1048576)  + "M");
 
                                     }
 
@@ -1260,7 +1264,7 @@ public class TSXXChuLi {
 //										Log.d("MyReceiver", "task.getSmallFileTotalBytes():" + task.getTotalBytes());
 
                                         if (task.getUrl().equals(vv)) {
-                                            ToastUtils.getInstances().setDate("下载中", 2, "下载视频中 " + ((float)soFarBytes/1048576.0f) + "M");
+                                            ToastUtils.getInstances().setDate("下载中", 100, "下载视频中 " + ((float)soFarBytes/1048576.0f) + "M");
                                             //	showNotifictionIcon(,,);
                                         }
                                     }
@@ -1297,9 +1301,9 @@ public class TSXXChuLi {
                                     protected void error(BaseDownloadTask task, Throwable e) {
                                         Log.d("MyReceiver", "task.isRunning():" + task.getFilename() + "失败" + e);
                                         //出错
-                                        if (task.getUrl().equals(vv)) {
-
-                                        }
+//                                        if (task.getUrl().equals(vv)) {
+//
+//                                        }
                                         showNotifictionIcon(0, "下载失败", "" + e);
                                     }
 

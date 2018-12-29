@@ -8,6 +8,8 @@
         <!--android:protectionLevel="signature" />-->
 
     <!-- Required  一些系统要求的权限，如访问网络等 -->
+    <!--自动重启权限-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
@@ -269,6 +271,14 @@
         <!--<service-->
             <!--android:name=".utils.MyService"-->
             <!--android:persistent="true" />-->
+        <receiver android:name=".ui.BaseActivity$MyReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <!--<category android:name="android.intent.category.HOME" />-->
+            </intent-filter>
+        </receiver>
+
 
         <activity android:name=".ui.MainActivity101" android:screenOrientation="landscape"/>
         <activity android:name=".ui.MainActivity102" android:screenOrientation="landscape"/>

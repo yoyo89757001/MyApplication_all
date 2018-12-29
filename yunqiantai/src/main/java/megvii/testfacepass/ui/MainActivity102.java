@@ -291,6 +291,13 @@ public class MainActivity102 extends AppCompatActivity implements CameraManager.
     private Box<XinXiIdBean> xinXiIdBeanBox = null;
     // private List<Subject> subjectList = new ArrayList<>();
     private Box<LunBoBean> lunBoBeanBox = null;
+    OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            .writeTimeout(100000, TimeUnit.MILLISECONDS)
+            .connectTimeout(100000, TimeUnit.MILLISECONDS)
+            .readTimeout(100000, TimeUnit.MILLISECONDS)
+//				    .cookieJar(new CookiesManager())
+          //  .retryOnConnectionFailure(true)
+            .build();
 
     private int count = -1;
     private Contents contents = null;
@@ -2895,7 +2902,7 @@ public class MainActivity102 extends AppCompatActivity implements CameraManager.
                                 return;
                             }
                             //  Log.d("TimeChangeReceiver", baoCunBean.getDangqianChengShi());
-                            OkHttpClient okHttpClient = new OkHttpClient();
+
                             Request.Builder requestBuilder = new Request.Builder()
                                     .get()
                                     .url("http://v.juhe.cn/weather/index?format=1&cityname=" + baoCunBean.getDangqianChengShi() + "&key=356bf690a50036a5cfc37d54dc6e8319");
@@ -3069,14 +3076,8 @@ public class MainActivity102 extends AppCompatActivity implements CameraManager.
 
     //上传识别记录
     private void link_shangchuanjilu(final Subject subject) {
-        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .writeTimeout(100000, TimeUnit.MILLISECONDS)
-                .connectTimeout(100000, TimeUnit.MILLISECONDS)
-                .readTimeout(100000, TimeUnit.MILLISECONDS)
-//				    .cookieJar(new CookiesManager())
-                .retryOnConnectionFailure(true)
-                .build();
+       // final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
         RequestBody body = null;
 
         body = new FormBody.Builder()
@@ -3088,7 +3089,7 @@ public class MainActivity102 extends AppCompatActivity implements CameraManager.
                 .add("subjectId", subject.getId() + "") //员工ID
                 .add("subjectType", subject.getPeopleType()) //人员类型
                 // .add("department", subject.getPosition()+"") //部门
-                .add("discernPlace", FileUtil.getSerialNumber(this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(this))//识别地点
+                .add("discernPlace", baoCunBean.getTuisongDiZhi()+"")//识别地点
                 // .add("discernAvatar",  "") //头像
                 .add("identificationTime", DateUtils.time(System.currentTimeMillis() + ""))//时间
                 .build();
@@ -3109,7 +3110,7 @@ public class MainActivity102 extends AppCompatActivity implements CameraManager.
                 Log.d("AllConnects", "请求失败" + e.getMessage());
                 BenDiJiLuBean bean = new BenDiJiLuBean();
                 bean.setSubjectId(subject.getId());
-                bean.setDiscernPlace(FileUtil.getSerialNumber(MainActivity102.this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(MainActivity102.this));
+                bean.setDiscernPlace(baoCunBean.getTuisongDiZhi()+"");
                 bean.setSubjectType(subject.getPeopleType());
                 bean.setIdentificationTime(DateUtils.time(System.currentTimeMillis() + ""));
                 benDiJiLuBeanBox.put(bean);
@@ -3128,7 +3129,7 @@ public class MainActivity102 extends AppCompatActivity implements CameraManager.
                 } catch (Exception e) {
                     BenDiJiLuBean bean = new BenDiJiLuBean();
                     bean.setSubjectId(subject.getId());
-                    bean.setDiscernPlace(FileUtil.getSerialNumber(MainActivity102.this) == null ? FileUtil.getIMSI() : FileUtil.getSerialNumber(MainActivity102.this));
+                    bean.setDiscernPlace(baoCunBean.getTuisongDiZhi()+"");
                     bean.setSubjectType(subject.getPeopleType());
                     bean.setIdentificationTime(DateUtils.time(System.currentTimeMillis() + ""));
                     benDiJiLuBeanBox.put(bean);
@@ -3141,16 +3142,9 @@ public class MainActivity102 extends AppCompatActivity implements CameraManager.
 
     //上传识别记录2
     private void link_shangchuanjilu2(final BenDiJiLuBean subject) {
-        final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .writeTimeout(100000, TimeUnit.MILLISECONDS)
-                .connectTimeout(100000, TimeUnit.MILLISECONDS)
-                .readTimeout(100000, TimeUnit.MILLISECONDS)
-//				    .cookieJar(new CookiesManager())
-                .retryOnConnectionFailure(true)
-                .build();
-        RequestBody body = null;
+      //  final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
+        RequestBody body = null;
         body = new FormBody.Builder()
                 //.add("name", subject.getName()) //
                 //.add("companyId", subject.getCompanyId()+"") //公司di
@@ -3160,7 +3154,7 @@ public class MainActivity102 extends AppCompatActivity implements CameraManager.
                 .add("subjectId", subject.getSubjectId() + "") //员工ID
                 .add("subjectType", subject.getSubjectType() + "") //人员类型
                 // .add("department", subject.getPosition()+"") //部门
-                .add("discernPlace", subject.getDiscernPlace() + "")//识别地点
+                .add("discernPlace", baoCunBean.getTuisongDiZhi() + "")//识别地点
                 // .add("discernAvatar",  "") //头像
                 .add("identificationTime", subject.getIdentificationTime() + "")//时间
                 .build();

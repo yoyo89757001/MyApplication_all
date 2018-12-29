@@ -14,7 +14,7 @@ public class BaoCunBean {
     private String shipingIP;
     private String zhujiDiZhi;
     private int moban;
-    private String tuisongDiZhi;
+    private String tuisongDiZhi; //用来存信鸽token
     private String gonggao;
     private boolean isShowMoshengren;
     private boolean isShowShiPingLiu;
@@ -46,6 +46,15 @@ public class BaoCunBean {
     private boolean isTianQi;
     private String shangBanTime;
     private String xiaBanTime;
+    private int mima;
+
+    public int getMima() {
+        return mima;
+    }
+
+    public void setMima(int mima) {
+        this.mima = mima;
+    }
 
     public String getShangBanTime() {
         return shangBanTime;

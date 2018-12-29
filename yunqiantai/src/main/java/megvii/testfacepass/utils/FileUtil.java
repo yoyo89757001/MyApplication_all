@@ -1013,8 +1013,10 @@ public class FileUtil {
         try {
             List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
             for (NetworkInterface nif : all) {
-                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
-               // if (!nif.getName().equalsIgnoreCase("eth0")) continue;
+                //3C:D1:6E:51:18:D5
+                //0C:9A:42:C3:A8:CC
+               // if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+                if (!nif.getName().equalsIgnoreCase("eth0")) continue;
                 byte[] macBytes = nif.getHardwareAddress();
                 if (macBytes == null) {
                     return "";

@@ -6,6 +6,7 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
@@ -95,7 +96,36 @@ public class FileUtil {
         return stringBuilder.toString();
     }
 
+    public static   Bitmap adjustPhotoRotation(Bitmap bm, final int orientationDegree) {
+        try {
+            int width = bm.getWidth();
+            int height = bm.getHeight();
+            Matrix matrix = new Matrix();
+            matrix.setRotate(orientationDegree, (float) width / 2, (float) height / 2);
+            float targetX = 0;
+            float targetY = 0;
+            if (orientationDegree == 90 || orientationDegree == 270) {
+                if (width > height) {
+                    targetX = (float) height / 2 - (float) width / 2;
+                    targetY = 0 - targetX;
+                } else {
+                    targetY = (float) width / 2 - (float) height / 2;
+                    targetX = 0 - targetY;
+                }
+            }
+            matrix.postTranslate(targetX, targetY);
+            Bitmap bm1 = Bitmap.createBitmap(bm.getHeight(), bm.getWidth(), Bitmap.Config.ARGB_8888);
 
+            Paint paint = new Paint();
+            Canvas canvas = new Canvas(bm1);
+            canvas.drawBitmap(bm, matrix, paint);
+
+            return bm1;
+        } catch (OutOfMemoryError | Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * 获取手机IMSI号

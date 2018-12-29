@@ -222,7 +222,7 @@ public class FaceInit {
                 try{
                     ResponseBody body = response.body();
                     String ss=body.string().trim();
-                    Log.d("AllConnects", "绑定："+ss);
+                   // Log.d("AllConnects", "绑定："+ss);
                     JsonObject jsonObject= parse(ss).getAsJsonObject();
                     Gson gson=new Gson();
                     final BangDingBean dingBean=gson.fromJson(jsonObject,BangDingBean.class);
@@ -473,7 +473,7 @@ public class FaceInit {
                 try{
                     ResponseBody body = response.body();
                     String ss=body.string().trim();
-                  //  Log.d("AllConnects", "上传绑定成功状态"+ss);
+                    Log.d("AllConnects", "上传绑定成功状态"+ss);
                    JsonObject jsonObject= parse(ss).getAsJsonObject();
 
                    EventBus.getDefault().post(jsonObject.get("message").getAsString());

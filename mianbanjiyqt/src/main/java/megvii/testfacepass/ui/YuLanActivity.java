@@ -23,10 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.TypefaceSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.LruCache;
@@ -40,22 +37,17 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.sdsmdg.tastytoast.TastyToast;
 
 import org.apache.http.HttpEntity;
@@ -67,16 +59,11 @@ import org.apache.http.util.CharsetUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -86,25 +73,20 @@ import megvii.facepass.FacePassHandler;
 import megvii.facepass.types.FacePassAddFaceResult;
 import megvii.facepass.types.FacePassDetectionResult;
 import megvii.facepass.types.FacePassFace;
-import megvii.facepass.types.FacePassGroupSyncDetail;
 import megvii.facepass.types.FacePassImage;
 import megvii.facepass.types.FacePassImageRotation;
 import megvii.facepass.types.FacePassImageType;
 import megvii.facepass.types.FacePassRecognitionResult;
 import megvii.facepass.types.FacePassRecognitionResultType;
-import megvii.facepass.types.FacePassSyncResult;
 import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
-import megvii.testfacepass.adapter.FaceTokenAdapter;
-import megvii.testfacepass.adapter.GroupNameAdapter;
 import megvii.testfacepass.beans.BaoCunBean;
+import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.camera.CameraManager;
 import megvii.testfacepass.camera.CameraPreview;
 import megvii.testfacepass.camera.CameraPreviewData;
-import megvii.testfacepass.network.ByteRequest;
 import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.SettingVar;
-import megvii.testfacepass.view.FaceView;
 
 
 public class YuLanActivity extends Activity implements CameraManager.CameraListener, View.OnClickListener {
@@ -143,7 +125,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     private boolean isLocalGroupExist = true;
 
     /* 在预览界面圈出人脸 */
-    private FaceView faceView;
+   // private FaceView faceView;
 
     private ScrollView scrollView;
 
@@ -174,7 +156,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     int screenState = 0;// 0 横 1 竖
 
     /* 网络请求队列*/
-    RequestQueue requestQueue;
+   // RequestQueue requestQueue;
 
 
     Button visible;
@@ -191,10 +173,10 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
     FeedFrameThread mFeedFrameThread;
     /*底库同步*/
-    private ImageView mSyncGroupBtn;
+    private Button mSyncGroupBtn;
     private AlertDialog mSyncGroupDialog;
 
-    private ImageView mFaceOperationBtn;
+    private Button mFaceOperationBtn;
     /*图片缓存*/
     private FaceImageCache mImageCache;
 
@@ -202,7 +184,10 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
     private Box<BaoCunBean> baoCunBeanDao = null;
     private BaoCunBean baoCunBean = null;
-
+    private Box<Subject> subjectBox = null;
+    private String tupianFaceToken=null;
+    private String tupianFaceToken2=null;
+    private static boolean isLink=false;
 
 
     @Override
@@ -215,21 +200,18 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         initAndroidHandler();
         baoCunBeanDao = MyApplication.myApplication.getBaoCunBeanBox();
         baoCunBean = baoCunBeanDao.get(123456L);
+        subjectBox=MyApplication.myApplication.getSubjectBox();
+        mFacePassHandler=MyApplication.myApplication.getFacePassHandler();
 
         EventBus.getDefault().register(this);//订阅
-        if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
-            recognize_url = "http://" + serverIP_online + ":8080/api/service/recognize/v1";
-            serverIP = serverIP_online;
-        } else {
-            serverIP = serverIP_offline;
-        }
+
 
         /* 初始化界面 */
         initView();
 
       //  initFaceHandler();
         /* 初始化网络请求库 */
-        requestQueue = Volley.newRequestQueue(getApplicationContext());
+        //requestQueue = Volley.newRequestQueue(getApplicationContext());
 
         mRecognizeThread = new RecognizeThread();
         mRecognizeThread.start();
@@ -301,11 +283,11 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     @Override
     protected void onResume() {
         //checkGroup();
-        initToast();
+       // initToast();
         /* 打开相机 */
         manager.open(getWindowManager(), cameraFacingFront, cameraWidth, cameraHeight);
 
-        adaptFrameLayout();
+     //   adaptFrameLayout();
         super.onResume();
     }
 
@@ -317,12 +299,12 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         String[] localGroups = mFacePassHandler.getLocalGroups();
         isLocalGroupExist = false;
         if (localGroups == null || localGroups.length == 0) {
-            faceView.post(new Runnable() {
-                @Override
-                public void run() {
-                    toast("请创建" + group_name + "底库");
-                }
-            });
+//            faceView.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    toast("请创建" + group_name + "底库");
+//                }
+//            });
             return;
         }
         for (String group : localGroups) {
@@ -330,14 +312,14 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                 isLocalGroupExist = true;
             }
         }
-        if (!isLocalGroupExist) {
-            faceView.post(new Runnable() {
-                @Override
-                public void run() {
-                    toast("请创建" + group_name + "底库");
-                }
-            });
-        }
+//        if (!isLocalGroupExist) {
+//            faceView.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    toast("请创建" + group_name + "底库");
+//                }
+//            });
+//        }
     }
 
     /* 相机回调函数 */
@@ -381,92 +363,91 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                   //  long l2=System.currentTimeMillis();
                   //  Log.d("YuLan", "l2-l1:" + (l2 - l1));
                     if (detectionResult == null || detectionResult.faceList.length == 0) {
-                        faceView.clear();
+                       // faceView.clear();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                faceView.invalidate();
+                               // faceView.invalidate();
                             }
                         });
                     } else {
-                        showFacePassFace(detectionResult.faceList);
+                        showFacePassFace(detectionResult.faceList,image);
                     }
 
-                    if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
-                        /*抓拍版模式*/
-                        if (detectionResult != null && detectionResult.message.length != 0) {
-                            /* 构建http请求 */
-                            FacePassRequest request = new FacePassRequest(recognize_url, detectionResult, new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
-                                    Log.d(DEBUG_TAG, String.format("%s", response));
-                                    try {
-                                        JSONObject jsresponse = new JSONObject(response);
-                                        int code = jsresponse.getInt("code");
-                                        if (code != 0) {
-                                            Log.e(DEBUG_TAG, String.format("error code: %d", code));
-                                            return;
-                                        }
-                                        /* 将服务器返回的结果交回SDK进行处理来获得识别结果 */
-                                        FacePassRecognitionResult[] result = null;
-                                        try {
-                                            Log.i("lengthlength", "length is " + jsresponse.getString("data").getBytes().length);
-                                            result = mFacePassHandler.decodeResponse(jsresponse.getString("data").getBytes());
-                                        } catch (FacePassException e) {
-                                            e.printStackTrace();
-                                            return;
-                                        }
-                                        if (result == null || result.length == 0) {
-                                            return;
-                                        }
-
-                                        for (FacePassRecognitionResult res : result) {
-                                            String faceToken = new String(res.faceToken);
-                                            if (FacePassRecognitionResultType.RECOG_OK == res.facePassRecognitionResultType) {
-                                                getFaceImageByFaceToken(res.trackId, faceToken);
-                                            }
-                                            showRecognizeResult(res.trackId, res.detail.searchScore, res.detail.livenessScore, FacePassRecognitionResultType.RECOG_OK == res.facePassRecognitionResultType);
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError errors) {
-                                    final VolleyError error = errors;
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Log.e(DEBUG_TAG, "volley error response");
-                                            if (error.networkResponse != null) {
-                                                faceEndTextView.append(String.format("network error %d", error.networkResponse.statusCode));
-                                            } else {
-                                                String errorMessage = error.getClass().getSimpleName();
-                                                faceEndTextView.append("network error" + errorMessage);
-                                            }
-                                            faceEndTextView.append("\n");
-                                        }
-                                    });
-                                }
-                            });
-                            request.setRetryPolicy(new DefaultRetryPolicy(10000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                            Log.d(DEBUG_TAG, "request add");
-                            request.setTag("upload_detect_result_tag");
-                            requestQueue.add(request);
-                        }
-                    } else {
+//                    if (SDK_MODE == FacePassSDKMode.MODE_ONLINE) {
+//                        /*抓拍版模式*/
+//                        if (detectionResult != null && detectionResult.message.length != 0) {
+//                            /* 构建http请求 */
+//                            FacePassRequest request = new FacePassRequest(recognize_url, detectionResult, new Response.Listener<String>() {
+//                                @Override
+//                                public void onResponse(String response) {
+//                                    Log.d(DEBUG_TAG, String.format("%s", response));
+//                                    try {
+//                                        JSONObject jsresponse = new JSONObject(response);
+//                                        int code = jsresponse.getInt("code");
+//                                        if (code != 0) {
+//                                            Log.e(DEBUG_TAG, String.format("error code: %d", code));
+//                                            return;
+//                                        }
+//                                        /* 将服务器返回的结果交回SDK进行处理来获得识别结果 */
+//                                        FacePassRecognitionResult[] result = null;
+//                                        try {
+//                                            Log.i("lengthlength", "length is " + jsresponse.getString("data").getBytes().length);
+//                                            result = mFacePassHandler.decodeResponse(jsresponse.getString("data").getBytes());
+//                                        } catch (FacePassException e) {
+//                                            e.printStackTrace();
+//                                            return;
+//                                        }
+//                                        if (result == null || result.length == 0) {
+//                                            return;
+//                                        }
+//
+//                                        for (FacePassRecognitionResult res : result) {
+//                                            String faceToken = new String(res.faceToken);
+//                                            if (FacePassRecognitionResultType.RECOG_OK == res.facePassRecognitionResultType) {
+//                                                getFaceImageByFaceToken(res.trackId, faceToken);
+//                                            }
+//                                            showRecognizeResult(res.trackId, res.detail.searchScore, res.detail.livenessScore, FacePassRecognitionResultType.RECOG_OK == res.facePassRecognitionResultType);
+//                                        }
+//                                    } catch (JSONException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            }, new Response.ErrorListener() {
+//                                @Override
+//                                public void onErrorResponse(VolleyError errors) {
+//                                    final VolleyError error = errors;
+//                                    runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            Log.e(DEBUG_TAG, "volley error response");
+//                                            if (error.networkResponse != null) {
+//                                                faceEndTextView.append(String.format("network error %d", error.networkResponse.statusCode));
+//                                            } else {
+//                                                String errorMessage = error.getClass().getSimpleName();
+//                                                faceEndTextView.append("network error" + errorMessage);
+//                                            }
+//                                            faceEndTextView.append("\n");
+//                                        }
+//                                    });
+//                                }
+//                            });
+//                            request.setRetryPolicy(new DefaultRetryPolicy(10000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+//                            Log.d(DEBUG_TAG, "request add");
+//                            request.setTag("upload_detect_result_tag");
+//                            requestQueue.add(request);
+//                        }
+                 //   } else {
                         /*离线模式，将识别到人脸的，message不为空的result添加到处理队列中*/
-                        if (detectionResult != null && detectionResult.message.length != 0) {
-                            Log.d(DEBUG_TAG, "mDetectResultQueue.offer");
-                            mDetectResultQueue.offer(detectionResult.message);
-                            Log.d(DEBUG_TAG, "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
-                        }
-                    }
+                     //   if (detectionResult != null && detectionResult.message.length != 0) {
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (FacePassException e) {
+                         //   Log.d(DEBUG_TAG, "mDetectResultQueue.offer");
+                          //  mDetectResultQueue.offer(detectionResult.message);
+                           // Log.d(DEBUG_TAG, "1 mDetectResultQueue.size = " + mDetectResultQueue.size());
+                    //    }
+               //     }
+
+                } catch (InterruptedException | FacePassException e) {
                     e.printStackTrace();
                 }
             }
@@ -492,15 +473,15 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                             for (FacePassRecognitionResult result : recognizeResult) {
                                 String faceToken = new String(result.faceToken);
                                 if (FacePassRecognitionResultType.RECOG_OK == result.facePassRecognitionResultType) {
-                                    getFaceImageByFaceToken(result.trackId, faceToken);
+                                    //getFaceImageByFaceToken(result.trackId, faceToken);
+
+
                                 }
-                                showRecognizeResult(result.trackId, result.detail.searchScore, result.detail.livenessScore, !TextUtils.isEmpty(faceToken));
+
                             }
                         }
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (FacePassException e) {
+                } catch (InterruptedException | FacePassException e) {
                     e.printStackTrace();
                 }
             }
@@ -514,26 +495,14 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     }
 
 
-    private void showRecognizeResult(final long trackId, final float searchScore, final float livenessScore, final boolean isRecognizeOK) {
-        mAndroidHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                faceEndTextView.append("ID = " + trackId + (isRecognizeOK ? "识别成功" : "识别失败") + "\n");
-                faceEndTextView.append("识别分 = " + searchScore + "\n");
-                faceEndTextView.append("活体分 = " + livenessScore + "\n");
-                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        });
-
-    }
 
 
 
 
-    private void adaptFrameLayout() {
-        SettingVar.isButtonInvisible = false;
-        SettingVar.iscameraNeedConfig = false;
-    }
+//    private void adaptFrameLayout() {
+//        SettingVar.isButtonInvisible = false;
+//        SettingVar.iscameraNeedConfig = false;
+//    }
 
     private void initToast() {
         SettingVar.isButtonInvisible = false;
@@ -575,10 +544,10 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         }
         setContentView(R.layout.activity_yulan);
 
-        mSyncGroupBtn = (ImageView) findViewById(R.id.btn_group_name);
+        mSyncGroupBtn = findViewById(R.id.btn_group_name);
         mSyncGroupBtn.setOnClickListener(this);
 
-        mFaceOperationBtn = (ImageView) findViewById(R.id.btn_face_operation);
+        mFaceOperationBtn = findViewById(R.id.btn_face_operation);
         mFaceOperationBtn.setOnClickListener(this);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -593,7 +562,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         /* 初始化界面 */
         faceEndTextView = (TextView) this.findViewById(R.id.tv_meg2);
         faceEndTextView.setTypeface(tf);
-        faceView = (FaceView) this.findViewById(R.id.fcview);
+       // faceView = (FaceView) this.findViewById(R.id.fcview);
 
         SettingVar.cameraSettingOk = false;
         ll = (LinearLayout) this.findViewById(R.id.ll);
@@ -649,8 +618,8 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
     @Override
     protected void onRestart() {
-        faceView.clear();
-        faceView.invalidate();
+       // faceView.clear();
+       // faceView.invalidate();
         super.onRestart();
     }
 
@@ -659,13 +628,12 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         mRecognizeThread.isInterrupt = true;
 
         mRecognizeThread.interrupt();
-        if (requestQueue != null) {
-            requestQueue.cancelAll("upload_detect_result_tag");
-            requestQueue.cancelAll("handle_sync_request_tag");
-            requestQueue.cancelAll("load_image_request_tag");
-            requestQueue.stop();
-        }
-
+//        if (requestQueue != null) {
+//            requestQueue.cancelAll("upload_detect_result_tag");
+//            requestQueue.cancelAll("handle_sync_request_tag");
+//            requestQueue.cancelAll("load_image_request_tag");
+//            requestQueue.stop();
+//        }
         if (manager != null) {
             manager.release();
         }
@@ -687,29 +655,29 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     }
 
 
-    private void showFacePassFace(FacePassFace[] detectResult) {
+    private void showFacePassFace(FacePassFace[] detectResult, final FacePassImage image) {
         final FacePassFace[] result = detectResult;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                faceView.clear();
+             //   faceView.clear();
                 for (FacePassFace face : result) {
                     boolean mirror = cameraFacingFront; /* 前摄像头时mirror为true */
-                    StringBuilder faceIdString = new StringBuilder();
-                    faceIdString.append("ID = ").append(face.trackId);
-                    SpannableString faceViewString = new SpannableString(faceIdString);
-                    faceViewString.setSpan(new TypefaceSpan("fonts/kai"), 0, faceViewString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    StringBuilder faceRollString = new StringBuilder();
-                    faceRollString.append("旋转: ").append((int) face.pose.roll).append("°");
-                    StringBuilder facePitchString = new StringBuilder();
-                    facePitchString.append("上下: ").append((int) face.pose.pitch).append("°");
-                    StringBuilder faceYawString = new StringBuilder();
-                    faceYawString.append("左右: ").append((int) face.pose.yaw).append("°");
-                    StringBuilder faceBlurString = new StringBuilder();
-                    faceBlurString.append("模糊: ").append(String.format("%.2f", face.blur));
-                    StringBuilder faceAgeString = new StringBuilder();
-                 //   faceAgeString.append("年龄: ").append(face.age);
-                    StringBuilder faceGenderString = new StringBuilder();
+//                    StringBuilder faceIdString = new StringBuilder();
+//                    faceIdString.append("ID = ").append(face.trackId);
+//                    SpannableString faceViewString = new SpannableString(faceIdString);
+//                    faceViewString.setSpan(new TypefaceSpan("fonts/kai"), 0, faceViewString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                    StringBuilder faceRollString = new StringBuilder();
+//                    faceRollString.append("旋转: ").append((int) face.pose.roll).append("°");
+//                    StringBuilder facePitchString = new StringBuilder();
+//                    facePitchString.append("上下: ").append((int) face.pose.pitch).append("°");
+//                    StringBuilder faceYawString = new StringBuilder();
+//                    faceYawString.append("左右: ").append((int) face.pose.yaw).append("°");
+//                    StringBuilder faceBlurString = new StringBuilder();
+//                    faceBlurString.append("模糊: ").append(String.format("%.2f", face.blur));
+//                    StringBuilder faceAgeString = new StringBuilder();
+//                 //   faceAgeString.append("年龄: ").append(face.age);
+//                    StringBuilder faceGenderString = new StringBuilder();
 
 //                    switch (face.gender) {
 //                        case 0:
@@ -771,63 +739,143 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                             bottom = face.rect.right;
                     }
 
+
                     RectF drect = new RectF();
                     RectF srect = new RectF(left, top, right, bottom);
-
                     mat.mapRect(drect, srect);
-                    faceView.addRect(drect);
-                  //  faceView.addId(faceIdString.toString());
-                  //  faceView.addRoll(faceRollString.toString());
-                  //  faceView.addPitch(facePitchString.toString());
-                  //  faceView.addYaw(faceYawString.toString());
-                  //  faceView.addBlur(faceBlurString.toString());
-                 //   faceView.addAge(faceAgeString.toString());
-                  //  faceView.addGenders(faceGenderString.toString());
+
+                    //头像加宽加高点
+//            RectF srect2 = new RectF(face.rect.left - 40 < 0 ? 0 : face.rect.left - 40, face.rect.top - 100 < 0 ? 0 : face.rect.top - 100,
+//                    face.rect.right + 40 > image.width ? image.width : face.rect.right + 40, face.rect.bottom + 100 > image.height ? image.height : face.rect.bottom + 100);
+                    RectF srect2 = new RectF(face.rect.left - 120 < 0 ? 0 : face.rect.left - 120, face.rect.top - 120 < 0 ? 0 : face.rect.top - 120,
+                            face.rect.right + 220 > image.width ? image.width : face.rect.right + 220, face.rect.bottom + 120 > image.height ? image.height : face.rect.bottom + 120);
+
+
+                    float pitch = face.pose.pitch;
+                    float roll = face.pose.roll;
+                    float yaw = face.pose.yaw;
+                    //  Log.d("MainActivity203", "pitch:" + pitch);
+                    //  Log.d("MainActivity203", "roll:" + roll);
+                    //  Log.d("MainActivity203", "yaw:" + yaw);
+                    if (pitch < 15 && pitch > -15 && roll < 15 && roll > -15 && yaw < 15 && yaw > -15 && face.blur < 0.2) {
+                        try {
+                            //  Log.d("MainActivity203", "tID:" + tID);
+                            //  Log.d("MainActivity203", "face.trackId:" + face.trackId);
+                            //   Log.d("MainActivity203", "isLink:" + isLink);
+                            if (isLink) {  //入库成功后将 tID=-1;
+                                //  Log.d("MainActivity203", "进来");
+                                isLink = false;
+                                //  isLink2 = false;
+                                //  tID = -1;
+                                //获取图片
+                                YuvImage image2 = new YuvImage(image.image, ImageFormat.NV21, image.width, image.height, null);
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                image2.compressToJpeg(new Rect(0, 0, image.width, image.height), 100, stream);
+                                final Bitmap bmp = BitmapFactory.decodeByteArray(stream.toByteArray(), 0, stream.size());
+                                stream.close();
+
+                                int x1, y1, x2, y2 = 0;
+                                x1 = (int) srect2.left;
+                                y1 = (int) srect2.top;
+                                //是宽高，不是坐标
+                                x2 = (srect2.left + (srect2.right - srect2.left)) > image.width ? (int) (image.width - srect2.left) : (int) (srect2.right - srect2.left);
+                                y2 = (srect2.top + (srect2.bottom - srect2.top)) > image.height ? (int) (image.height - srect2.top) : (int) (srect2.bottom - srect2.top);
+                                //截取单个人头像
+                                final Bitmap bitmap = Bitmap.createBitmap(bmp, x1, y1, x2, y2);
+
+                                final Bitmap fileBitmap = FileUtil.adjustPhotoRotation(bitmap, 360-SettingVar.faceRotation);
+                              if (fileBitmap!=null)
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        try {
+                                            FacePassAddFaceResult result = mFacePassHandler.addFace(fileBitmap);
+                                            if (result != null) {
+                                                if (result.result == 0) {
+                                                    // faceTokenEt.setText();
+                                                    tupianFaceToken2=new String(result.faceToken);
+                                                    toast("图片质量通过");
+                                                } else if (result.result == 1) {
+                                                    toast("没有检测到人脸");
+                                                } else {
+                                                    toast("图片不符合入库质量");
+                                                }
+                                            }
+                                        } catch (FacePassException e) {
+                                            e.printStackTrace();
+                                            toast(e.getMessage());
+                                        }
+
+                                        shipingAddFaceDialog(fileBitmap);
+                                    }
+                                });
+
+
+                                //linkedBlockingQueue.offer(b);
+                             //   Log.d("MainActivity203", "陌生人入队列");
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                ceshi.setImageBitmap(bitmap);
+//                            }
+//                        });
+
+                            }
+
+
+                        } catch (Exception ex) {
+                            //isLink = true;
+                            Log.e("Sys", "Error:" + ex.getMessage());
+                        }
+
+                    }
+
                 }
-                faceView.invalidate();
+               // faceView.invalidate();
             }
         });
 
     }
 
-    public void showToast(CharSequence text, int duration, boolean isSuccess, Bitmap bitmap) {
-        LayoutInflater inflater = getLayoutInflater();
-        View toastView = inflater.inflate(R.layout.toast, null);
-        LinearLayout toastLLayout = (LinearLayout) toastView.findViewById(R.id.toastll);
-        if (toastLLayout == null) {
-            return;
-        }
-        toastLLayout.getBackground().setAlpha(100);
-        ImageView imageView = (ImageView) toastView.findViewById(R.id.toastImageView);
-        TextView idTextView = (TextView) toastView.findViewById(R.id.toastTextView);
-        TextView stateView = (TextView) toastView.findViewById(R.id.toastState);
-        SpannableString s;
-        if (isSuccess) {
-            s = new SpannableString("验证成功");
-            imageView.setImageResource(R.drawable.success);
-        } else {
-            s = new SpannableString("验证失败");
-            imageView.setImageResource(R.drawable.success);
-        }
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
-        }
-        stateView.setText(s);
-        idTextView.setText(text);
-
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-        toast.setDuration(duration);
-        toast.setView(toastView);
-
-        if (mToastBlockQueue.size() == 0) {
-            mAndroidHandler.removeMessages(MSG_SHOW_TOAST);
-            mAndroidHandler.sendEmptyMessage(MSG_SHOW_TOAST);
-            mToastBlockQueue.offer(toast);
-        } else {
-            mToastBlockQueue.offer(toast);
-        }
-    }
+//    public void showToast(CharSequence text, int duration, boolean isSuccess, Bitmap bitmap) {
+//        LayoutInflater inflater = getLayoutInflater();
+//        View toastView = inflater.inflate(R.layout.toast, null);
+//        LinearLayout toastLLayout = (LinearLayout) toastView.findViewById(R.id.toastll);
+//        if (toastLLayout == null) {
+//            return;
+//        }
+//        toastLLayout.getBackground().setAlpha(100);
+//        ImageView imageView = (ImageView) toastView.findViewById(R.id.toastImageView);
+//        TextView idTextView = (TextView) toastView.findViewById(R.id.toastTextView);
+//        TextView stateView = (TextView) toastView.findViewById(R.id.toastState);
+//        SpannableString s;
+//        if (isSuccess) {
+//            s = new SpannableString("验证成功");
+//            imageView.setImageResource(R.drawable.success);
+//        } else {
+//            s = new SpannableString("验证失败");
+//            imageView.setImageResource(R.drawable.success);
+//        }
+//        if (bitmap != null) {
+//            imageView.setImageBitmap(bitmap);
+//        }
+//        stateView.setText(s);
+//        idTextView.setText(text);
+//
+//        Toast toast = new Toast(getApplicationContext());
+//        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+//        toast.setDuration(duration);
+//        toast.setView(toastView);
+//
+//        if (mToastBlockQueue.size() == 0) {
+//            mAndroidHandler.removeMessages(MSG_SHOW_TOAST);
+//            mAndroidHandler.sendEmptyMessage(MSG_SHOW_TOAST);
+//            mToastBlockQueue.offer(toast);
+//        } else {
+//            mToastBlockQueue.offer(toast);
+//        }
+//    }
 
     private static final int REQUEST_CODE_CHOOSE_PICK = 1;
 
@@ -835,7 +883,15 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_group_name:
-                showSyncGroupDialog();
+                if (tupianFaceToken2!=null){
+                    try {
+                        mFacePassHandler.deleteFace(tupianFaceToken2.getBytes());
+                        tupianFaceToken2=null;
+                    } catch (FacePassException e) {
+                        e.printStackTrace();
+                    }
+                }
+               isLink=true;
                 break;
             case R.id.btn_face_operation:
                 showAddFaceDialog();
@@ -866,6 +922,7 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                         try {
                             path = FileUtil.getPath(getApplicationContext(), uri);
                         } catch (Exception e) {
+                            Log.d("YuLanActivity", e.getMessage());
                         }
                     }
                     if (TextUtils.isEmpty(path)) {
@@ -881,252 +938,358 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         }
     }
 
-    private void getFaceImageByFaceToken(final long trackId, String faceToken) {
-        if (TextUtils.isEmpty(faceToken)) {
+//    private void getFaceImageByFaceToken(final long trackId, String faceToken) {
+//        if (TextUtils.isEmpty(faceToken)) {
+//            return;
+//        }
+//
+//        final String faceUrl = "http://" + serverIP + ":8080/api/image/v1/query?face_token=" + faceToken;
+//
+//        final Bitmap cacheBmp = mImageCache.getBitmap(faceUrl);
+//        if (cacheBmp != null) {
+//            mAndroidHandler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Log.i(DEBUG_TAG, "getFaceImageByFaceToken cache not null");
+//                    showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, cacheBmp);
+//                }
+//            });
+//            return;
+//        } else {
+//            try {
+//                final Bitmap bitmap = mFacePassHandler.getFaceImage(faceToken.getBytes());
+//                mAndroidHandler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Log.i(DEBUG_TAG, "getFaceImageByFaceToken cache is null");
+//                        showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, bitmap);
+//                    }
+//                });
+//                if (bitmap != null) {
+//                    return;
+//                }
+//            } catch (FacePassException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//        ByteRequest request = new ByteRequest(Request.Method.GET, faceUrl, new Response.Listener<byte[]>() {
+//            @Override
+//            public void onResponse(byte[] response) {
+//
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inJustDecodeBounds = false;
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(response, 0, response.length, options);
+//                mImageCache.putBitmap(faceUrl, bitmap);
+//                showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, bitmap);
+//                Log.i(DEBUG_TAG, "getFaceImageByFaceToken response ");
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.i(DEBUG_TAG, "image load failed ! ");
+//            }
+//        });
+//        request.setTag("load_image_request_tag");
+//        requestQueue.add(request);
+//    }
+
+
+//    /*同步底库操作*/
+//    private void showSyncGroupDialog() {
+//
+////        if (mSyncGroupDialog != null && mSyncGroupDialog.isShowing()) {
+////            mSyncGroupDialog.hide();
+////            requestQueue.cancelAll("handle_sync_request_tag");
+////        }
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//
+//        View view = LayoutInflater.from(this).inflate(R.layout.layout_dialog_sync_groups, null);
+//
+//        final EditText groupNameEt = (EditText) view.findViewById(R.id.et_group_name);
+//        final TextView syncDataTv = (TextView) view.findViewById(R.id.tv_show_sync_data);
+//
+//        Button obtainGroupsBtn = (Button) view.findViewById(R.id.btn_obtain_groups);
+//        Button createGroupBtn = (Button) view.findViewById(R.id.btn_submit);
+//        ImageView closeWindowIv = (ImageView) view.findViewById(R.id.iv_close);
+//
+//        final Button handleSyncDataBtn = (Button) view.findViewById(R.id.btn_handle_sync_data);
+//        final ListView groupNameLv = (ListView) view.findViewById(R.id.lv_group_name);
+//        final ScrollView syncScrollView = (ScrollView) view.findViewById(R.id.sv_handle_sync_data);
+//
+//        final GroupNameAdapter groupNameAdapter = new GroupNameAdapter();
+//
+//        builder.setView(view);
+//        closeWindowIv.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mSyncGroupDialog.dismiss();
+//            }
+//        });
+//
+//        obtainGroupsBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (mFacePassHandler == null) {
+//                    toast("FacePassHandle is null ! ");
+//                    return;
+//                }
+//                String[] groups = mFacePassHandler.getLocalGroups();
+//                if (groups != null && groups.length > 0) {
+//                    List<String> data = Arrays.asList(groups);
+//                    syncScrollView.setVisibility(View.GONE);
+//                    groupNameLv.setVisibility(View.VISIBLE);
+//                    groupNameAdapter.setData(data);
+//                    groupNameLv.setAdapter(groupNameAdapter);
+//                } else {
+//                    toast("groups is null !");
+//                }
+//            }
+//        });
+//
+//        createGroupBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (mFacePassHandler == null) {
+//                    toast("FacePassHandle is null ! ");
+//                    return;
+//                }
+//                String groupName = groupNameEt.getText().toString();
+//                if (TextUtils.isEmpty(groupName)) {
+//                    toast("please input group name ！");
+//                    return;
+//                }
+//                boolean isSuccess = false;
+//                try {
+//                    isSuccess = mFacePassHandler.createLocalGroup(groupName);
+//                } catch (FacePassException e) {
+//                    e.printStackTrace();
+//                }
+//                toast("create group " + isSuccess);
+//                if (isSuccess && group_name.equals(groupName)) {
+//                    isLocalGroupExist = true;
+//                }
+//
+//            }
+//        });
+//
+//        handleSyncDataBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (mFacePassHandler == null) {
+//                    toast("FacePassHandle is null ! ");
+//                    return;
+//                }
+//                String requestData = mFacePassHandler.getSyncRequestData();
+//                getHandleSyncGroupData(requestData);
+//            }
+//
+//            private void getHandleSyncGroupData(final String paramsValue) {
+//
+//
+//                ByteRequest request = new ByteRequest(Request.Method.POST, "http://" + serverIP + ":8080/api/service/sync/v1", new Response.Listener<byte[]>() {
+//                    @Override
+//                    public void onResponse(byte[] response) {
+//                        if (mFacePassHandler == null) {
+//
+//                            return;
+//                        }
+//                        FacePassSyncResult result3 = null;
+//                        try {
+//                            result3 = mFacePassHandler.handleSyncResultData(response);
+//                        } catch (FacePassException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        if (result3 == null || result3.facePassGroupSyncDetails == null) {
+//                            toast("handle sync result is failed!");
+//                            return;
+//                        }
+//
+//                        StringBuilder builder = new StringBuilder();
+//                        for (FacePassGroupSyncDetail detail : result3.facePassGroupSyncDetails) {
+//                            builder.append("========" + detail.groupName + "==========" + "\r\n");
+//                            builder.append("groupName :" + detail.groupName + " \r\n");
+//                            builder.append("facetokenadded :" + detail.faceAdded + " \r\n");
+//                            builder.append("facetokendeleted :" + detail.faceDeleted + " \r\n");
+//                            builder.append("resultcode :" + detail.result + " \r\n");
+//                        }
+//                        syncDataTv.setText(builder);
+//                        syncScrollView.setVisibility(View.VISIBLE);
+//                        groupNameLv.setVisibility(View.GONE);
+//                    }
+//                }, new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        error.printStackTrace();
+//                    }
+//                }) {
+//                    @Override
+//                    public byte[] getBody() throws AuthFailureError {
+//
+//                        return paramsValue.getBytes();
+//                    }
+//                };
+//
+//               // request.setTag("handle_sync_request_tag");
+//                //requestQueue.add(request);
+//            }
+//        });
+//
+//        groupNameAdapter.setOnItemDeleteButtonClickListener(new GroupNameAdapter.ItemDeleteButtonClickListener() {
+//            @Override
+//            public void OnItemDeleteButtonClickListener(int position) {
+//                List<String> groupNames = groupNameAdapter.getData();
+//                if (groupNames == null) {
+//                    return;
+//                }
+//                if (mFacePassHandler == null) {
+//                    toast("FacePassHandle is null ! ");
+//                    return;
+//                }
+//                String groupName = groupNames.get(position);
+//                boolean isSuccess = false;
+//                try {
+//                    isSuccess = mFacePassHandler.deleteLocalGroup(groupName);
+//                } catch (FacePassException e) {
+//                    e.printStackTrace();
+//                }
+//                if (isSuccess) {
+//                    String[] groups = mFacePassHandler.getLocalGroups();
+//                    if (group_name.equals(groupName)) {
+//                        isLocalGroupExist = false;
+//                    }
+//                    if (groups != null) {
+//                        groupNameAdapter.setData(Arrays.asList(groups));
+//                        groupNameAdapter.notifyDataSetChanged();
+//                    }
+//                    toast("删除成功!");
+//                } else {
+//                    toast("删除失败!");
+//
+//                }
+//            }
+//
+//        });
+//
+//        mSyncGroupDialog = builder.create();
+//
+//        WindowManager m = getWindowManager();
+//        Display d = m.getDefaultDisplay();  //为获取屏幕宽、高
+//
+//        WindowManager.LayoutParams attributes = mSyncGroupDialog.getWindow().getAttributes();
+//        attributes.height = d.getHeight();
+//        attributes.width = d.getWidth();
+//        mSyncGroupDialog.getWindow().setAttributes(attributes);
+//
+//        mSyncGroupDialog.show();
+//
+//    }
+
+
+
+    private AlertDialog mFaceShiPingDialog;
+
+    private void shipingAddFaceDialog(Bitmap fileBitmap) {
+
+
+
+        if (mFaceShiPingDialog != null && !mFaceShiPingDialog.isShowing()) {
+            mFaceShiPingDialog.show();
             return;
         }
-
-        final String faceUrl = "http://" + serverIP + ":8080/api/image/v1/query?face_token=" + faceToken;
-
-        final Bitmap cacheBmp = mImageCache.getBitmap(faceUrl);
-        if (cacheBmp != null) {
-            mAndroidHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Log.i(DEBUG_TAG, "getFaceImageByFaceToken cache not null");
-                    showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, cacheBmp);
-                }
-            });
+        if (mFaceShiPingDialog != null && mFaceShiPingDialog.isShowing()) {
+           ImageView ii= mFaceShiPingDialog.findViewById(R.id.touxiang);
+           ii.setImageBitmap(fileBitmap);
             return;
-        } else {
-            try {
-                final Bitmap bitmap = mFacePassHandler.getFaceImage(faceToken.getBytes());
-                mAndroidHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(DEBUG_TAG, "getFaceImageByFaceToken cache is null");
-                        showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, bitmap);
-                    }
-                });
-                if (bitmap != null) {
-                    return;
-                }
-            } catch (FacePassException e) {
-                e.printStackTrace();
-            }
-
-        }
-        ByteRequest request = new ByteRequest(Request.Method.GET, faceUrl, new Response.Listener<byte[]>() {
-            @Override
-            public void onResponse(byte[] response) {
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = false;
-                Bitmap bitmap = BitmapFactory.decodeByteArray(response, 0, response.length, options);
-                mImageCache.putBitmap(faceUrl, bitmap);
-                showToast("ID = " + String.valueOf(trackId), Toast.LENGTH_SHORT, true, bitmap);
-                Log.i(DEBUG_TAG, "getFaceImageByFaceToken response ");
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i(DEBUG_TAG, "image load failed ! ");
-            }
-        });
-        request.setTag("load_image_request_tag");
-        requestQueue.add(request);
-    }
-
-
-    /*同步底库操作*/
-    private void showSyncGroupDialog() {
-
-        if (mSyncGroupDialog != null && mSyncGroupDialog.isShowing()) {
-            mSyncGroupDialog.hide();
-            requestQueue.cancelAll("handle_sync_request_tag");
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        View view = LayoutInflater.from(this).inflate(R.layout.layout_dialog_sync_groups, null);
-
-        final EditText groupNameEt = (EditText) view.findViewById(R.id.et_group_name);
-        final TextView syncDataTv = (TextView) view.findViewById(R.id.tv_show_sync_data);
-
-        Button obtainGroupsBtn = (Button) view.findViewById(R.id.btn_obtain_groups);
-        Button createGroupBtn = (Button) view.findViewById(R.id.btn_submit);
-        ImageView closeWindowIv = (ImageView) view.findViewById(R.id.iv_close);
-
-        final Button handleSyncDataBtn = (Button) view.findViewById(R.id.btn_handle_sync_data);
-        final ListView groupNameLv = (ListView) view.findViewById(R.id.lv_group_name);
-        final ScrollView syncScrollView = (ScrollView) view.findViewById(R.id.sv_handle_sync_data);
-
-        final GroupNameAdapter groupNameAdapter = new GroupNameAdapter();
-
+        View view = LayoutInflater.from(this).inflate(R.layout.layout_dialog_face_operation22, null);
         builder.setView(view);
-        closeWindowIv.setOnClickListener(new View.OnClickListener() {
+
+        final EditText name = (EditText) view.findViewById(R.id.name);
+        final EditText bumen = (EditText) view.findViewById(R.id.bumen);
+
+        Button chongpai =view.findViewById(R.id.chongpai);
+        Button queding=view.findViewById(R.id.queding);
+        ImageView touxiang = (ImageView) view.findViewById(R.id.touxiang);
+        ImageView closeIv = (ImageView) view.findViewById(R.id.iv_close);
+        touxiang.setImageBitmap(fileBitmap);
+
+        queding.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSyncGroupDialog.dismiss();
-            }
-        });
+                if (name.getText().toString().trim().equals("")){
+                    toast("姓名必填");
+                }else {
+                    if (tupianFaceToken2==null){
+                        toast("人脸方向不对或质量不符合要求");
+                    }else {
+                        //开始添加
 
-        obtainGroupsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
-                String[] groups = mFacePassHandler.getLocalGroups();
-                if (groups != null && groups.length > 0) {
-                    List<String> data = Arrays.asList(groups);
-                    syncScrollView.setVisibility(View.GONE);
-                    groupNameLv.setVisibility(View.VISIBLE);
-                    groupNameAdapter.setData(data);
-                    groupNameLv.setAdapter(groupNameAdapter);
-                } else {
-                    toast("groups is null !");
-                }
-            }
-        });
-
-        createGroupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
-                String groupName = groupNameEt.getText().toString();
-                if (TextUtils.isEmpty(groupName)) {
-                    toast("please input group name ！");
-                    return;
-                }
-                boolean isSuccess = false;
-                try {
-                    isSuccess = mFacePassHandler.createLocalGroup(groupName);
-                } catch (FacePassException e) {
-                    e.printStackTrace();
-                }
-                toast("create group " + isSuccess);
-                if (isSuccess && group_name.equals(groupName)) {
-                    isLocalGroupExist = true;
-                }
-
-            }
-        });
-
-        handleSyncDataBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
-                String requestData = mFacePassHandler.getSyncRequestData();
-                getHandleSyncGroupData(requestData);
-            }
-
-            private void getHandleSyncGroupData(final String paramsValue) {
-
-                // TODO: 2017/12/6
-                ByteRequest request = new ByteRequest(Request.Method.POST, "http://" + serverIP + ":8080/api/service/sync/v1", new Response.Listener<byte[]>() {
-                    @Override
-                    public void onResponse(byte[] response) {
-                        if (mFacePassHandler == null) {
-
-                            return;
-                        }
-                        FacePassSyncResult result3 = null;
                         try {
-                            result3 = mFacePassHandler.handleSyncResultData(response);
+                            boolean b= mFacePassHandler.bindGroup(group_name,tupianFaceToken2.getBytes());
+                            if (b){
+                                Subject subject=new Subject();
+                                subject.setId(System.currentTimeMillis());
+                                subject.setDepartmentName(bumen.getText().toString().trim());
+                                subject.setName(name.getText().toString().trim());
+                                subject.setPeopleType("员工");
+                                subject.setTeZhengMa(tupianFaceToken2);
+                                subjectBox.put(subject);
+                                tupianFaceToken2=null;
+                                toast("入库成功");
+                            }else {
+                                toast("入库失败,请重试");
+                            }
+
                         } catch (FacePassException e) {
                             e.printStackTrace();
+                            toast("入库失败,请重试");
                         }
 
-                        if (result3 == null || result3.facePassGroupSyncDetails == null) {
-                            toast("handle sync result is failed!");
-                            return;
-                        }
 
-                        StringBuilder builder = new StringBuilder();
-                        for (FacePassGroupSyncDetail detail : result3.facePassGroupSyncDetails) {
-                            builder.append("========" + detail.groupName + "==========" + "\r\n");
-                            builder.append("groupName :" + detail.groupName + " \r\n");
-                            builder.append("facetokenadded :" + detail.faceAdded + " \r\n");
-                            builder.append("facetokendeleted :" + detail.faceDeleted + " \r\n");
-                            builder.append("resultcode :" + detail.result + " \r\n");
-                        }
-                        syncDataTv.setText(builder);
-                        syncScrollView.setVisibility(View.VISIBLE);
-                        groupNameLv.setVisibility(View.GONE);
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                }) {
-                    @Override
-                    public byte[] getBody() throws AuthFailureError {
+                }
 
-                        return paramsValue.getBytes();
-                    }
-                };
-                request.setTag("handle_sync_request_tag");
-                requestQueue.add(request);
+
             }
         });
 
-        groupNameAdapter.setOnItemDeleteButtonClickListener(new GroupNameAdapter.ItemDeleteButtonClickListener() {
+        chongpai.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void OnItemDeleteButtonClickListener(int position) {
-                List<String> groupNames = groupNameAdapter.getData();
-                if (groupNames == null) {
-                    return;
-                }
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
-                String groupName = groupNames.get(position);
-                boolean isSuccess = false;
-                try {
-                    isSuccess = mFacePassHandler.deleteLocalGroup(groupName);
-                } catch (FacePassException e) {
-                    e.printStackTrace();
-                }
-                if (isSuccess) {
-                    String[] groups = mFacePassHandler.getLocalGroups();
-                    if (group_name.equals(groupName)) {
-                        isLocalGroupExist = false;
+            public void onClick(View v) {
+                if (tupianFaceToken2!=null){
+                    try {
+                        mFacePassHandler.deleteFace(tupianFaceToken2.getBytes());
+                        tupianFaceToken2=null;
+                    } catch (FacePassException e) {
+                        e.printStackTrace();
                     }
-                    if (groups != null) {
-                        groupNameAdapter.setData(Arrays.asList(groups));
-                        groupNameAdapter.notifyDataSetChanged();
-                    }
-                    toast("删除成功!");
-                } else {
-                    toast("删除失败!");
-
                 }
+                isLink=true;
             }
-
         });
 
-        mSyncGroupDialog = builder.create();
+
+        closeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFaceShiPingDialog.dismiss();
+            }
+        });
+
 
         WindowManager m = getWindowManager();
         Display d = m.getDefaultDisplay();  //为获取屏幕宽、高
-
-        WindowManager.LayoutParams attributes = mSyncGroupDialog.getWindow().getAttributes();
+        mFaceShiPingDialog = builder.create();
+        WindowManager.LayoutParams attributes = mFaceShiPingDialog.getWindow().getAttributes();
         attributes.height = d.getHeight();
         attributes.width = d.getWidth();
-        mSyncGroupDialog.getWindow().setAttributes(attributes);
-
-        mSyncGroupDialog.show();
-
+        mFaceShiPingDialog.getWindow().setAttributes(attributes);
+        mFaceShiPingDialog.show();
     }
 
     private AlertDialog mFaceOperationDialog;
@@ -1151,18 +1314,68 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
 
         Button choosePictureBtn = (Button) view.findViewById(R.id.btn_choose_picture);
         Button addFaceBtn = (Button) view.findViewById(R.id.btn_add_face);
-        Button getFaceImageBtn = (Button) view.findViewById(R.id.btn_get_face_image);
+      //  Button getFaceImageBtn = (Button) view.findViewById(R.id.btn_get_face_image);
         Button deleteFaceBtn = (Button) view.findViewById(R.id.btn_delete_face);
-        Button bindGroupFaceTokenBtn = (Button) view.findViewById(R.id.btn_bind_group);
-        Button getGroupInfoBtn = (Button) view.findViewById(R.id.btn_get_group_info);
+        Button bindGroupFaceTokenBtn =  view.findViewById(R.id.btn_bind_group);
+       // Button getGroupInfoBtn = (Button) view.findViewById(R.id.btn_get_group_info);
+        Button queding=view.findViewById(R.id.queding);
 
         ImageView closeIv = (ImageView) view.findViewById(R.id.iv_close);
 
-        final ListView groupInfoLv = (ListView) view.findViewById(R.id.lv_group_info);
+      //  final ListView groupInfoLv = (ListView) view.findViewById(R.id.lv_group_info);
 
-        final FaceTokenAdapter faceTokenAdapter = new FaceTokenAdapter();
+       // final FaceTokenAdapter faceTokenAdapter = new FaceTokenAdapter();
 
-        groupNameEt.setText(group_name);
+      //  groupNameEt.setText(group_name);
+
+
+        queding.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (faceTokenEt.getText().toString().trim().equals("")){
+                    toast("姓名必填");
+                }else {
+                    if (tupianFaceToken==null){
+                        if (faceImagePathEt.getText().toString().trim().equals("")){
+                            toast("请先选择图片");
+                        }else {
+                            toast("请点击添加人脸或重选图片");
+                        }
+                    }else {
+                        //开始添加
+
+                        try {
+                            boolean b= mFacePassHandler.bindGroup(group_name,tupianFaceToken.getBytes());
+                            if (b){
+                                Subject subject=new Subject();
+                                subject.setId(System.currentTimeMillis());
+                                subject.setDepartmentName(groupNameEt.getText().toString().trim());
+                                subject.setName(faceTokenEt.getText().toString().trim());
+                                subject.setPeopleType("员工");
+                                subject.setTeZhengMa(tupianFaceToken);
+                                subjectBox.put(subject);
+                                tupianFaceToken=null;
+                                toast("入库成功");
+                            }else {
+                                tupianFaceToken=null;
+                                toast("入库失败,请重试");
+                            }
+
+                        } catch (FacePassException e) {
+                            e.printStackTrace();
+                            toast("入库失败,请重试");
+                        }
+
+
+
+                    }
+
+
+                }
+
+
+            }
+        });
 
         closeIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1211,43 +1424,18 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
                     FacePassAddFaceResult result = mFacePassHandler.addFace(bitmap);
                     if (result != null) {
                         if (result.result == 0) {
-                            toast("add face successfully！");
-                            faceTokenEt.setText(new String(result.faceToken));
+                           // faceTokenEt.setText();
+
+                            tupianFaceToken=new String(result.faceToken);
+                            toast("图片质量通过");
+
                         } else if (result.result == 1) {
-                            toast("no face ！");
+                            toast("没有检测到人脸");
                         } else {
-                            toast("quality problem！");
+                            toast("图片不符合入库质量");
                         }
                     }
                 } catch (FacePassException e) {
-                    e.printStackTrace();
-                    toast(e.getMessage());
-                }
-            }
-        });
-
-        getFaceImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
-                try {
-                    byte[] faceToken = faceTokenEt.getText().toString().getBytes();
-                    Bitmap bmp = mFacePassHandler.getFaceImage(faceToken);
-                    final ImageView iv = (ImageView) findViewById(R.id.imview);
-                    iv.setImageBitmap(bmp);
-                    iv.setVisibility(View.VISIBLE);
-                    iv.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            iv.setVisibility(View.GONE);
-                            iv.setImageBitmap(null);
-                        }
-                    }, 2000);
-                    mFaceOperationDialog.dismiss();
-                } catch (Exception e) {
                     e.printStackTrace();
                     toast(e.getMessage());
                 }
@@ -1257,41 +1445,9 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         deleteFaceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
-                boolean b = false;
-                try {
-                    byte[] faceToken = faceTokenEt.getText().toString().getBytes();
-                    b = mFacePassHandler.deleteFace(faceToken);
-                    if (b) {
-                        String groupName = groupNameEt.getText().toString();
-                        if (TextUtils.isEmpty(groupName)) {
-                            toast("group name  is null ！");
-                            return;
-                        }
-                        byte[][] faceTokens = mFacePassHandler.getLocalGroupInfo(groupName);
-                        List<String> faceTokenList = new ArrayList<>();
-                        if (faceTokens != null && faceTokens.length > 0) {
-                            for (int j = 0; j < faceTokens.length; j++) {
-                                if (faceTokens[j].length > 0) {
-                                    faceTokenList.add(new String(faceTokens[j]));
-                                }
-                            }
 
-                        }
-                        faceTokenAdapter.setData(faceTokenList);
-                        groupInfoLv.setAdapter(faceTokenAdapter);
-                    }
-                } catch (FacePassException e) {
-                    e.printStackTrace();
-                    toast(e.getMessage());
-                }
-
-                String result = b ? "success " : "failed";
-                toast("delete face " + result);
-                Log.d(DEBUG_TAG, "delete face  " + result);
+                toast("请不要点我");
+              //  Log.d(DEBUG_TAG, "delete face  " + result);
 
             }
         });
@@ -1299,144 +1455,31 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         bindGroupFaceTokenBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
+//                if (mFacePassHandler == null) {
+//                    toast("FacePassHandle is null ! ");
+//                    return;
+//                }
+//
+//                byte[] faceToken = faceTokenEt.getText().toString().getBytes();
+//                String groupName = groupNameEt.getText().toString();
+//                if (faceToken == null || faceToken.length == 0 || TextUtils.isEmpty(groupName)) {
+//                    toast("params error！");
+//                    return;
+//                }
+//                try {
+//                    boolean b = mFacePassHandler.bindGroup(groupName, faceToken);
+//                    String result = b ? "success " : "failed";
+                    toast("点我没用");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    toast(e.getMessage());
+//                }
 
-                byte[] faceToken = faceTokenEt.getText().toString().getBytes();
-                String groupName = groupNameEt.getText().toString();
-                if (faceToken == null || faceToken.length == 0 || TextUtils.isEmpty(groupName)) {
-                    toast("params error！");
-                    return;
-                }
-                try {
-                    boolean b = mFacePassHandler.bindGroup(groupName, faceToken);
-                    String result = b ? "success " : "failed";
-                    toast("bind  " + result);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    toast(e.getMessage());
-                }
-
-
-            }
-        });
-
-        getGroupInfoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
-                String groupName = groupNameEt.getText().toString();
-                if (TextUtils.isEmpty(groupName)) {
-                    toast("group name  is null ！");
-                    return;
-                }
-                try {
-                    byte[][] faceTokens = mFacePassHandler.getLocalGroupInfo(groupName);
-                    List<String> faceTokenList = new ArrayList<>();
-                    if (faceTokens != null && faceTokens.length > 0) {
-                        for (int j = 0; j < faceTokens.length; j++) {
-                            if (faceTokens[j].length > 0) {
-                                faceTokenList.add(new String(faceTokens[j]));
-                            }
-                        }
-
-                    }
-                    faceTokenAdapter.setData(faceTokenList);
-                    groupInfoLv.setAdapter(faceTokenAdapter);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    toast("get local group info error!");
-                }
 
             }
         });
 
-        faceTokenAdapter.setOnItemButtonClickListener(new FaceTokenAdapter.ItemButtonClickListener() {
-            @Override
-            public void onItemDeleteButtonClickListener(int position) {
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
 
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
-                String groupName = groupNameEt.getText().toString();
-                if (TextUtils.isEmpty(groupName)) {
-                    toast("group name  is null ！");
-                    return;
-                }
-                try {
-                    byte[] faceToken = faceTokenAdapter.getData().get(position).getBytes();
-                    boolean b = mFacePassHandler.deleteFace(faceToken);
-                    String result = b ? "success " : "failed";
-                    toast("delete face " + result);
-                    if (b) {
-                        byte[][] faceTokens = mFacePassHandler.getLocalGroupInfo(groupName);
-                        List<String> faceTokenList = new ArrayList<>();
-                        if (faceTokens != null && faceTokens.length > 0) {
-                            for (int j = 0; j < faceTokens.length; j++) {
-                                if (faceTokens[j].length > 0) {
-                                    faceTokenList.add(new String(faceTokens[j]));
-                                }
-                            }
-
-                        }
-                        faceTokenAdapter.setData(faceTokenList);
-                        groupInfoLv.setAdapter(faceTokenAdapter);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    toast(e.getMessage());
-                }
-
-            }
-
-            @Override
-            public void onItemUnbindButtonClickListener(int position) {
-                if (mFacePassHandler == null) {
-                    toast("FacePassHandle is null ! ");
-                    return;
-                }
-
-                String groupName = groupNameEt.getText().toString();
-                if (TextUtils.isEmpty(groupName)) {
-                    toast("group name  is null ！");
-                    return;
-                }
-                try {
-                    byte[] faceToken = faceTokenAdapter.getData().get(position).getBytes();
-                    boolean b = mFacePassHandler.unBindGroup(groupName, faceToken);
-                    String result = b ? "success " : "failed";
-                    toast("unbind " + result);
-                    if (b) {
-                        byte[][] faceTokens = mFacePassHandler.getLocalGroupInfo(groupName);
-                        List<String> faceTokenList = new ArrayList<>();
-                        if (faceTokens != null && faceTokens.length > 0) {
-                            for (int j = 0; j < faceTokens.length; j++) {
-                                if (faceTokens[j].length > 0) {
-                                    faceTokenList.add(new String(faceTokens[j]));
-                                }
-                            }
-
-                        }
-                        faceTokenAdapter.setData(faceTokenList);
-                        groupInfoLv.setAdapter(faceTokenAdapter);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    toast("unbind error!");
-                }
-
-            }
-        });
 
 
         WindowManager m = getWindowManager();
@@ -1448,6 +1491,9 @@ public class YuLanActivity extends Activity implements CameraManager.CameraListe
         mFaceOperationDialog.getWindow().setAttributes(attributes);
         mFaceOperationDialog.show();
     }
+
+
+
 
     private void toast(String msg) {
         Toast.makeText(YuLanActivity.this, msg, Toast.LENGTH_SHORT).show();

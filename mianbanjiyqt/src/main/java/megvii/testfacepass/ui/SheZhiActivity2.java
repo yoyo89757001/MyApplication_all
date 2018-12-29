@@ -1,32 +1,24 @@
 package megvii.testfacepass.ui;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import android.widget.Toast;
-
-
-import com.google.gson.Gson;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.yatoooon.screenadaptation.ScreenAdapterTools;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONArray;
 
-
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,20 +30,22 @@ import megvii.testfacepass.MyApplication;
 import megvii.testfacepass.R;
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.ChengShiIDBean;
+import megvii.testfacepass.beans.DaKaBean;
 import megvii.testfacepass.beans.JsonBean;
 import megvii.testfacepass.beans.Subject;
 import megvii.testfacepass.dialog.BangDingDialog;
 import megvii.testfacepass.dialog.XiuGaiDiZhiDialog;
 import megvii.testfacepass.dialog.XiuGaiHuoTiFZDialog;
+import megvii.testfacepass.dialog.XiuGaiMiMaDialog;
 import megvii.testfacepass.dialog.XiuGaiRuKuFZDialog;
 import megvii.testfacepass.dialog.XiuGaiSBFZDialog;
 import megvii.testfacepass.dialog.YuYingDialog;
 
+import megvii.testfacepass.utils.DateUtils;
+import megvii.testfacepass.utils.ExcelUtil;
 import megvii.testfacepass.utils.FaceInit;
-
-import megvii.testfacepass.utils.FileUtil;
 import megvii.testfacepass.utils.RestartAPPTool;
-import megvii.testfacepass.utils.SettingVar;
+
 
 
 public class SheZhiActivity2 extends Activity {
@@ -67,16 +61,18 @@ public class SheZhiActivity2 extends Activity {
     RelativeLayout rl6;
     @BindView(R.id.rl7)
     RelativeLayout rl7;
+    @BindView(R.id.rl8)
+    RelativeLayout rl8;
     @BindView(R.id.switchs)
     Switch switchs;
     @BindView(R.id.rl5)
     RelativeLayout rl5;
     @BindView(R.id.rl9)
     RelativeLayout rl9;
+    @BindView(R.id.daochu)
+    Button daochu;
 
     private BangDingDialog bangDingDialog=null;
-    private int cameraRotation;
-    private static final String group_name = "face-pass-test-x";
     private Box<BaoCunBean> baoCunBeanDao = null;
     private BaoCunBean baoCunBean = null;
    // public OkHttpClient okHttpClient = null;
@@ -86,7 +82,9 @@ public class SheZhiActivity2 extends Activity {
     private Box<ChengShiIDBean> chengShiIDBeanBox;
     private static String usbPath = null;
     private int shibai;
-    private Box<Subject> subjectBox=MyApplication.myApplication.getSubjectBox();
+    private Box<DaKaBean> daKaBeanBox=MyApplication.myApplication.getDaKaBeanBox();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,14 +132,10 @@ public class SheZhiActivity2 extends Activity {
 //            }
 //        }).start();
 
-        if (SettingVar.isSettingAvailable) {
-            cameraRotation = SettingVar.faceRotation;
-        }
-
     }
 
 
-    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7, R.id.rl9})
+    @OnClick({R.id.rl1, R.id.rl2, R.id.rl3, R.id.rl4, R.id.rl5, R.id.rl6, R.id.rl7,R.id.rl8, R.id.rl9,R.id.daochu})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl1:
@@ -267,20 +261,59 @@ public class SheZhiActivity2 extends Activity {
                 });
                 dialog.show();
                 break;
-//            case R.id.rl8:
-//                //选择城市
-//                if (options1Items.size() > 0 && options2Items.size() > 0 && options3Items.size() > 0) {
-//                    showPickerView();
-//                } else {
-//                    Toast tastyToast = TastyToast.makeText(SheZhiActivity2.this, "城市数据准备中...请稍后", TastyToast.LENGTH_LONG, TastyToast.INFO);
-//                    tastyToast.setGravity(Gravity.CENTER, 0, 0);
-//                    tastyToast.show();
-//                }
-//                break;
+            case R.id.rl8:
+                //修改密码
+
+                final XiuGaiMiMaDialog diZhiDialog2 = new XiuGaiMiMaDialog(SheZhiActivity2.this);
+                diZhiDialog2.setCanceledOnTouchOutside(false);
+                diZhiDialog2.setContents(baoCunBean.getMima()+"", null);
+                diZhiDialog2.setOnQueRenListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        baoCunBean.setMima(Integer.valueOf(diZhiDialog2.getUrl()));
+                        baoCunBeanDao.put(baoCunBean);
+                        diZhiDialog2.dismiss();
+                    }
+                });
+                diZhiDialog2.setQuXiaoListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        diZhiDialog2.dismiss();
+                    }
+                });
+                diZhiDialog2.show();
+
+
+                break;
 
             case R.id.rl9:
 
                 startActivity(new Intent(SheZhiActivity2.this, YuLanActivity.class));
+
+                break;
+
+            case R.id.daochu:
+                EventBus.getDefault().post("可能耗时较长,请等待导出");
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<DaKaBean> daKaBeanList=daKaBeanBox.getAll();
+
+                        File file = new File(MyApplication.SDPATH2+File.separator+DateUtils.timeHore(System.currentTimeMillis()+"")+".xls");
+                        //文件夹是否已经存在
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        String[] title = {"id", "姓名", "部门", "人员类型", "时间"};
+                        String fileName = file.toString();
+                        ExcelUtil.initExcel(fileName, title);
+                        ExcelUtil.writeObjListToExcel(daKaBeanList, fileName, SheZhiActivity2.this,daKaBeanBox);
+
+                    }
+                }).start();
+
+
 
                 break;
 

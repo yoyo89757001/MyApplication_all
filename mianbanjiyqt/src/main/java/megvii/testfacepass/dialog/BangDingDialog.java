@@ -2,9 +2,6 @@ package megvii.testfacepass.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -45,48 +42,48 @@ public class BangDingDialog extends Dialog {
         linearLayout=mView.findViewById(R.id.llllll);
         jiudianname= (EditText) mView.findViewById(R.id.xiangce);
         idid= (EditText)mView.findViewById(R.id.idid);
-        idid.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-              int len=s.toString().length();
-                StringBuilder builder=new StringBuilder();
-                if (len>0){
-                    if (len==4){
-                        builder.append(idid.getText().toString().trim());
-                        builder.append("-");
-                        idid.setText(builder.toString());
-                        idid.setSelection(idid.getText().toString().trim().length());
-                    }else if (len==9){
-                        builder.append(idid.getText().toString().trim());
-                        builder.append("-");
-                        idid.setText(builder.toString());
-                        idid.setSelection(idid.getText().toString().trim().length());
-                    }else if (len==14){
-                        builder.append(idid.getText().toString().trim());
-                        builder.append("-");
-                        idid.setText(builder.toString());
-                        idid.setSelection(idid.getText().toString().trim().length());
-                    }else if (len==19){
-                        builder.append(idid.getText().toString().trim());
-                        builder.append("-");
-                        idid.setText(builder.toString());
-                        idid.setSelection(idid.getText().toString().trim().length());
-                    }
-
-
-                }
-            }
-        });
+//        idid.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//              int len=s.toString().length();
+//                StringBuilder builder=new StringBuilder();
+//                if (len>0){
+//                    if (len==4){
+//                        builder.append(idid.getText().toString().trim());
+//                        builder.append("-");
+//                        idid.setText(builder.toString());
+//                        idid.setSelection(idid.getText().toString().trim().length());
+//                    }else if (len==9){
+//                        builder.append(idid.getText().toString().trim());
+//                        builder.append("-");
+//                        idid.setText(builder.toString());
+//                        idid.setSelection(idid.getText().toString().trim().length());
+//                    }else if (len==14){
+//                        builder.append(idid.getText().toString().trim());
+//                        builder.append("-");
+//                        idid.setText(builder.toString());
+//                        idid.setSelection(idid.getText().toString().trim().length());
+//                    }else if (len==19){
+//                        builder.append(idid.getText().toString().trim());
+//                        builder.append("-");
+//                        idid.setText(builder.toString());
+//                        idid.setSelection(idid.getText().toString().trim().length());
+//                    }
+//
+//
+//                }
+//            }
+//        });
        // title2= (TextView) mView.findViewById(R.id.title2);
         l1= (Button)mView. findViewById(R.id.queren);
         l2= (Button) mView.findViewById(R.id.quxiao);

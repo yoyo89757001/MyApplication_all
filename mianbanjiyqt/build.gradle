@@ -105,6 +105,9 @@ dependencies {
     implementation 'com.tencent.wup:wup:1.0.0.E-release'
     //mid包
     implementation 'com.tencent.mid:mid:4.0.7'
+    implementation 'me.grantland:autofittextview:0.2.1'
+    implementation 'com.airbnb.android:lottie:2.5.4'
+    implementation group: 'net.sourceforge.jexcelapi', name: 'jxl', version: '2.6.12'
 
 }
 // 指定com.android.support 包的版本一致

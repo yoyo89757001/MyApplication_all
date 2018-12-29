@@ -1,9 +1,7 @@
 package megvii.testfacepass.beans;
 
 import android.view.View;
-
 import java.util.Comparator;
-
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
 import io.objectbox.annotation.Transient;
@@ -68,8 +66,33 @@ public class Subject implements Comparator<Subject> {
     private int daka;
     private String shijian;
     private String displayPhoto;
+    private byte[] txBytes;
+    private int w;
+    private int h;
 
+    public int getW() {
+        return w;
+    }
 
+    public void setW(int w) {
+        this.w = w;
+    }
+
+    public int getH() {
+        return h;
+    }
+
+    public void setH(int h) {
+        this.h = h;
+    }
+
+    public byte[] getTxBytes() {
+        return txBytes;
+    }
+
+    public void setTxBytes(byte[] txBytes) {
+        this.txBytes = txBytes;
+    }
 
     public String getDisplayPhoto() {
         return displayPhoto;

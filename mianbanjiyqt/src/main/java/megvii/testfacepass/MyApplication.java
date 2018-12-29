@@ -28,6 +28,7 @@ import megvii.facepass.FacePassHandler;
 import megvii.testfacepass.beans.BaoCunBean;
 import megvii.testfacepass.beans.BenDiJiLuBean;
 import megvii.testfacepass.beans.ChengShiIDBean;
+import megvii.testfacepass.beans.DaKaBean;
 import megvii.testfacepass.beans.GuanHuai;
 import megvii.testfacepass.beans.LunBoBean;
 import megvii.testfacepass.beans.MyObjectBox;
@@ -61,10 +62,11 @@ public class MyApplication extends Application implements Application.ActivityLi
     private Box<GuanHuai> guanHuaiBox=null;
     private Box<TodayBean> todayBeanBox = null;
     private Box<BenDiJiLuBean> benDiJiLuBeanBox = null;
+    private Box<DaKaBean> daKaBeanBox = null;
     private BoxStore mBoxStore=null;
 
     public static final String SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"ruitongzip";
-    public static final String SDPATH2 = Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"ruitongpopho";
+    public static final String SDPATH2 = Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"ruitong";
 
 
 
@@ -107,6 +109,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         todayBeanBox= mBoxStore.boxFor(TodayBean.class);
         benDiJiLuBeanBox= mBoxStore.boxFor(BenDiJiLuBean.class);
         chengShiIDBeanBox=mBoxStore.boxFor(ChengShiIDBean.class);
+        daKaBeanBox=mBoxStore.boxFor(DaKaBean.class);
 
         if(chengShiIDBeanBox.getAll().size()==0){
             OkHttpClient okHttpClient= new OkHttpClient();
@@ -169,6 +172,7 @@ public class MyApplication extends Application implements Application.ActivityLi
             baoCunBean.setRuKuFaceSize(70);
             baoCunBean.setRuKuMoHuDu(0.3f);
             baoCunBean.setHuoTiFZ(70);
+            baoCunBean.setMima(123456);
             baoCunBean.setHuoTi(false);
             baoCunBean.setDangqianShiJian("d");
             baoCunBean.setTianQi(false);
@@ -184,6 +188,7 @@ public class MyApplication extends Application implements Application.ActivityLi
                         .readTimeout(15_000) // set read timeout.
                 ))
                 .commit();
+
 
     }
 
@@ -218,7 +223,9 @@ public class MyApplication extends Application implements Application.ActivityLi
     public Box<BaoCunBean> getBaoCunBeanBox(){
         return baoCunBeanBox;
     }
-
+    public Box<DaKaBean> getDaKaBeanBox(){
+        return daKaBeanBox;
+    }
 
     public FacePassHandler getFacePassHandler() {
 
